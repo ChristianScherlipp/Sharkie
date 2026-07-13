@@ -3,8 +3,11 @@ class MovableObject {
     y;
     img;
 
-    constructor (){
 
+    // loadImage
+    loadImage(path){
+        this.img = new Image(); // this.Image = document.getElementById('Image') <img id="image" src>
+        this.img.src = path;
     }
 
     moveRight(){

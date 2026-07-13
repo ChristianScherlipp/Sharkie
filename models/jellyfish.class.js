@@ -1,0 +1,3 @@
+class Jellyfish extends MovableObject {
+    
+}

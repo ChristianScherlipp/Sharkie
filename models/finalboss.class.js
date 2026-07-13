@@ -1,0 +1,3 @@
+class Finalboss extends MovableObject {
+    
+}
