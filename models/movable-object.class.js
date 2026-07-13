@@ -1,7 +1,9 @@
 class MovableObject {
-    x = 120;
-    y = 400;
+    x = 50;
+    y = 200;
     img;
+    height= 150;
+    width = 180;
 
     constructor() {
 
