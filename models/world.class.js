@@ -6,7 +6,10 @@ class World {
     new Finalboss(),
 ];
     
-    
+    constructor() {
+        
+    }
+
     draw(){
 
     }
