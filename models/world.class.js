@@ -3,6 +3,8 @@ class World {
     
     enemies = [
         new Pufferfish(),
+        new Pufferfish(),
+        new Pufferfish(),
         new Jellyfish(),
         new Finalboss(),
     ];
