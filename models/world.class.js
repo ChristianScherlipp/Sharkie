@@ -8,7 +8,10 @@ class World {
     ];
     lights = [new Light()];
     backgroundObjects = [
-        new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png')
+        new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D1.png', 0),
+        new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 0),
+        new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 0),
+        new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 0),
     ];
     
 
@@ -25,12 +28,12 @@ class World {
         // Canvas Clearen um neu geladenen bilder anzuzeigen 
         // und das vorgänger bild aus dem canvas entfernt wird.
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-        this.addToMap(this.character); // Character laden
+        
         this.addObjectsToMap(this.backgroundObjects); // Background laden
-        this.addObjectsToMap(this.enemies); // Gegner aus dem Array enemies laden
         this.addObjectsToMap(this.lights); // Licht Laden
-
+        this.addObjectsToMap(this.enemies); // Gegner aus dem Array enemies laden
+        this.addToMap(this.character); // Character laden
+        
 
         // Draw() wird immer wieder aufgerufen
         let self = this;
