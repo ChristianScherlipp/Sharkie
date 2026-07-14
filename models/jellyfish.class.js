@@ -1,9 +1,9 @@
 class Jellyfish extends MovableObject {
     JELLY_IMAGES_SWIM = [
-            './assets/img/2.Enemy/2.jelly_fish/Regular_damage/Lila1.png',
-            './assets/img/2.Enemy/2.jelly_fish/Regular_damage/Lila2.png',
-            './assets/img/2.Enemy/2.jelly_fish/Regular_damage/Lila3.png',
-            './assets/img/2.Enemy/2.jelly_fish/Regular_damage/Lila4.png',
+            './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png',
+            './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila2.png',
+            './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila3.png',
+            './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila4.png',
     ];
     currentImage = 0;
 
