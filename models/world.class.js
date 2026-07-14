@@ -8,7 +8,7 @@ class World {
     ];
     lights = [new Light()];
     backgroundObjects = [
-        new BackgroundObject('../assets/img/3.Background/Layers/2.Floor/D1.png')
+        new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png')
     ];
     
 
