@@ -2,11 +2,16 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     background-image: url(./assets/img/3.Background/sharkie-bg2.webp);
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
     height: 100vh;
+}
+
+body h1 {
+    font-size: 6rem;
 }
 
 canvas {

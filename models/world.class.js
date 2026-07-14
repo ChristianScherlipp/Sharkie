@@ -7,7 +7,10 @@ class World {
         new Finalboss(),
     ];
     lights = [new Light()];
-    substratebases = [new Substratebase()]
+    backgroundObjects = [
+        new BackgroundObject('../assets/img/3.Background/Layers/2.Floor/D1.png')
+    ];
+    
 
     canvas;
     ctx;
@@ -22,24 +25,27 @@ class World {
         // Canvas Clearen um neu geladenen bilder anzuzeigen 
         // und das vorgänger bild aus dem canvas entfernt wird.
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        // Character laden
-        this.ctx.drawImage(this.character.img, this.character.x, this.character.y, this.character.width, this.character.height);
-        // Licht Laden
-        this.lights.forEach(light => {
-            this.ctx.drawImage(light.img, light.x, light.y, light.width, light.height);
-        });
-        // Bodengrund laden
-        this.substratebases.forEach(substratebases => {
-            this.ctx.drawImage(substratebases.img, substratebases.x, substratebases.y, substratebases.width, substratebases.height);
-        });
-        // Gegner aus dem Array enemies laden
-        this.enemies.forEach(enemy => {
-            this.ctx.drawImage(enemy.img, enemy.x, enemy.y, enemy.width, enemy.height);
-        });
+
+        this.addToMap(this.character); // Character laden
+        this.addObjectsToMap(this.backgroundObjects); // Background laden
+        this.addObjectsToMap(this.enemies); // Gegner aus dem Array enemies laden
+        this.addObjectsToMap(this.lights); // Licht Laden
+
+
         // Draw() wird immer wieder aufgerufen
         let self = this;
         requestAnimationFrame(function() {
             self.draw();
         });
+    }
+
+    addObjectsToMap (objects) {
+        objects.forEach(object => {
+            this.addToMap(object);
+        });
+    }
+
+    addToMap (mo){
+        this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
     }
 }
