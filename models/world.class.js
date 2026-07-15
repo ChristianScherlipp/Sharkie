@@ -16,10 +16,10 @@ class World {
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 0),
     ];
     
-
     canvas;
     ctx;
     keyboard;
+    camera_x = 0;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -33,12 +33,12 @@ class World {
         // Canvas Clearen um neu geladenen bilder anzuzeigen 
         // und das vorgänger bild aus dem canvas entfernt wird.
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
+        this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.backgroundObjects); // Background laden
         this.addObjectsToMap(this.lights); // Licht Laden
         this.addObjectsToMap(this.enemies); // Gegner aus dem Array enemies laden
         this.addToMap(this.character); // Character laden
-        
+        this.ctx.translate(-this.camera_x, 0);
 
         // Draw() wird immer wieder aufgerufen
         let self = this;
