@@ -1,20 +1,9 @@
 class World {
     character = new Character();
     
-    enemies = [
-        new Pufferfish(),
-        new Pufferfish(),
-        new Pufferfish(),
-        new Jellyfish(),
-        new Finalboss(),
-    ];
-    lights = [new Light()];
-    backgroundObjects = [
-        new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D1.png', 0),
-        new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 0),
-        new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 0),
-        new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 0),
-    ];
+    enemies = level1.enemies;
+    lights = level1.lights;
+    backgroundObjects = level1.backgroundObjects;
     
     canvas;
     ctx;
@@ -65,9 +54,9 @@ class World {
     // Image Spiegeln
     flipImage (mo){
         this.ctx.save();
-            this.ctx.translate(mo.width, 0);
-            this.ctx.scale(-1, 1)
-            mo.x = mo.x * -1;
+        this.ctx.translate(mo.width, 0);
+        this.ctx.scale(-1, 1)
+        mo.x = mo.x * -1;
     }
     // gespiegeltest Image zurücksetzen
     flipImageBack(mo){

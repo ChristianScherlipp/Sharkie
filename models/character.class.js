@@ -2,7 +2,7 @@ class Character extends MovableObject {
     width = 250;
     height = 290;
     y = 150;
-    speed = 1;
+    speed = 4;
     IMAGES_SWIM = [
             './assets/img/1.Sharkie/3.Swim/1.png',
             './assets/img/1.Sharkie/3.Swim/2.png',
