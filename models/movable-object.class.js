@@ -5,6 +5,8 @@ class MovableObject {
     height= 120;
     width = 150;
     speed = 0.15;
+    speedY = 0;
+    acceleration = 0.005;
     imageCache = {};
     currentImage = 0;
     otherDirection = false;
@@ -59,5 +61,15 @@ class MovableObject {
         let path = images[i];
         this.img = this.imageCache[path];
         this.currentImage++;
+    }
+
+    apllyGravity(){
+        setInterval(() => {
+                if (this.y < 240) {
+                this.y -= this.speedY;
+                this.speedY -= this.acceleration; 
+                console.log(this.y);
+            }
+        }, 1000 / 25)
     }
 }

@@ -18,6 +18,7 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_SWIM);
         this.x = 20;
         this.animate();
+        this.apllyGravity();
     }
 
     animate() {
@@ -32,6 +33,7 @@ class Character extends MovableObject {
             }
             if (this.world.keyboard.UP) {
                 this.y -= this.speed;
+                this.acceleration = 0;
             }
             if (this.world.keyboard.DOWN) {
                 this.y += this.speed;
