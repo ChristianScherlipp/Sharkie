@@ -6,7 +6,7 @@ class MovableObject {
     width = 150;
     speed = 0.15;
     speedY = 0;
-    acceleration = 0.005;
+    acceleration = 0.0004;
     imageCache = {};
     currentImage = 0;
     otherDirection = false;
@@ -65,11 +65,15 @@ class MovableObject {
 
     apllyGravity(){
         setInterval(() => {
-                if (this.y < 240) {
+                if (this.isAboveGround()) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration; 
-                console.log(this.y);
+                console.log('y is ' + this.y);
             }
-        }, 1000 / 25)
+        }, 1000 / 120)
+    }
+
+    isAboveGround(){
+        return this.y < 240;
     }
 }
