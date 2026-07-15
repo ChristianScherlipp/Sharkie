@@ -1,4 +1,6 @@
 class Finalboss extends MovableObject {
+    x = 700;
+    y = Math.random() * 350;
     FINALBOSS_IMAGES_SWIM = [
             './assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png',
             './assets/img/2.Enemy/3.Final_Enemy/2.floating/2.png',
@@ -18,8 +20,6 @@ class Finalboss extends MovableObject {
     constructor (){
         super().loadImage('./assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png');
         this.loadImages(this.FINALBOSS_IMAGES_SWIM);
-        this.x = 500;
-        this.y = Math.random() * 450;
         this.width = 250;
         this.height = 220;
 
@@ -28,10 +28,7 @@ class Finalboss extends MovableObject {
 
     animate() {
         setInterval(() => {
-            let i = this.currentImage % this.FINALBOSS_IMAGES_SWIM.length;
-            let path = this.FINALBOSS_IMAGES_SWIM[i];
-            this.img = this.imageCache[path];
-            this.currentImage++;
+            this.playAnimation(this.FINALBOSS_IMAGES_SWIM);
         }, 150);
     }
 }

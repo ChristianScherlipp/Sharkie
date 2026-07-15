@@ -1,10 +1,6 @@
 class World {
     character = new Character();
-    
-    enemies = level1.enemies;
-    lights = level1.lights;
-    backgroundObjects = level1.backgroundObjects;
-    
+    level = level1;
     canvas;
     ctx;
     keyboard;
@@ -23,9 +19,9 @@ class World {
         // und das vorgänger bild aus dem canvas entfernt wird.
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
-        this.addObjectsToMap(this.backgroundObjects); // Background laden
-        this.addObjectsToMap(this.lights); // Licht Laden
-        this.addObjectsToMap(this.enemies); // Gegner aus dem Array enemies laden
+        this.addObjectsToMap(this.level.backgroundObjects); // Background laden
+        this.addObjectsToMap(this.level.lights); // Licht Laden
+        this.addObjectsToMap(this.level.enemies); // Gegner aus dem Array enemies laden
         this.addToMap(this.character); // Character laden
         this.ctx.translate(-this.camera_x, 0);
 

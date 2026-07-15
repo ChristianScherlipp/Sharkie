@@ -19,10 +19,7 @@ class Jellyfish extends MovableObject {
 
     animate() {
         setInterval(() => {
-            let i = this.currentImage % this.JELLY_IMAGES_SWIM.length;
-            let path = this.JELLY_IMAGES_SWIM[i];
-            this.img = this.imageCache[path];
-            this.currentImage++;
+            this.playAnimation(this.JELLY_IMAGES_SWIM);
         }, 255);
     }
 }
