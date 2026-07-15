@@ -1,5 +1,5 @@
 class Finalboss extends MovableObject {
-    x = 700;
+    x = 2500;
     y = Math.random() * 300;
     FINALBOSS_IMAGES_SWIM = [
             './assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png',
