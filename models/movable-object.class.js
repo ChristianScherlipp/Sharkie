@@ -33,25 +33,25 @@ class MovableObject {
     moveRight(){
         setInterval(() => {
             this.x += this.speed;    
-        }, 1000 / 60);
+        }, 1000 / 120);
     }
 
     moveLeft(){
         setInterval(() => {
         this.x -= this.speed;
-        }, 1000 / 60);
+        }, 1000 / 120);
     }
 
     moveUp(){
         setInterval(() => {
         this.y -= this.speed;
-        }, 1000 / 60);
+        }, 1000 / 120);
     }
 
     moveDown(){
         setInterval(() => {
         this.y += this.speed;
-        }, 1000 / 60);
+        }, 1000 / 120);
     }
 
     playAnimation(images){
