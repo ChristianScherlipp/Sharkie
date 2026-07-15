@@ -6,6 +6,7 @@ class MovableObject {
     width = 150;
     speed = 0.15;
     imageCache = {};
+    currentImage = 0;
 
     constructor() {
 

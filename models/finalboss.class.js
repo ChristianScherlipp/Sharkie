@@ -14,7 +14,6 @@ class Finalboss extends MovableObject {
             './assets/img/2.Enemy/3.Final_Enemy/2.floating/12.png',
             './assets/img/2.Enemy/3.Final_Enemy/2.floating/13.png',
     ];
-    currentImage = 0;
 
     constructor (){
         super().loadImage('./assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png');

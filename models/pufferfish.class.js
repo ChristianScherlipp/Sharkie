@@ -6,7 +6,6 @@ class Pufferfish extends MovableObject {
             './assets/img/2.Enemy/1.Puffer_fish_3_color_options/1.Swim/1.swim4.png',
             './assets/img/2.Enemy/1.Puffer_fish_3_color_options/1.Swim/1.swim5.png',
     ];
-    currentImage = 0;
 
     constructor(){
         super().loadImage('./assets/img/2.Enemy/1.Puffer_fish_3_color_options/1.Swim/1.swim1.png');

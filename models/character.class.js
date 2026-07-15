@@ -10,7 +10,7 @@ class Character extends MovableObject {
             './assets/img/1.Sharkie/3.Swim/5.png',
             './assets/img/1.Sharkie/3.Swim/6.png',
         ];
-    currentImage = 0;
+    world;
 
     constructor() {
         super().loadImage('./assets/img/1.Sharkie/3.Swim/1.png');

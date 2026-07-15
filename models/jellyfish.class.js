@@ -5,7 +5,6 @@ class Jellyfish extends MovableObject {
             './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila3.png',
             './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila4.png',
     ];
-    currentImage = 0;
 
     constructor() {
         super().loadImage('./assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png');
