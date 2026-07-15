@@ -11,21 +11,39 @@ function init() {
 }
 
 window.addEventListener('keydown', (e) => {
-    if(e.keyCode == 68 || e.keyCode == 39) {
+    if(e.key.toLocaleLowerCase() == 'd' || e.key == 'ArrowRight') {
         keyboard.RIGHT = true;
     }
-    if(e.keyCode == 65 || e.keyCode == 37) {
+    if(e.key.toLocaleLowerCase() == 'a' || e.key == 'ArrowLeft') {
         keyboard.LEFT = true;
     }
-    if(e.keyCode == 87 || e.keyCode == 38) {
+    if(e.key.toLocaleLowerCase() == 'w' || e.key == 'ArrowUp') {
         keyboard.UP = true;
     }
-    if(e.keyCode == 83 || e.keyCode == 40) {
+    if(e.key.toLocaleLowerCase() == 's' || e.key == 'ArrowDown') {
         keyboard.DOWN = true;
     }
-    if(e.keyCode == 32) {
-        keyboard.SPACE = true;
+    if(e.key == ' ') {
+        keyboard.SPACE = true;        
     }
     console.log(e);
     
+});
+
+window.addEventListener('keyup', (e) => {
+    if(e.key.toLocaleLowerCase() == 'd' || e.key == 'ArrowRight') {
+        keyboard.RIGHT = false;
+    }
+    if(e.key.toLocaleLowerCase() == 'a' || e.key == 'ArrowLeft') {
+        keyboard.LEFT = false;
+    }
+    if(e.key.toLocaleLowerCase() == 'w' || e.key == 'ArrowUp') {
+        keyboard.UP = false;
+    }
+    if(e.key.toLocaleLowerCase() == 's' || e.key == 'ArrowDown') {
+        keyboard.DOWN = false;
+    }
+    if(e.key == ' ') {
+        keyboard.SPACE = false;
+    }
 });
