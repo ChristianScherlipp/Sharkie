@@ -78,7 +78,7 @@ class Character extends MovableObject {
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
             }else if(this.isHurt()){
-                this.playAnimation(this.IMAGES_HURT)
+                this.playAnimation(this.IMAGES_HURT);
             }else{
                 if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
                     this.playAnimation(this.IMAGES_SWIM);

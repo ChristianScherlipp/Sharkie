@@ -26,7 +26,6 @@ window.addEventListener('keydown', (e) => {
     if(e.key == ' ') {
         keyboard.SPACE = true;        
     }
-    console.log(e);
     
 });
 
