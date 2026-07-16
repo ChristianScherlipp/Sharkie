@@ -55,23 +55,6 @@ class MovableObject extends DrawableObject {
         return this.y < 240;
     }
 
-    drawFrame(ctx){
-        if (this instanceof Character || this instanceof Finalboss || this instanceof Jellyfish || this instanceof Pufferfish) {
-            ctx.beginPath();
-            ctx.lineWidth = '5';
-            ctx.strokeStyle = "blue";
-            ctx.rect(this.x, this.y, this.width, this.height);
-            ctx.stroke();
-        }
-        if (this instanceof Character || this instanceof Finalboss || this instanceof Jellyfish || this instanceof Pufferfish) {
-            ctx.beginPath();
-            ctx.lineWidth = '1';
-            ctx.strokeStyle = "red";
-            ctx.rect(this.x + this.offset.left , this.y + this.offset.top, this.width - this.offset.right - this.offset.left,  this.height - this.offset.bottom - this.offset.top);
-            ctx.stroke();
-        }
-    }
-
     isColliding(mo){        
         return this.x + this.width - this.offset.right > mo.x + mo.offset.left &&
             this.y + this.height - this.offset.bottom > mo.y + mo.offset.top &&
