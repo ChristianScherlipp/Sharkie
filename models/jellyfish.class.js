@@ -1,4 +1,11 @@
 class Jellyfish extends MovableObject {
+    offset = {
+        top : 120,
+        left : 30,
+        right : 40,
+        bottom : 30
+    };
+    
     JELLY_IMAGES_SWIM = [
             './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png',
             './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila2.png',

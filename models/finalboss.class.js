@@ -1,6 +1,13 @@
 class Finalboss extends MovableObject {
     x = 2500;
     y = Math.random() * 300;
+    offset = {
+        top : 120,
+        left : 30,
+        right : 40,
+        bottom : 30
+    };
+
     FINALBOSS_IMAGES_SWIM = [
             './assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png',
             './assets/img/2.Enemy/3.Final_Enemy/2.floating/2.png',
