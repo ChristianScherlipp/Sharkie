@@ -10,6 +10,7 @@ class MovableObject {
     imageCache = {};
     currentImage = 0;
     otherDirection = false;
+    energy = 100;
 
     constructor() {
 
@@ -68,7 +69,6 @@ class MovableObject {
                 if (this.isAboveGround()) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration; 
-                console.log(this.y);
             }
         }, 1000 / 120)
     }
@@ -92,9 +92,21 @@ class MovableObject {
     }
 
     isColliding(mo){
-        return this.x + this.width > mo.x &&
+        return this.x + this.width> mo.x &&
             this.y + this.height > mo.y &&
-            this.x < mo.x &&
-            this.y < mo.y + mo.height
+            this.x < mo.x + mo.width &&
+            this.y < mo.y + mo.height;
+    }
+
+    hit(){
+
+        this.energy -= 2;
+        if(this.energy < 0){
+            this.energy = 0;
+        }
+    }
+
+    isDead() {
+        return this.energy == 0;
     }
 }
