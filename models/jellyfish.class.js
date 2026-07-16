@@ -1,9 +1,9 @@
 class Jellyfish extends MovableObject {
     offset = {
-        top : 120,
-        left : 30,
-        right : 40,
-        bottom : 30
+        top : 10,
+        left : 10,
+        right : 10,
+        bottom : 20
     };
     
     JELLY_IMAGES_SWIM = [

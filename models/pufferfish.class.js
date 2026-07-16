@@ -1,8 +1,8 @@
 class Pufferfish extends MovableObject {
     offset = {
-        top : 120,
-        left : 30,
-        right : 40,
+        top : 5,
+        left : 5,
+        right : 12,
         bottom : 30
     };
     

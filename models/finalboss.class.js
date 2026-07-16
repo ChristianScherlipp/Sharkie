@@ -2,10 +2,10 @@ class Finalboss extends MovableObject {
     x = 2500;
     y = Math.random() * 300;
     offset = {
-        top : 120,
-        left : 30,
-        right : 40,
-        bottom : 30
+        top : 80,
+        left : 15,
+        right : 20,
+        bottom : 40
     };
 
     FINALBOSS_IMAGES_SWIM = [

@@ -6,10 +6,10 @@ class Character extends MovableObject {
     world;
 
     offset = {
-        top : 120,
-        left : 30,
-        right : 40,
-        bottom : 30
+        top : 130,
+        left : 50,
+        right : 50,
+        bottom : 70
     };
     
     IMAGES_SWIM = [
