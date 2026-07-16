@@ -68,7 +68,7 @@ class MovableObject {
                 if (this.isAboveGround()) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration; 
-                console.log('y is ' + this.y);
+                console.log(this.y);
             }
         }, 1000 / 120)
     }
@@ -89,5 +89,12 @@ class MovableObject {
             ctx.rect(this.x, this.y, this.width, this.height);
             ctx.stroke();
         }
+    }
+
+    isColliding(mo){
+        return this.x + this.width > mo.x &&
+            this.y + this.height > mo.y &&
+            this.x < mo.x &&
+            this.y < mo.y + mo.height
     }
 }
