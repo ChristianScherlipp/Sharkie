@@ -76,4 +76,16 @@ class MovableObject {
     isAboveGround(){
         return this.y < 240;
     }
+
+    draw(ctx){
+        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+    }
+
+    drawFrame(ctx){
+        ctx.beginPath();
+        ctx.lineWidth = '2';
+        ctx.strokeStyle = "blue";
+        ctx.rect(this.x, this.y, this.width, this.height);
+        ctx.stroke();
+    }
 }
