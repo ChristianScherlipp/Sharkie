@@ -5,6 +5,7 @@ class World {
     ctx;
     keyboard;
     camera_x = 0;
+    statusBar = new Statusbar();
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -23,6 +24,7 @@ class World {
         this.addObjectsToMap(this.level.backgroundObjects); // Background laden
         this.addObjectsToMap(this.level.lights); // Licht Laden
         this.addObjectsToMap(this.level.enemies); // Gegner aus dem Array enemies laden
+        this.addToMap(this.statusBar);
         this.addToMap(this.character); // Character laden
         this.ctx.translate(-this.camera_x, 0);
 

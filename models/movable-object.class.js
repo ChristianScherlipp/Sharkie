@@ -1,37 +1,14 @@
-class MovableObject {
-    x;
-    y;
-    img;
-    height= 120;
-    width = 150;
+class MovableObject extends DrawableObject {
     speed = 0.15;
     speedY = 0;
     acceleration = 0.0004;
-    imageCache = {};
-    currentImage = 0;
+    
     otherDirection = false;
     energy = 100;
     lastHit = 0;
 
     constructor() {
-
-    }
-    // loadImage
-    loadImage(path){
-        this.img = new Image(); // this.Image = document.getElementById('Image') <img id="image" src>
-        this.img.src = path;
-    }
-
-    /**
-     * 
-     * @param {Array} arr - ['img/image1', 'img/image2', ...] 
-     */
-    loadImages(arr) {
-        arr.forEach((path) => {
-            let img = new Image();
-            img.src = path;
-            this.imageCache[path] = img;
-        });
+        super();
     }
 
     moveRight(){
@@ -76,10 +53,6 @@ class MovableObject {
 
     isAboveGround(){
         return this.y < 240;
-    }
-
-    draw(ctx){
-        ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
 
     drawFrame(ctx){
