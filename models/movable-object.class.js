@@ -11,6 +11,7 @@ class MovableObject {
     currentImage = 0;
     otherDirection = false;
     energy = 100;
+    lastHit = 0;
 
     constructor() {
 
@@ -99,11 +100,18 @@ class MovableObject {
     }
 
     hit(){
-
         this.energy -= 2;
         if(this.energy < 0){
             this.energy = 0;
+        }else {
+            this.lastHit = new Date().getTime();
         }
+    }
+
+    isHurt(){
+        let timepassed = new Date().getTime() - this.lastHit; //Difference in ms
+        timepassed = timepassed / 1000; // Difference in s
+        return timepassed < 1;
     }
 
     isDead() {
