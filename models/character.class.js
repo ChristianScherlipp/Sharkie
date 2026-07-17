@@ -1,9 +1,15 @@
 class Character extends MovableObject {
+    x = 20;
+    y = 150;
     width = 250;
     height = 290;
-    y = 150;
     speed = 4;
     world;
+
+    rX;
+    rY;
+    rW;
+    rH;
 
     offset = {
         top : 130,
@@ -49,19 +55,30 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_SWIM);
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
-        this.x = 20;
         this.animate();
         this.apllyGravity();
+        this.getRealFrame();
+    }
+
+    getRealFrame(){
+        setInterval(() => {
+            this.rX = this.x +this.offset.left;
+            this.rY = this.y + this.offset.top;
+            this.rW = this.width - this.offset.left - this.offset.right;
+            this.rH = this.height - this.offset.top - this.offset.bottom;
+        }, 1000 / 120)
     }
 
     animate() {
         setInterval(() => {
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.x += this.speed;
+                this.rX += this.speed;
                 this.otherDirection = false;
             } 
             if (this.world.keyboard.LEFT && this.x > 0) {
                 this.x -= this.speed;
+                this.rX - this.speed;
                 this.otherDirection = true;
             }
             if (this.world.keyboard.UP && this.y > -130) {
@@ -72,6 +89,7 @@ class Character extends MovableObject {
                 this.y += this.speed;
             }
             this.world.camera_x = -this.x + 50;
+            
         }, 1000 / 60);
 
         setInterval(() => {
@@ -80,7 +98,7 @@ class Character extends MovableObject {
             }else if(this.isHurt()){
                 this.playAnimation(this.IMAGES_HURT);
             }else{
-                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
                     this.playAnimation(this.IMAGES_SWIM);
                 }
             }

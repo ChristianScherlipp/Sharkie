@@ -1,6 +1,14 @@
 class Finalboss extends MovableObject {
     x = 2500;
     y = Math.random() * 300;
+    width = 250;
+    height = 220;
+
+    rX;
+    rY;
+    rW;
+    rH;
+
     offset = {
         top : 80,
         left : 15,
@@ -27,10 +35,17 @@ class Finalboss extends MovableObject {
     constructor (){
         super().loadImage('./assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png');
         this.loadImages(this.FINALBOSS_IMAGES_SWIM);
-        this.width = 250;
-        this.height = 220;
-
         this.animate();
+        this.getRealFrame();
+    }
+
+    getRealFrame(){
+        setInterval(() => {
+            this.rX = this.x +this.offset.left;
+            this.rY = this.y + this.offset.top;
+            this.rW = this.width - this.offset.left - this.offset.right;
+            this.rH = this.height - this.offset.top - this.offset.bottom;
+        }, 1000 / 120)
     }
 
     animate() {

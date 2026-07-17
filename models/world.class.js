@@ -59,10 +59,12 @@ class World {
         this.ctx.translate(mo.width, 0);
         this.ctx.scale(-1, 1)
         mo.x = mo.x * -1;
+        mo.rX = mo.rX * -1;
     }
     // gespiegeltest Image zurücksetzen
     flipImageBack(mo){
         mo.x = mo.x * -1;
+        mo.rX = mo.rX * -1;
         this.ctx.restore();
     }
 
@@ -74,6 +76,8 @@ class World {
         setInterval(() => {
             this.level.enemies.forEach((enemy) =>{
                 if(this.character.isColliding(enemy)) {
+                    console.log('getroffen');
+
                     this.character.hit();
                 }
 
