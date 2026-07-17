@@ -6,11 +6,6 @@ class Character extends MovableObject {
     speed = 4;
     world;
 
-    rX;
-    rY;
-    rW;
-    rH;
-
     offset = {
         top : 130,
         left : 50,
@@ -60,25 +55,16 @@ class Character extends MovableObject {
         this.getRealFrame();
     }
 
-    getRealFrame(){
-        setInterval(() => {
-            this.rX = this.x +this.offset.left;
-            this.rY = this.y + this.offset.top;
-            this.rW = this.width - this.offset.left - this.offset.right;
-            this.rH = this.height - this.offset.top - this.offset.bottom;
-        }, 1000 / 120)
-    }
+    
 
     animate() {
         setInterval(() => {
             if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
                 this.x += this.speed;
-                this.rX += this.speed;
                 this.otherDirection = false;
             } 
             if (this.world.keyboard.LEFT && this.x > 0) {
                 this.x -= this.speed;
-                this.rX - this.speed;
                 this.otherDirection = true;
             }
             if (this.world.keyboard.UP && this.y > -130) {
@@ -89,7 +75,7 @@ class Character extends MovableObject {
                 this.y += this.speed;
             }
             this.world.camera_x = -this.x + 50;
-            
+            this.getRealFrame();
         }, 1000 / 60);
 
         setInterval(() => {

@@ -4,11 +4,6 @@ class Pufferfish extends MovableObject {
     width = 140;
     height = 110;
 
-    rX;
-    rY;
-    rW;
-    rH;
-
     offset = {
         top : 5,
         left : 5,
@@ -30,15 +25,6 @@ class Pufferfish extends MovableObject {
         this.speed = 0.15 + Math.random() * 0.5;
         this.animate();
         this.getRealFrame();
-    }
-
-    getRealFrame(){
-        setInterval(() => {
-            this.rX = this.x +this.offset.left;
-            this.rY = this.y + this.offset.top;
-            this.rW = this.width - this.offset.left - this.offset.right;
-            this.rH = this.height - this.offset.top - this.offset.bottom;
-        }, 1000 / 120)
     }
 
     animate() {

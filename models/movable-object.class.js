@@ -7,31 +7,54 @@ class MovableObject extends DrawableObject {
     energy = 100;
     lastHit = 0;
 
+    rX;
+    rY;
+    rW;
+    rH;
+
+    offset = {
+        top : 0,
+        left : 0,
+        right : 0,
+        bottom : 0
+    };
+
     constructor() {
         super();
     }
 
+    getRealFrame(){
+            this.rX = this.x + this.offset.left;
+            this.rY = this.y + this.offset.top;
+            this.rW = this.width - this.offset.left - this.offset.right;
+            this.rH = this.height - this.offset.top - this.offset.bottom;
+    }
+
     moveRight(){
         setInterval(() => {
-            this.x += this.speed;    
+            this.x += this.speed;  
+            this.getRealFrame();
         }, 1000 / 120);
     }
 
     moveLeft(){
         setInterval(() => {
         this.x -= this.speed;
+        this.getRealFrame();
         }, 1000 / 120);
     }
 
     moveUp(){
         setInterval(() => {
         this.y -= this.speed;
+        this.getRealFrame();
         }, 1000 / 120);
     }
 
     moveDown(){
         setInterval(() => {
         this.y += this.speed;
+        this.getRealFrame();
         }, 1000 / 120);
     }
 
@@ -47,6 +70,7 @@ class MovableObject extends DrawableObject {
                 if (this.isAboveGround()) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration; 
+                this.getRealFrame();
             }
         }, 1000 / 120)
     }

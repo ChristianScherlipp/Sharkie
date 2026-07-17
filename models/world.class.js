@@ -46,11 +46,11 @@ class World {
             this.flipImage(mo);
         }
         mo.draw(this.ctx);
-        mo.drawFrame(this.ctx);
-
+        
         if (mo.otherDirection) {
             this.flipImageBack(mo);
         }
+        mo.drawFrame(this.ctx);
     }
         
     // Image Spiegeln
@@ -59,12 +59,10 @@ class World {
         this.ctx.translate(mo.width, 0);
         this.ctx.scale(-1, 1)
         mo.x = mo.x * -1;
-        mo.rX = mo.rX * -1;
     }
     // gespiegeltest Image zurücksetzen
     flipImageBack(mo){
         mo.x = mo.x * -1;
-        mo.rX = mo.rX * -1;
         this.ctx.restore();
     }
 
@@ -76,8 +74,6 @@ class World {
         setInterval(() => {
             this.level.enemies.forEach((enemy) =>{
                 if(this.character.isColliding(enemy)) {
-                    console.log('getroffen');
-
                     this.character.hit();
                 }
 

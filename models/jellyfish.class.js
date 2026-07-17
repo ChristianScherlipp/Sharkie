@@ -4,11 +4,6 @@ class Jellyfish extends MovableObject {
     width = 120;
     height = 180;
 
-    rX;
-    rY;
-    rW;
-    rH;
-
     offset = {
         top : 10,
         left : 10,
@@ -28,15 +23,6 @@ class Jellyfish extends MovableObject {
         this.loadImages(this.JELLY_IMAGES_SWIM);
         this.animate();
         this.getRealFrame();
-    }
-
-    getRealFrame(){
-        setInterval(() => {
-            this.rX = this.x +this.offset.left;
-            this.rY = this.y + this.offset.top;
-            this.rW = this.width - this.offset.left - this.offset.right;
-            this.rH = this.height - this.offset.top - this.offset.bottom;
-        }, 1000 / 120)
     }
 
     animate() {
