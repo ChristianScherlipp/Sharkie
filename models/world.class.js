@@ -22,10 +22,12 @@ class World {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.backgroundObjects); // Background laden
+        this.ctx.translate(-this.camera_x, 0);
+        this.addToMap(this.statusBar);
+        this.ctx.translate(this.camera_x, 0);
+        this.addToMap(this.character); // Character laden
         this.addObjectsToMap(this.level.lights); // Licht Laden
         this.addObjectsToMap(this.level.enemies); // Gegner aus dem Array enemies laden
-        this.addToMap(this.statusBar);
-        this.addToMap(this.character); // Character laden
         this.ctx.translate(-this.camera_x, 0);
 
         // Draw() wird immer wieder aufgerufen
@@ -75,6 +77,7 @@ class World {
             this.level.enemies.forEach((enemy) =>{
                 if(this.character.isColliding(enemy)) {
                     this.character.hit();
+                    this.statusBar.setPercentage(this.character.energy)
                 }
 
             })
