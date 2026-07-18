@@ -65,13 +65,21 @@ class MovableObject extends DrawableObject {
         this.currentImage++;
     }
 
-    apllyGravity(){
+    applyGravity(){
         setInterval(() => {
                 if (this.isAboveGround()) {
                 this.y -= this.speedY;
                 this.speedY -= this.acceleration; 
                 this.getRealFrame();
             }
+        }, 1000 / 120)
+    }
+
+    applyAntiGravity(){
+        setInterval(() => {
+                this.y -= this.speedY;
+                this.speedY += this.acceleration; 
+                this.getRealFrame();
         }, 1000 / 120)
     }
 

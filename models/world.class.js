@@ -7,6 +7,7 @@ class World {
     camera_x = 0;
     coinBar = new Coinbar();
     healthBar = new Healthbar();
+    firingObjects = [];
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -14,7 +15,7 @@ class World {
         this.keyboard = keyboard;
         this.draw();
         this.setWorld();
-        this.checkCollisions();
+        this.run();
     }
 
     draw(){
@@ -29,6 +30,7 @@ class World {
         this.addToMap(this.coinBar);
         this.addToMap(this.healthBar);
         this.ctx.translate(this.camera_x, 0);
+        this.addObjectsToMap(this.firingObjects);
         this.addToMap(this.character); // Character laden
         this.ctx.translate(-this.camera_x, 0);
 
@@ -74,16 +76,27 @@ class World {
         this.character.world = this;
     }
 
-    checkCollisions(){
+    run(){
         setInterval(() => {
-            this.level.enemies.forEach((enemy) =>{
+            this.checkCollision();
+            this.checkFiringObjects();
+        }, 200);
+    }
+
+    checkFiringObjects(){
+        if (this.keyboard.SPACE) {
+            let bubble = new FiringObject(this.character.x + 200, this.character.y + 150);        
+            this.firingObjects.push(bubble)
+        }
+    }
+
+    checkCollision(){
+        this.level.enemies.forEach((enemy) =>{
                 if(this.character.isColliding(enemy)) {
                     this.character.hit();
                     this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR)
                     
                 }
-
             })
-        }, 200);
     }
 }
