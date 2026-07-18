@@ -7,6 +7,7 @@ class World {
     camera_x = 0;
     coinBar = new Coinbar();
     healthBar = new Healthbar();
+    posionBar = new Posionbar();
     firingObjects = [];
 
     constructor(canvas, keyboard) {
@@ -28,6 +29,7 @@ class World {
         this.addObjectsToMap(this.level.enemies); // Gegner aus dem Array enemies laden
         this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.coinBar);
+        this.addToMap(this.posionBar);
         this.addToMap(this.healthBar);
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.firingObjects);

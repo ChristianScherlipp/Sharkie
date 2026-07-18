@@ -1,8 +1,8 @@
 class Healthbar extends Statusbar {
     x = 20;
     y = 0;
-    width = 120;
-    height = 30;
+    width = 160;
+    height = 40;
 
     IMAGES_HEALTHBAR = [
         './assets/img/4.Marcadores/green/Life/0_copia3.png',

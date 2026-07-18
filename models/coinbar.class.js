@@ -1,8 +1,8 @@
 class Coinbar extends Statusbar {
     x = 20;
-    y = 25;
-    width = 120;
-    height = 30;
+    y = 30;
+    width = 160;
+    height = 40;
 
     IMAGES_COINBAR = [
         './assets/img/4.Marcadores/green/Coin/0_copia4.png',
