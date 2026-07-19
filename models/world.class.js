@@ -9,14 +9,40 @@ class World {
     healthBar = new Healthbar();
     posionBar = new Posionbar();
     firingObjects = [];
+    lastTime = 0;
+    collisionTimer = 0;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
-        this.draw();
         this.setWorld();
+        this.lastTime = performance.now();
         this.run();
+    }
+
+    // Zentraler Game-Loop läuft über requestAnimationFrame,
+    // ersetzt alle vorherigen setIntervals im Projekt
+    run(time = performance.now()){
+        let deltaTime = time - this.lastTime;
+        this.lastTime = time;
+        this.update(deltaTime);
+        this.draw();
+        requestAnimationFrame((t) => this.run(t))
+    }
+
+    update(deltaTime){
+        this.character.update(deltaTime);
+        this.level.enemies.forEach(enemy => enemy.update(deltaTime));
+        this.firingObjects.forEach(fo => fo.update(deltaTime));
+        //Kollision & Schießen liefen früher alle 200ms per eigenen Interval,
+        // das wird hier über einen zähler nachgebildet.
+        this.collisionTimer += deltaTime;
+        if (this.collisionTimer > 200) {
+            this.checkCollision();
+            this.checkFiringObjects();
+            this.collisionTimer = 0;
+        }
     }
 
     draw(){
@@ -35,12 +61,6 @@ class World {
         this.addObjectsToMap(this.firingObjects);
         this.addToMap(this.character); // Character laden
         this.ctx.translate(-this.camera_x, 0);
-
-        // Draw() wird immer wieder aufgerufen
-        let self = this;
-        requestAnimationFrame(function() {
-            self.draw();
-        });
     }
 
     addObjectsToMap (objects) {
@@ -78,12 +98,6 @@ class World {
         this.character.world = this;
     }
 
-    run(){
-        setInterval(() => {
-            this.checkCollision();
-            this.checkFiringObjects();
-        }, 200);
-    }
 
     checkFiringObjects(){
         if (this.keyboard.SPACE) {

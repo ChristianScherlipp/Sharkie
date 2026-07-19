@@ -50,44 +50,42 @@ class Character extends MovableObject {
         this.loadImages(this.IMAGES_SWIM);
         this.loadImages(this.IMAGES_DEAD);
         this.loadImages(this.IMAGES_HURT);
-        this.animate();
-        this.applyGravity();
         this.getRealFrame();
     }
 
     
 
-    animate() {
-        setInterval(() => {
-            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
-                this.x += this.speed;
-                this.otherDirection = false;
-            } 
-            if (this.world.keyboard.LEFT && this.x > 0) {
-                this.x -= this.speed;
-                this.otherDirection = true;
-            }
-            if (this.world.keyboard.UP && this.y > -130) {
-                this.y -= this.speed;
-                this.acceleration = 0;
-            }
-            if (this.world.keyboard.DOWN && this.isAboveGround()) {
-                this.y += this.speed;
-            }
-            this.world.camera_x = -this.x + 50;
-            this.getRealFrame();
-        }, 1000 / 60);
+    update(deltaTime) {
+        let factor = deltaTime / (1000 / 60);
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+            this.x += this.speed * factor;
+            this.otherDirection = false;
+        } 
+        if (this.world.keyboard.LEFT && this.x > 0) {
+            this.x -= this.speed * factor;
+            this.otherDirection = true;
+        }
+        if (this.world.keyboard.UP && this.y > -130) {
+            this.y -= this.speed * factor;
+            this.acceleration = 0;
+        }
+        if (this.world.keyboard.DOWN && this.isAboveGround()) {
+            this.y += this.speed * factor;
+        }
+        this.world.camera_x = -this.x + 50;
+        this.applyGravity(deltaTime);
+        this.getRealFrame();
 
-        setInterval(() => {
+        this.animationTimer += deltaTime;
+        if(this.animationTimer > 150){
             if (this.isDead()) {
                 this.playAnimation(this.IMAGES_DEAD);
-            }else if(this.isHurt()){
+            } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
-            }else{
-                if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
-                    this.playAnimation(this.IMAGES_SWIM);
-                }
+            } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN) {
+                this.playAnimation(this.IMAGES_SWIM);
             }
-        }, 150);
+            this.animationTimer = 0;
+        }
     }
 }

@@ -6,15 +6,14 @@ class FiringObject extends MovableObject {
         this.y = y;
         this.height = 50;
         this.width = 50;
-        this.firing(); 
+        this.stpeedY = 30;
     }
 
 
-    firing(){
-        this.stpeedY = 30;
-        this.applyAntiGravity();
-        setInterval(() => {
-            this.x += 3;
-        }, 50)
+    // Wird jeden Frame von World.update() aufgerufen (ersetzt applyAintiGravity()-
+    //  Interval und das seoerate x += 3-Interval)
+    update(deltaTime) {
+        this.applyAntiGravity(deltaTime);
+        this.x += 3 * (deltaTime / 50);
     }
 }

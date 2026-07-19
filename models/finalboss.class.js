@@ -30,13 +30,12 @@ class Finalboss extends MovableObject {
     constructor (){
         super().loadImage('./assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png');
         this.loadImages(this.FINALBOSS_IMAGES_SWIM);
-        this.animate();
+        
         this.getRealFrame();
     }
 
-    animate() {
-        setInterval(() => {
-            this.playAnimation(this.FINALBOSS_IMAGES_SWIM);
-        }, 150);
+    // Wird jeden Frame von World.update() aufgerufen.
+    update(deltaTime){
+        this.animateImages(this.FINALBOSS_IMAGES_SWIM, deltaTime, 150);
     }
 }

@@ -21,13 +21,11 @@ class Jellyfish extends MovableObject {
     constructor() {
         super().loadImage('./assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png');
         this.loadImages(this.JELLY_IMAGES_SWIM);
-        this.animate();
         this.getRealFrame();
     }
 
-    animate() {
-        setInterval(() => {
-            this.playAnimation(this.JELLY_IMAGES_SWIM);
-        }, 255);
+    // Wird jeden Frame von World.update() aufgerufen
+    update(deltaTime){
+        this.animateImages(this.JELLY_IMAGES_SWIM, deltaTime, 255)
     }
 }

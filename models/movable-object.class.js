@@ -19,6 +19,9 @@ class MovableObject extends DrawableObject {
         bottom : 0
     };
 
+    // Zähler für Sprite-Animationen, wird von animateImages() genutzt
+    animationTimer = 0;
+
     constructor() {
         super();
     }
@@ -30,32 +33,30 @@ class MovableObject extends DrawableObject {
             this.rH = this.height - this.offset.top - this.offset.bottom;
     }
 
-    moveRight(){
-        setInterval(() => {
-            this.x += this.speed;  
-            this.getRealFrame();
-        }, 1000 / 120);
+    // Referenz-Tick war früher 1000/120 ms -> alle Werte bleiben wie voher kalibriert,
+    // "factor" gleicht unterschiedliche Bildwiederholraten aus 
+    moveRight(deltaTime){
+        let factor = deltaTime / (1000 / 120);
+        this.x += this.speed * factor;  
+        this.getRealFrame();
     }
 
-    moveLeft(){
-        setInterval(() => {
-        this.x -= this.speed;
+    moveLeft(deltaTime){
+        let factor = deltaTime / (1000 / 120);
+        this.x -= this.speed *factor;
         this.getRealFrame();
-        }, 1000 / 120);
     }
 
-    moveUp(){
-        setInterval(() => {
-        this.y -= this.speed;
+    moveUp(deltaTime){
+        let factor = deltaTime / (1000 / 120);
+        this.y -= this.speed * factor;
         this.getRealFrame();
-        }, 1000 / 120);
     }
 
-    moveDown(){
-        setInterval(() => {
-        this.y += this.speed;
+    moveDown(deltaTime){
+        let factor = deltaTime / (1000 / 120);
+        this.y += this.speed * factor;
         this.getRealFrame();
-        }, 1000 / 120);
     }
 
     playAnimation(images){
@@ -65,22 +66,30 @@ class MovableObject extends DrawableObject {
         this.currentImage++;
     }
 
-    applyGravity(){
-        setInterval(() => {
-                if (this.isAboveGround()) {
-                this.y -= this.speedY;
-                this.speedY -= this.acceleration; 
-                this.getRealFrame();
-            }
-        }, 1000 / 120)
+    //Ersetzt die früheren einzelnen setINterval-Animationsschleifen.
+    // interval = wie viele ms zwischen zwei Bildwechseln liegen soll (z.B. 150)
+    animateImages(images, deltaTime, interval){
+        this.animationTimer += deltaTime;
+        if (this.animationTimer > interval) {
+            this.playAnimation(images);
+            this.animationTimer = 0;
+        }
     }
 
-    applyAntiGravity(){
-        setInterval(() => {
-                this.y -= this.speedY;
-                this.speedY += this.acceleration; 
-                this.getRealFrame();
-        }, 1000 / 120)
+    applyGravity(deltaTime){
+        if (this.isAboveGround()) {
+            let factor = deltaTime / (1000 / 120);
+            this.y -= this.speedY * factor;
+            this.speedY -= this.acceleration * factor; 
+            this.getRealFrame();
+        }
+    }
+
+    applyAntiGravity(deltaTime){
+        let factor = deltaTime / (1000 / 120);
+        this.y -= this.speedY * factor;
+        this.speedY += this.acceleration * factor; 
+        this.getRealFrame();
     }
 
     isAboveGround(){
@@ -111,5 +120,11 @@ class MovableObject extends DrawableObject {
 
     isDead() {
         return this.energy == 0;
+    }
+
+    //  Wird von der zentralen Game-Loop in World jeden Frame aufgerufen.
+    // Unterklassen überschreiben das mit ihrer eigenen Bewegungs- / Animationslogik
+    update(deltaTime){
+        // absichtlich leer(default no+op)
     }
 }
