@@ -106,7 +106,7 @@ export class Character extends MovableObject {
             this.x += this.speed * factor;
             this.otherDirection = false;
         } 
-        if (this.world.keyboard.LEFT && this.x > 0) {
+        if (this.world.keyboard.LEFT && this.x > this.world.level.level_start_x) {
             this.x -= this.speed * factor;
             this.otherDirection = true;
         }
@@ -117,7 +117,16 @@ export class Character extends MovableObject {
         if (this.world.keyboard.DOWN && this.isAboveGround()) {
             this.y += this.speed * factor;
         }
-        this.world.camera_x = -this.x + 50;
+        // Kamera mit Totzone: bleibt stehen, solange der Hintergrund sonst eine
+        // schwarze Lücke zeigen würde (Weltanfang/-ende), folgt Sharkie sonst
+        // ab 40% der Canvas-Breite.
+        let canvasWidth = this.world.canvas.width;
+        let followX = this.world.level.level_start_x + canvasWidth * 0.4;
+        let cameraMax = -this.world.level.level_start_x;
+        let cameraMin = canvasWidth - this.world.level.level_end_x;
+        let desiredCamera = followX - this.x;
+        this.world.camera_x = Math.min(cameraMax, Math.max(cameraMin, desiredCamera));
+
         this.getRealFrame();
         
         let isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN;
