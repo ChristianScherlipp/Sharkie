@@ -1,4 +1,7 @@
-class Jellyfish extends MovableObject {
+import { MovableObject } from "./movable-object.class.js";
+
+export class Jellyfish extends MovableObject {
+    showFrame = true;
     x = 190 + Math.random() * 1800;
     y = Math.random() * 440;
     width = 120;

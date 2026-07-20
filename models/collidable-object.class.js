@@ -1,7 +1,9 @@
+import { MovableObject } from "./movable-object.class.js";
+
 /**
  *  An extension of MovableObject that can collide with other CollidableObjects.
 */
-class CollidableObject extends MovableObject {
+export class CollidableObject extends MovableObject {
 
     /**
      * @type {object} - Numerical offset for this instance's coordinates and dimensons,

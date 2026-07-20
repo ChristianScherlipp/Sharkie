@@ -1,4 +1,7 @@
-class Finalboss extends MovableObject {
+import { MovableObject } from "./movable-object.class.js";
+
+export class Finalboss extends MovableObject {
+    showFrame = true;
     x = 2500;
     y = Math.random() * 300;
     width = 250;

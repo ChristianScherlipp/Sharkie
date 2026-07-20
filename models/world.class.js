@@ -1,4 +1,12 @@
-class World {
+import { Character } from "./character.class.js";
+import { Coinbar } from "./coinbar.class.js";
+import { Healthbar } from "./healthbar.class.js";
+import { Posionbar } from "./posionbar-object.class.js";
+import { FiringObject } from "./firing-object.class.js";
+import { level1 } from "../levels/level1.js"
+import { Light } from "./light.class.js";
+ 
+export class World {
     character = new Character();
     level = level1;
     canvas;
@@ -34,6 +42,7 @@ class World {
     update(deltaTime){
         this.character.update(deltaTime);
         this.level.enemies.forEach(enemy => enemy.update(deltaTime));
+        this.level.lights.forEach(light => light.update(deltaTime));
         this.firingObjects.forEach(fo => fo.update(deltaTime));
         //Kollision & Schießen liefen früher alle 200ms per eigenen Interval,
         // das wird hier über einen zähler nachgebildet.

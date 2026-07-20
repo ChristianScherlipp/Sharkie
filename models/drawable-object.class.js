@@ -1,4 +1,4 @@
-class DrawableObject {
+export class DrawableObject {
     x;
     y;
     height= 120;
@@ -6,6 +6,7 @@ class DrawableObject {
     img;
     imageCache = {};
     currentImage = 0;
+    showFrame = false;
     
     constructor(){
 
@@ -34,14 +35,14 @@ class DrawableObject {
     }
 
     drawFrame(ctx){
-        if (this instanceof Character || this instanceof Finalboss || this instanceof Jellyfish || this instanceof Pufferfish) {
+        if (this.showFrame) {
             ctx.beginPath();
             ctx.lineWidth = '5';
             ctx.strokeStyle = "blue";
             ctx.rect(this.x, this.y, this.width, this.height);
             ctx.stroke();
         }
-        if (this instanceof Character || this instanceof Finalboss || this instanceof Jellyfish || this instanceof Pufferfish) {
+        if (this.showFrame) {
             ctx.beginPath();
             ctx.lineWidth = '1';
             ctx.strokeStyle = "red";

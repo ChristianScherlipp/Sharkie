@@ -1,4 +1,6 @@
-class Posionbar extends Statusbar {
+import { Statusbar } from "./status-bar.class.js";
+
+export class Posionbar extends Statusbar {
     x = 20;
     y = 60;
     width = 160;

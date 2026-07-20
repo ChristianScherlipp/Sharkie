@@ -1,4 +1,6 @@
-class FiringObject extends MovableObject {
+import { MovableObject } from "./movable-object.class.js";
+
+export class FiringObject extends MovableObject {
 
     constructor(x, y) {
         super().loadImage('./assets/img/1.Sharkie/4.Attack/Bubble_trap/Bubble.png');

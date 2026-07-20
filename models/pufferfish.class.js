@@ -1,4 +1,7 @@
-class Pufferfish extends MovableObject {
+import { MovableObject } from "./movable-object.class.js";
+
+export class Pufferfish extends MovableObject {
+    showFrame = true;
     x = 200 + Math.random() * 1800;
     y = Math.random() * 450;
     width = 140;

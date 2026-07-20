@@ -1,3 +1,6 @@
+import { Keyboard } from '../models/keyboard.class.js';
+import { World } from "../models/world.class.js";
+
 let canvas;
 let world;
 let keyboard = new Keyboard();
@@ -9,6 +12,8 @@ function init() {
     console.log('My Character is', world.character);
     
 }
+
+init();
 
 window.addEventListener('keydown', (e) => {
     if(e.key.toLocaleLowerCase() == 'd' || e.key == 'ArrowRight') {

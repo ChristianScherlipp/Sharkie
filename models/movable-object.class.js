@@ -1,4 +1,6 @@
-class MovableObject extends DrawableObject {
+import { DrawableObject } from "./drawable-object.class.js";
+
+export class MovableObject extends DrawableObject {
     speed = 0.15;
     speedY = 0;
     acceleration = 0.0004;

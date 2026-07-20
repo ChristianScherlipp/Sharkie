@@ -1,4 +1,11 @@
-const level1 = new Level(
+import { Level } from "../models/level.class.js";
+import { Pufferfish } from "../models/pufferfish.class.js";
+import { Jellyfish } from "../models/jellyfish.class.js";
+import { Finalboss } from "../models/finalboss.class.js";
+import { Light } from "../models/light.class.js";
+import { BackgroundObject } from "../models/background-object.class.js";
+
+export const level1 = new Level(
     [
         new Pufferfish(),
         new Pufferfish(),

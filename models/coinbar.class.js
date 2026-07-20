@@ -1,4 +1,6 @@
-class Coinbar extends Statusbar {
+import { Statusbar } from "./status-bar.class.js";
+
+export class Coinbar extends Statusbar {
     x = 20;
     y = 30;
     width = 160;

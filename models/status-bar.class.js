@@ -1,4 +1,6 @@
-class Statusbar extends DrawableObject{
+import { DrawableObject } from "./drawable-object.class.js";
+
+export class Statusbar extends DrawableObject{
 
 
     percentage;

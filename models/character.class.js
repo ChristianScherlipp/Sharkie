@@ -1,4 +1,7 @@
-class Character extends MovableObject {
+import { MovableObject } from "./movable-object.class.js";
+
+export class Character extends MovableObject {
+    showFrame = true;
     x = 20;
     y = 150;
     width = 250;
