@@ -102,7 +102,7 @@ export class Character extends MovableObject {
 
     update(deltaTime) {
         let factor = deltaTime / (1000 / 60);
-        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x - this.width) {
             this.x += this.speed * factor;
             this.otherDirection = false;
         } 
@@ -121,7 +121,7 @@ export class Character extends MovableObject {
         // schwarze Lücke zeigen würde (Weltanfang/-ende), folgt Sharkie sonst
         // ab 40% der Canvas-Breite.
         let canvasWidth = this.world.canvas.width;
-        let followX = this.world.level.level_start_x + canvasWidth * 0.4;
+        let followX = this.world.level.level_start_x + canvasWidth * 0.3;
         let cameraMax = -this.world.level.level_start_x;
         let cameraMin = canvasWidth - this.world.level.level_end_x;
         let desiredCamera = followX - this.x;
