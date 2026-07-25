@@ -30,4 +30,23 @@ export class Statusbar extends DrawableObject{
                 return 0;
             }
     }
+
+    // Zeichnet zuerst die Balken-Grafik (wie bisher) und schreibt danach
+    // den aktuellen Wert als "60/100" mittig über den Balken.
+    draw(ctx) {
+        super.draw(ctx);
+        let text = `${Math.round(this.percentage)}/100`;
+        let textX = this.x + this.width / 2;
+        let textY = this.y + this.height / 2;
+        ctx.save();
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'black';
+        ctx.strokeText(text, textX, textY);
+        ctx.fillStyle = 'white';
+        ctx.fillText(text, textX, textY);
+        ctx.restore();
+    }
 }
