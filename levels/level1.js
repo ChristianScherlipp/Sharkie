@@ -2,6 +2,7 @@ import { Level } from "../models/level.class.js";
 import { Pufferfish } from "../models/pufferfish.class.js";
 import { Jellyfish } from "../models/jellyfish.class.js";
 import { Finalboss } from "../models/finalboss.class.js";
+import { Coin } from "../models/coin.class.js";
 import { Light } from "../models/light.class.js";
 import { BackgroundObject } from "../models/background-object.class.js";
 
@@ -13,6 +14,15 @@ export const level1 = new Level(
         new Jellyfish(),
         new Jellyfish(),
         new Finalboss(),
+    ],
+
+    [
+        new Coin(250, 250),
+        new Coin(290, 230),
+        new Coin(330, 220),
+        new Coin(370, 220),
+        new Coin(410, 230),
+        new Coin(450, 250),
     ],
 
     [

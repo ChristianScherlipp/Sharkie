@@ -42,6 +42,7 @@ export class World {
     update(deltaTime){
         this.character.update(deltaTime);
         this.level.enemies.forEach(enemy => enemy.update(deltaTime));
+        this.level.coins.forEach(coin => coin.update(deltaTime));
         this.level.lights.forEach(light => light.update(deltaTime));
         this.firingObjects.forEach(fo => fo.update(deltaTime));
         //Kollision & Schießen liefen früher alle 200ms per eigenen Interval,
@@ -62,6 +63,7 @@ export class World {
         this.addObjectsToMap(this.level.backgroundObjects); // Background laden
         this.addObjectsToMap(this.level.lights); // Licht Laden
         this.addObjectsToMap(this.level.enemies); // Gegner aus dem Array enemies laden
+        this.addObjectsToMap(this.level.coins);
         this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.coinBar);
         this.addToMap(this.posionBar);
