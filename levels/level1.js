@@ -5,6 +5,7 @@ import { Finalboss } from "../models/finalboss.class.js";
 import { Coin } from "../models/coin.class.js";
 import { Light } from "../models/light.class.js";
 import { BackgroundObject } from "../models/background-object.class.js";
+import { BigCoin } from "../models/big-coin.class.js";
 
 export const level1 = new Level(
     [
@@ -23,6 +24,7 @@ export const level1 = new Level(
         new Coin(370, 220),
         new Coin(410, 230),
         new Coin(450, 250),
+        new BigCoin (600, 150)
     ],
 
     [

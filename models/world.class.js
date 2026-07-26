@@ -19,7 +19,7 @@ export class World {
     firingObjects = [];
     lastTime = 0;
     collisionTimer = 0;
-    totalCoins = this.level.coins.length;
+    totalCoins = this.level.coins.reduce((sum, coin) => sum + coin.value, 0);
     collectedCoins = 0;
 
     constructor(canvas, keyboard) {
@@ -52,9 +52,12 @@ export class World {
         this.collisionTimer += deltaTime;
         if (this.collisionTimer > 200) {
             this.checkCollision();
-            this.checkCoinCollision();
             this.checkFiringObjects();
             this.collisionTimer = 0;
+            if (this.character.justAttacked) {
+                this.checkCoinHit();
+                this.character.justAttacked = false;
+            }
         }
     }
 
@@ -132,14 +135,17 @@ export class World {
 
     // Rückwärts itterieren, damit das Entfernen (splice) während des  Durchlaufs
     // keine Coins überspringt
-    checkCoinCollision(){
+    checkCoinHit(){
         for (let i = this.level.coins.length - 1; i >= 0; i--){
             let coin = this.level.coins[i];
             if (this.character.isColliding(coin)) {
-                this.level.coins.splice(i, 1);
+                coin.value--;
                 this.collectedCoins++;
                 let percentage = (this.collectedCoins / this.totalCoins) * 100;
                 this.coinBar.setPercentage(percentage, this.coinBar.IMAGES_COINBAR, this.collectedCoins);
+                if (coin.value <= 0) {
+                    this.level.coins.splice(i, 1);
+                }
             }
         }
     }

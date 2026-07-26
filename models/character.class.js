@@ -17,6 +17,12 @@ export class Character extends MovableObject {
         right : 50,
         bottom : 70
     };
+
+    isAttacking = false;
+    attackFrame = 0;
+    attackTimer = 0;
+    attackFrameDuration = 100; // ms pro Frame, 8 Frames = 800ms gesamt
+    justAttacked = false; // World prüft dann einmalig auf Coin-Treffer
     
     IMAGES_SWIM = [
             './assets/img/1.Sharkie/3.Swim/1.png',
@@ -88,6 +94,17 @@ export class Character extends MovableObject {
         './assets/img/1.Sharkie/2.Long_IDLE/I14.png'
     ];
 
+    IMAGES_FIN_SLAP_ATTACK = [
+        './assets/img/1.Sharkie/4.Attack/Fin_slap/1.png',
+        './assets/img/1.Sharkie/4.Attack/Fin_slap/2.png',
+        './assets/img/1.Sharkie/4.Attack/Fin_slap/3.png',
+        './assets/img/1.Sharkie/4.Attack/Fin_slap/4.png',
+        './assets/img/1.Sharkie/4.Attack/Fin_slap/5.png',
+        './assets/img/1.Sharkie/4.Attack/Fin_slap/6.png',
+        './assets/img/1.Sharkie/4.Attack/Fin_slap/7.png',
+        './assets/img/1.Sharkie/4.Attack/Fin_slap/8.png',
+    ]
+
     constructor() {
         super().loadImage('./assets/img/1.Sharkie/3.Swim/1.png');
         this.loadImages(this.IMAGES_SWIM);
@@ -95,6 +112,7 @@ export class Character extends MovableObject {
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_LONG_IDLE);
+        this.loadImages(this.IMAGES_FIN_SLAP_ATTACK);
         this.getRealFrame();
     }
 
@@ -134,6 +152,27 @@ export class Character extends MovableObject {
             this.idleTime = 0;
         } else {
             this.idleTime += deltaTime;
+        }
+
+        if (this.world.keyboard.E && !this.isAttacking) {
+            this.isAttacking = true;
+            this.attackFrame = 0;
+            this.attackTimer = 0;
+            this.img = this.imageCache[this.IMAGES_FIN_SLAP_ATTACK[0]];
+            this.justAttacked = true;
+        }
+        if (this.isAttacking) {
+            this.attackTimer += deltaTime;
+            if (this.attackTimer > this.attackFrameDuration) {
+                this.attackTimer = 0;
+                this.attackFrame++;
+                if (this.attackFrame >= this.IMAGES_FIN_SLAP_ATTACK.length) {
+                    this.isAttacking = false;
+                } else {
+                    this.img = this.imageCache[this.IMAGES_FIN_SLAP_ATTACK[this.attackFrame]];
+                }
+            }
+            return;
         }
         
         this.animationTimer += deltaTime;

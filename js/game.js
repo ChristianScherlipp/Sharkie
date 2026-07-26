@@ -31,6 +31,9 @@ window.addEventListener('keydown', (e) => {
     if(e.key == ' ') {
         keyboard.SPACE = true;        
     }
+    if (e.key.toLocaleLowerCase() == 'e') {
+        keyboard.E = true;
+    }
     
 });
 
@@ -49,5 +52,8 @@ window.addEventListener('keyup', (e) => {
     }
     if(e.key == ' ') {
         keyboard.SPACE = false;
+    }
+    if (e.key.toLocaleLowerCase() == 'e') {
+        keyboard.E = false;
     }
 });

@@ -13,6 +13,7 @@ export class Coin extends MovableObject {
         right : 5,
         bottom : 5
     };
+    value = 1;
 
     IMAGES_COIN = [
         './assets/img/4.Marcadores/1.Coins/1.png',
@@ -21,13 +22,13 @@ export class Coin extends MovableObject {
         './assets/img/4.Marcadores/1.Coins/4.png',
     ];
 
-    constructor(x, y) {
+    constructor(x, y, value = 1) {
         super();
         this.loadImage(this.IMAGES_COIN[0]);
         this.loadImages(this.IMAGES_COIN);
         this.x = x;
         this.y = y
-
+        this.value = value;
         this.getRealFrame();
     }
 
