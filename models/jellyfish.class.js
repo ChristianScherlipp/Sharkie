@@ -3,7 +3,7 @@ import { MovableObject } from "./movable-object.class.js";
 export class Jellyfish extends MovableObject {
     showFrame = true;
     x = 190 + Math.random() * 2500;
-    y = Math.random() * 400;
+    y = Math.random() * (480 - 180);
     width = 120;
     height = 180;
 
@@ -29,8 +29,10 @@ export class Jellyfish extends MovableObject {
         super().loadImage('./assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png');
         this.loadImages(this.JELLY_IMAGES_SWIM);
         this.speed = 0.15 +Math.random() * 0.5;
-        this.minY = this.y - (50 + Math.random() * 5);
-        this.maxY = this.y + (50 + Math.random() * 5);
+        let canvasHeight = 480;
+        let range = 50 + Math.random() * 5
+        this.minY = Math.max(0, this.y - range);
+        this.maxY = Math.min(canvasHeight - this.height, this.y + range);
         this.getRealFrame();
     }
 
