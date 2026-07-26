@@ -139,7 +139,7 @@ export class World {
                 this.level.coins.splice(i, 1);
                 this.collectedCoins++;
                 let percentage = (this.collectedCoins / this.totalCoins) * 100;
-                this.coinBar.setPercentage(percentage, this.coinBar.IMAGES_COINBAR);
+                this.coinBar.setPercentage(percentage, this.coinBar.IMAGES_COINBAR, this.collectedCoins);
             }
         }
     }

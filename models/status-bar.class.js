@@ -1,16 +1,16 @@
 import { DrawableObject } from "./drawable-object.class.js";
 
 export class Statusbar extends DrawableObject{
-
-
     percentage;
+    displayValue;
 
     constructor() {
         super();
     }
 
-    setPercentage(percentage, images){
+    setPercentage(percentage, images, displayValue = percentage){
         this.percentage = percentage;
+        this.displayValue = displayValue;
         let path = images[this.resolveImageIndex()];
         this.img = this.imageCache[path];
     }
@@ -32,10 +32,10 @@ export class Statusbar extends DrawableObject{
     }
 
     // Zeichnet zuerst die Balken-Grafik (wie bisher) und schreibt danach
-    // den aktuellen Wert als "60/100" mittig über den Balken.
+    // den aktuellen Wert als "60" mittig über den Balken.
     draw(ctx) {
         super.draw(ctx);
-        let text = `${Math.round(this.percentage)}/100`;
+        let text = `${Math.round(this.displayValue)}`;
         let textX = this.x + this.width / 2;
         let textY = this.y + this.height / 2;
         ctx.save();
