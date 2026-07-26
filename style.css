@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'rye';
+    src: url('./assets/img/5.Font/rye-regular.ttf');
+}
+
 body{
     display: flex;
     flex-direction: column;
@@ -8,10 +13,16 @@ body{
     background-size: cover;
     background-repeat: no-repeat;
     height: 100vh;
+    font-family: 'rye', Arial, Helvetica, sans-serif;
 }
 
 body h1 {
-    font-size: 6rem;
+    font-size: 4rem;
+    letter-spacing: 5px;
+    text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.6);
+    font-weight: 600;
+    line-height: normal;
+    margin: 0;
 }
 
 canvas {
@@ -20,4 +31,23 @@ canvas {
     border-radius: 1rem;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.80),
                 0 20px 40px rgba(0, 0, 0, 0.40);
+}
+
+/* Smartphone------------ */
+@media only screen and (max-width: 720px) {
+    canvas {
+        width: 100%;
+    }
+}
+
+
+/* Smartphone------------ */
+@media only screen and (max-height: 480px) {
+    canvas {
+        height: 100vh;
+    }
+
+    h1 {
+        display: none;
+    }
 }
