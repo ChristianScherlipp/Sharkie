@@ -12,10 +12,10 @@ export class Character extends MovableObject {
     idleTime = 0;
 
     offset = {
-        top : 130,
-        left : 50,
-        right : 50,
-        bottom : 70
+        top : 160,
+        left : 60,
+        right : 60,
+        bottom : 80
     };
 
     isAttacking = false;
