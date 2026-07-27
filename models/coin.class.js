@@ -14,6 +14,8 @@ export class Coin extends MovableObject {
         bottom : 5
     };
     value = 1;
+    collectOnTouch = true;
+    blocksMovement = false;
 
     IMAGES_COIN = [
         './assets/img/4.Marcadores/1.Coins/1.png',

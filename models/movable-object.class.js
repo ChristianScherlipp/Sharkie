@@ -105,6 +105,13 @@ export class MovableObject extends DrawableObject {
             this.rY < mo.rY + mo.rH;
     }
 
+    isNear(mo, range = 30){
+        return this.rX + this.rW + range > mo.rX &&
+            this.rY + this.rH + range > mo.rY &&
+            this.rX - range < mo.rX + mo.rW &&
+            this.rY - range < mo.rY + mo.rH;
+    }
+
     hit(){
         this.energy -= 2;
         if(this.energy < 0){

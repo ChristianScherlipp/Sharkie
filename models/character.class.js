@@ -120,6 +120,8 @@ export class Character extends MovableObject {
 
     update(deltaTime) {
         let factor = deltaTime / (1000 / 60);
+        let prevX = this.x;
+        let prevY = this.y;
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x - this.width) {
             this.x += this.speed * factor;
             this.otherDirection = false;
@@ -146,6 +148,13 @@ export class Character extends MovableObject {
         this.world.camera_x = Math.min(cameraMax, Math.max(cameraMin, desiredCamera));
 
         this.getRealFrame();
+
+        let blocked = this.world.level.coins.some(coin => coin.blocksMovement && this.isColliding(coin));
+        if (blocked){
+            this.x = prevX;
+            this.y = prevY;
+            this.getRealFrame();
+        }
         
         let isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN;
         if (isMoving) {

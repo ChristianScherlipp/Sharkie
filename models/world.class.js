@@ -54,6 +54,7 @@ export class World {
             this.checkCollision();
             this.checkFiringObjects();
             this.collisionTimer = 0;
+            this.checkCoinCollision();
             if (this.character.justAttacked) {
                 this.checkCoinHit();
                 this.character.justAttacked = false;
@@ -133,12 +134,22 @@ export class World {
             })
     }
 
-    // Rückwärts itterieren, damit das Entfernen (splice) während des  Durchlaufs
-    // keine Coins überspringt
-    checkCoinHit(){
+    checkCoinCollision() {
         for (let i = this.level.coins.length - 1; i >= 0; i--){
             let coin = this.level.coins[i];
-            if (this.character.isColliding(coin)) {
+            if (coin.collectOnTouch && this.character.isColliding(coin)) {
+                this.level.coins.splice(i, 1);
+                this.collectedCoins += coin.value;
+                let percentage = (this.collectedCoins / this.totalCoins) * 100;
+                this.coinBar.setPercentage(percentage, this.coinBar.IMAGES_COINBAR, this.collectedCoins);
+            }
+        }
+    }
+    
+    checkCoinHit(){
+        for (let i = this.level.coins.length - 1; i >= 0; i--){ // Rückwärts itterieren, damit das Entfernen (splice) während des  Durchlaufs keine Coins überspringt
+            let coin = this.level.coins[i];
+            if (!coin.collectOnTouch && this.character.isNear(coin)) {
                 coin.value--;
                 this.collectedCoins++;
                 let percentage = (this.collectedCoins / this.totalCoins) * 100;
