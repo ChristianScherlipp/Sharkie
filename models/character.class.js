@@ -23,6 +23,12 @@ export class Character extends MovableObject {
     attackTimer = 0;
     attackFrameDuration = 100; // ms pro Frame, 8 Frames = 800ms gesamt
     justAttacked = false; // World prüft dann einmalig auf Coin-Treffer
+
+    isFormingBubble = false;
+    bubbleFrame = 0;
+    bubbleTimer = 0;
+    bubbleFrameDuration = 100;
+    justFiredBubble = false; //world erzeugt daraufhin das FiringObject
     
     IMAGES_SWIM = [
             './assets/img/1.Sharkie/3.Swim/1.png',
@@ -105,6 +111,17 @@ export class Character extends MovableObject {
         './assets/img/1.Sharkie/4.Attack/Fin_slap/8.png',
     ]
 
+    IMAGES_BUBBLE_FORMATION = [
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/1.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/2.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/3.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/4.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/5.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/6.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/7.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/8.png',
+    ]
+
     constructor() {
         super().loadImage('./assets/img/1.Sharkie/3.Swim/1.png');
         this.loadImages(this.IMAGES_SWIM);
@@ -113,6 +130,7 @@ export class Character extends MovableObject {
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_LONG_IDLE);
         this.loadImages(this.IMAGES_FIN_SLAP_ATTACK);
+        this.loadImages(this.IMAGES_BUBBLE_FORMATION);
         this.getRealFrame();
     }
 
@@ -163,7 +181,7 @@ export class Character extends MovableObject {
             this.idleTime += deltaTime;
         }
 
-        if (this.world.keyboard.E && !this.isAttacking) {
+        if (this.world.keyboard.E && !this.isAttacking && !this.isFormingBubble) {
             this.isAttacking = true;
             this.attackFrame = 0;
             this.attackTimer = 0;
@@ -179,6 +197,27 @@ export class Character extends MovableObject {
                     this.isAttacking = false;
                 } else {
                     this.img = this.imageCache[this.IMAGES_FIN_SLAP_ATTACK[this.attackFrame]];
+                }
+            }
+            return;
+        }
+
+        if (this.world.keyboard.SPACE && !this.isFormingBubble && !this.isAttacking) {
+            this.isFormingBubble = true;
+            this.bubbleFrame = 0;
+            this.bubbleTimer = 0;
+            this.img = this.imageCache[this.IMAGES_BUBBLE_FORMATION[0]];
+        }
+        if (this.isFormingBubble) {
+            this.bubbleTimer += deltaTime;
+            if (this.bubbleTimer > this.bubbleFrameDuration) {
+                this.bubbleTimer = 0;
+                this.bubbleFrame++;
+                if (this.bubbleFrame >= this.IMAGES_BUBBLE_FORMATION.length) {
+                    this.isFormingBubble = false;
+                    this.justFiredBubble = true;
+                } else {
+                    this.img = this.imageCache[this.IMAGES_BUBBLE_FORMATION[this.bubbleFrame]];
                 }
             }
             return;

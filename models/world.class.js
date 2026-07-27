@@ -50,9 +50,9 @@ export class World {
         //Kollision & Schießen liefen früher alle 200ms per eigenen Interval,
         // das wird hier über einen zähler nachgebildet.
         this.collisionTimer += deltaTime;
+        this.checkFiringObjects();
         if (this.collisionTimer > 200) {
             this.checkCollision();
-            this.checkFiringObjects();
             this.collisionTimer = 0;
             this.checkCoinCollision();
             if (this.character.justAttacked) {
@@ -118,9 +118,14 @@ export class World {
 
 
     checkFiringObjects(){
-        if (this.keyboard.SPACE) {
-            let bubble = new FiringObject(this.character.x + 200, this.character.y + 150);        
-            this.firingObjects.push(bubble)
+        if (this.character.justFiredBubble) {
+            this.character.justFiredBubble = false;
+            let direction = this.character.otherDirection ? -1 : 1;
+            let spawnX = this.character.otherDirection 
+                ? this.character.x - 20 
+                : this.character.x + this.character.width - 50;
+            let bubble = new FiringObject(spawnX, this.character.y + 150, direction);
+            this.firingObjects.push(bubble);
         }
     }
 
