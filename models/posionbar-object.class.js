@@ -1,25 +1,20 @@
 import { Statusbar } from "./status-bar.class.js";
 
 export class Posionbar extends Statusbar {
-    x = 20;
-    y = 60;
-    width = 160;
+    x = 100;
+    y = 30;
+    width = 40;
     height = 40;
+    iconMode = true;
 
-    IMAGES_COINBAR = [
-        './assets/img/4.Marcadores/green/poisoned_bubbles/0_copia2.png',
-        './assets/img/4.Marcadores/green/poisoned_bubbles/20_copia2.png',
-        './assets/img/4.Marcadores/green/poisoned_bubbles/40_copia2.png',
-        './assets/img/4.Marcadores/green/poisoned_bubbles/60_copia2.png',
-        './assets/img/4.Marcadores/green/poisoned_bubbles/80_copia2.png',
-        './assets/img/4.Marcadores/green/poisoned_bubbles/100_copia2.png',
-        
+    IMAGE_POISON_ICON = [
+        './assets/img/4.Marcadores/green/100_copia_5.png'
     ];
 
     constructor (){
         super();
 
-        this.loadImages(this.IMAGES_COINBAR);
-        this.setPercentage(0, this.IMAGES_COINBAR)
+        this.loadImage(this.IMAGE_POISON_ICON);
+        this.setPercentage(0, [], 0)
     }
 }

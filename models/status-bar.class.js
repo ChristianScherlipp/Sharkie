@@ -3,6 +3,7 @@ import { DrawableObject } from "./drawable-object.class.js";
 export class Statusbar extends DrawableObject{
     percentage;
     displayValue;
+    iconMode;
 
     constructor() {
         super();
@@ -11,8 +12,10 @@ export class Statusbar extends DrawableObject{
     setPercentage(percentage, images, displayValue = percentage){
         this.percentage = percentage;
         this.displayValue = displayValue;
-        let path = images[this.resolveImageIndex()];
-        this.img = this.imageCache[path];
+        if (!this.iconMode) {
+            let path = images[this.resolveImageIndex()];
+            this.img = this.imageCache[path];
+        }
     }
 
     resolveImageIndex(){
@@ -36,16 +39,26 @@ export class Statusbar extends DrawableObject{
     draw(ctx) {
         super.draw(ctx);
         let text = `${Math.round(this.displayValue)}`;
-        let textX = this.x + this.width / 2;
-        let textY = this.y + this.height / 2;
         ctx.save();
         ctx.font = 'bold 16px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
         ctx.lineWidth = 3;
         ctx.strokeStyle = 'black';
-        ctx.strokeText(text, textX, textY);
         ctx.fillStyle = 'white';
+
+        let textX, textY;
+        if (this.iconMode) {
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'middle';
+            textX = this.x + this.width + 8;
+            textY = this.y + this.height / 2;
+        } else {
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            textX = this.x + this.width / 2;
+            textY = this.y + this.height / 2;
+        }
+        
+        ctx.strokeText(text, textX, textY);
         ctx.fillText(text, textX, textY);
         ctx.restore();
     }
