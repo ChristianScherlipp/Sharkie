@@ -30,10 +30,11 @@ export class Finalboss extends MovableObject {
             './assets/img/2.Enemy/3.Final_Enemy/2.floating/13.png',
     ];
 
-    constructor (){
+    constructor (x, y){
         super().loadImage('./assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png');
         this.loadImages(this.FINALBOSS_IMAGES_SWIM);
-        
+        this.x = x;
+        this.y = y;
         this.getRealFrame();
     }
 

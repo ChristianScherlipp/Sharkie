@@ -9,12 +9,14 @@ import { BigCoin } from "../models/big-coin.class.js";
 
 export const level1 = new Level(
     [
-        new Pufferfish(),
-        new Pufferfish(),
-        new Pufferfish(),
-        new Jellyfish(),
-        new Jellyfish(),
-        new Finalboss(),
+        new Pufferfish(550, 250),
+        new Pufferfish(1300, 350),
+        new Pufferfish(2200, 300),
+        new Pufferfish(3100, 280),
+        new Jellyfish(900, 150),
+        new Jellyfish(1750, 100),
+        new Jellyfish(2650, 200),
+        new Finalboss(3800, 150),
     ],
 
     [

@@ -25,10 +25,12 @@ export class Jellyfish extends MovableObject {
     maxY;
     movingUp = true;
 
-    constructor() {
+    constructor(x, y) {
         super().loadImage('./assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png');
         this.loadImages(this.JELLY_IMAGES_SWIM);
         this.speed = 0.15 +Math.random() * 0.5;
+        this.x = x;
+        this.y =y;
         let canvasHeight = 480;
         let range = 50 + Math.random() * 5
         this.minY = Math.max(0, this.y - range);
