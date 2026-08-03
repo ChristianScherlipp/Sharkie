@@ -29,6 +29,12 @@ export class Character extends MovableObject {
     bubbleTimer = 0;
     bubbleFrameDuration = 100;
     justFiredBubble = false; //world erzeugt daraufhin das FiringObject
+
+    sFormingPoison = false;
+    poisonFrame = 0;
+    poisonTimer = 0;
+    poisonFrameDuration = 100;
+    justFiredPoison = false;
     
     IMAGES_SWIM = [
             './assets/img/1.Sharkie/3.Swim/1.png',
@@ -122,6 +128,17 @@ export class Character extends MovableObject {
         './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/8.png',
     ]
 
+    IMAGES_POISON_FORMATION = [
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/1.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/2.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/3.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/4.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/5.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/6.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/7.png',
+        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/8.png',
+    ]
+
     constructor() {
         super().loadImage('./assets/img/1.Sharkie/3.Swim/1.png');
         this.loadImages(this.IMAGES_SWIM);
@@ -131,6 +148,7 @@ export class Character extends MovableObject {
         this.loadImages(this.IMAGES_LONG_IDLE);
         this.loadImages(this.IMAGES_FIN_SLAP_ATTACK);
         this.loadImages(this.IMAGES_BUBBLE_FORMATION);
+        this.loadImages(this.IMAGES_POISON_FORMATION);
         this.getRealFrame();
     }
 
@@ -174,14 +192,14 @@ export class Character extends MovableObject {
             this.getRealFrame();
         }
         
-        let isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN;
+        let isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN || this.world.keyboard.E || this.world.keyboard.SPACE;
         if (isMoving) {
             this.idleTime = 0;
         } else {
             this.idleTime += deltaTime;
         }
 
-        if (this.world.keyboard.E && !this.isAttacking && !this.isFormingBubble) {
+        if (this.world.keyboard.SPACE && !this.isAttacking && !this.isFormingBubble && !this.FormingPoison) {
             this.isAttacking = true;
             this.attackFrame = 0;
             this.attackTimer = 0;
@@ -202,7 +220,7 @@ export class Character extends MovableObject {
             return;
         }
 
-        if (this.world.keyboard.SPACE && !this.isFormingBubble && !this.isAttacking) {
+        if (this.world.keyboard.E && !this.isFormingBubble && !this.isAttacking && !this.FormingPoison) {
             this.isFormingBubble = true;
             this.bubbleFrame = 0;
             this.bubbleTimer = 0;
@@ -218,6 +236,27 @@ export class Character extends MovableObject {
                     this.justFiredBubble = true;
                 } else {
                     this.img = this.imageCache[this.IMAGES_BUBBLE_FORMATION[this.bubbleFrame]];
+                }
+            }
+            return;
+        }
+
+        if (this.world.keyboard.Q && !this.isFormingPoison && !this.isAttacking && !this.isFormingBubble) {
+            this.isFormingPoison = true;
+            this.poisonFrame = 0;
+            this.poisonTimer = 0;
+            this.img = this.imageCache[this.IMAGES_POISON_FORMATION[0]];
+        }
+        if (this.isFormingPoison) {
+            this.poisonTimer += deltaTime;
+            if (this.poisonTimer > this.poisonFrameDuration) {
+                this.poisonTimer = 0;
+                this.poisonFrame++;
+                if (this.poisonFrame >= this.IMAGES_POISON_FORMATION.length) {
+                    this.isFormingPoison = false;
+                    this.justFiredPoison = true;
+                } else {
+                    this.img = this.imageCache[this.IMAGES_POISON_FORMATION[this.poisonFrame]];
                 }
             }
             return;

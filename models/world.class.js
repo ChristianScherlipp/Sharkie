@@ -3,6 +3,7 @@ import { Coinbar } from "./coinbar.class.js";
 import { Healthbar } from "./healthbar.class.js";
 import { Posionbar } from "./posionbar-object.class.js";
 import { FiringObject } from "./firing-object.class.js";
+import { PoisonBubble } from "./poison-bubble.class.js";
 import { level1 } from "../levels/level1.js"
 import { Light } from "./light.class.js";
 
@@ -54,6 +55,7 @@ export class World {
         // das wird hier über einen zähler nachgebildet.
         this.collisionTimer += deltaTime;
         this.checkFiringObjects();
+        this.checkPoisonFiringObjects();
         if (this.collisionTimer > 200) {
             this.checkCollision();
             this.collisionTimer = 0;
@@ -133,6 +135,18 @@ export class World {
             this.firingObjects.push(bubble);
         }
     }
+
+    checkPoisonFiringObjects(){
+    if (this.character.justFiredPoison) {
+        this.character.justFiredPoison = false;
+        let direction = this.character.otherDirection ? -1 : 1;
+        let spawnX = this.character.otherDirection
+            ? this.character.x - 20
+            : this.character.x + this.character.width - 60;
+        let poisonShot = new PoisonBubble(spawnX, this.character.y + 150, direction);
+        this.firingObjects.push(poisonShot);
+    }
+}
 
     checkCollision(){
         this.level.enemies.forEach((enemy) =>{

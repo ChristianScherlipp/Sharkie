@@ -34,6 +34,9 @@ window.addEventListener('keydown', (e) => {
     if (e.key.toLocaleLowerCase() == 'e') {
         keyboard.E = true;
     }
+    if (e.key.toLocaleLowerCase() == 'q') {
+        keyboard.Q = true;
+    }
     
 });
 
@@ -55,5 +58,8 @@ window.addEventListener('keyup', (e) => {
     }
     if (e.key.toLocaleLowerCase() == 'e') {
         keyboard.E = false;
+    }
+    if (e.key.toLocaleLowerCase() == 'q') {
+        keyboard.Q = false;
     }
 });

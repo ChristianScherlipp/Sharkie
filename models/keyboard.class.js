@@ -5,6 +5,7 @@ export class Keyboard {
     DOWN = false;
     SPACE = false;
     E = false;
+    Q = false;
 
     constructor() {
         
