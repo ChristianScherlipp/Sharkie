@@ -3,12 +3,14 @@ export class Level {
     lights;
     backgroundObjects;
     coins;
+    poisons;
     level_start_x;
     level_end_x;
 
-    constructor(enemies, coins, lights, backgroundObjects){
+    constructor(enemies, coins, poisons, lights, backgroundObjects){
         this.enemies = enemies;
         this.coins = coins;
+        this.poisons = poisons;
         this.lights = lights;
         this.backgroundObjects = backgroundObjects;
         this.level_start_x = Math.min(...backgroundObjects.map(bg => bg.x));

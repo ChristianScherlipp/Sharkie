@@ -5,7 +5,7 @@ import { Posionbar } from "./posionbar-object.class.js";
 import { FiringObject } from "./firing-object.class.js";
 import { level1 } from "../levels/level1.js"
 import { Light } from "./light.class.js";
- 
+
 export class World {
     character = new Character();
     level = level1;
@@ -21,6 +21,8 @@ export class World {
     collisionTimer = 0;
     totalCoins = this.level.coins.reduce((sum, coin) => sum + coin.value, 0);
     collectedCoins = 0;
+    totalPoisons = this.level.poisons.reduce((sum, poison) => sum + poison.value, 0);
+    collectedPoisons = 0;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -45,6 +47,7 @@ export class World {
         this.character.update(deltaTime);
         this.level.enemies.forEach(enemy => enemy.update(deltaTime));
         this.level.coins.forEach(coin => coin.update(deltaTime));
+        this.level.poisons.forEach(poison => poison.update(deltaTime));
         this.level.lights.forEach(light => light.update(deltaTime));
         this.firingObjects.forEach(fo => fo.update(deltaTime));
         //Kollision & Schießen liefen früher alle 200ms per eigenen Interval,
@@ -55,6 +58,7 @@ export class World {
             this.checkCollision();
             this.collisionTimer = 0;
             this.checkCoinCollision();
+            this.checkPoisonCollision();
             if (this.character.justAttacked) {
                 this.checkCoinHit();
                 this.character.justAttacked = false;
@@ -71,6 +75,7 @@ export class World {
         this.addObjectsToMap(this.level.lights); // Licht Laden
         this.addObjectsToMap(this.level.enemies); // Gegner aus dem Array enemies laden
         this.addObjectsToMap(this.level.coins);
+        this.addObjectsToMap(this.level.poisons);
         this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.coinBar);
         this.addToMap(this.posionBar);
@@ -162,6 +167,18 @@ export class World {
                 if (coin.value <= 0) {
                     this.level.coins.splice(i, 1);
                 }
+            }
+        }
+    }
+
+    checkPoisonCollision(){
+        for (let i = this.level.poisons.length - 1; i >= 0; i--) {
+            let poison = this.level.poisons[i];
+            if (poison.collectOnTouch && this.character.isColliding(poison)) {
+                this.level.poisons.splice(i, 1);
+                this.collectedPoisons += poison.value;
+                let percentage = (this.collectedPoisons / this.totalPoisons) * 100;
+                this.posionBar.setPercentage(percentage, [], this.collectedPoisons);
             }
         }
     }
