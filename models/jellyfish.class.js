@@ -4,8 +4,8 @@ export class Jellyfish extends MovableObject {
     showFrame = true;
     x = 190 + Math.random() * 2500;
     y = Math.random() * (480 - 180);
-    width = 120;
-    height = 180;
+    width = 70;
+    height = 120;
     damage = 2;
     detectionRange = 100;
     exitRange = 130;
