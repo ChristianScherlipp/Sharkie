@@ -6,6 +6,7 @@ export class Jellyfish extends MovableObject {
     y = Math.random() * (480 - 180);
     width = 120;
     height = 180;
+    damage = 2;
 
     offset = {
         top : 25,

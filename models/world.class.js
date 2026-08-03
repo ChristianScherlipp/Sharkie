@@ -46,7 +46,7 @@ export class World {
 
     update(deltaTime){
         this.character.update(deltaTime);
-        this.level.enemies.forEach(enemy => enemy.update(deltaTime));
+        this.level.enemies.forEach(enemy => enemy.update(deltaTime, this.character));
         this.level.coins.forEach(coin => coin.update(deltaTime));
         this.level.poisons.forEach(poison => poison.update(deltaTime));
         this.level.lights.forEach(light => light.update(deltaTime));
@@ -54,17 +54,20 @@ export class World {
         //Kollision & Schießen liefen früher alle 200ms per eigenen Interval,
         // das wird hier über einen zähler nachgebildet.
         this.collisionTimer += deltaTime;
-        this.checkFiringObjects();
-        this.checkPoisonFiringObjects();
         if (this.collisionTimer > 200) {
             this.checkCollision();
             this.collisionTimer = 0;
-            this.checkCoinCollision();
-            this.checkPoisonCollision();
-            if (this.character.justAttacked) {
-                this.checkCoinHit();
-                this.character.justAttacked = false;
-            }
+        }
+        
+        this.checkFiringObjects();
+        this.checkPoisonFiringObjects();
+        
+        this.checkCoinCollision();
+        this.checkPoisonCollision();
+        
+        if (this.character.justAttacked) {
+            this.checkCoinHit();
+            this.character.justAttacked = false;
         }
     }
 
@@ -151,7 +154,7 @@ export class World {
     checkCollision(){
         this.level.enemies.forEach((enemy) =>{
                 if(this.character.isColliding(enemy)) {
-                    this.character.hit();
+                    this.character.hit(enemy.damage);
                     this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR)
                     
                 }

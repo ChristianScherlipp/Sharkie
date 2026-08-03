@@ -3,7 +3,7 @@ import { DrawableObject } from "./drawable-object.class.js";
 export class MovableObject extends DrawableObject {
     speed = 0.15;
     speedY = 0;
-    acceleration = 0.001;
+    acceleration = 0.002;
     
     otherDirection = false;
     energy = 100;
@@ -112,8 +112,8 @@ export class MovableObject extends DrawableObject {
             this.rY - range < mo.rY + mo.rH;
     }
 
-    hit(){
-        this.energy -= 2;
+    hit(damage = 2){
+        this.energy -= damage;
         if(this.energy < 0){
             this.energy = 0;
         }else {
