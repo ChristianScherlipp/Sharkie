@@ -66,16 +66,29 @@ export class Pufferfish extends MovableObject {
     update(deltaTime, character) {
         let distance = Infinity;
         if (character) {
-            let dx = (character.x + character.width / 2) - (this.x + this.width / 2);
-            let dy = (character.y + character.height / 2) - (this.y + this.height / 2);
+            let charLeft = character.rX;
+            let charRight = character.rX + character.rW;
+            let charTop = character.rY;
+            let charBottom = character.rY + character.rH;
+            let fishLeft = this.rX;
+            let fishRight = this.rX + this.rW;
+            let fishTop = this.rY;
+            let fishBottom = this.rY + this.rH;
+            let dx = Math.max(charLeft - fishRight, fishLeft - charRight, 0);
+            let dy = Math.max(charTop - fishBottom, fishTop - charBottom, 0);
             distance = Math.sqrt(dx * dx + dy * dy);
         }
 
-        if (this.alertState === 'idle' && distance <= this.detectionRange) {
-            this.alertState = 'entering';
-            this.transitionFrame = 0;
-            this.transitionTimer = 0;
+        if (this.alertState === 'idle' && distance <= this.detectionRange && character) {
+            let facingLeft = !this.otherDirection;
+            let characterInFront = facingLeft ? (character.x + character.width / 2) <= (this.x + this.width / 2) : (character.x + character.width / 2) >= (this.x + this.width / 2);
+            if (characterInFront) {
+                this.alertState = 'entering';
+                this.transitionFrame = 0;
+                this.transitionTimer = 0;
+            }
         }
+        
         if ((this.alertState === 'entering' || this.alertState === 'charging') && distance > this.exitRange) {
             this.alertState = 'exiting';
         }
