@@ -7,6 +7,11 @@ export class Jellyfish extends MovableObject {
     width = 120;
     height = 180;
     damage = 2;
+    detectionRange = 100;
+    exitRange = 130;
+    isAlerted = false;
+    knocksBack = true;
+    knockbackDistance = 100;
 
     offset = {
         top : 25,
@@ -22,6 +27,13 @@ export class Jellyfish extends MovableObject {
             './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila4.png',
     ];
 
+    JELLY_IMAGES_DANGEROUS = [
+        './assets/img/2.Enemy/2.Jelly_fish/Super_dangerous/Pink1.png',
+        './assets/img/2.Enemy/2.Jelly_fish/Super_dangerous/Pink2.png',
+        './assets/img/2.Enemy/2.Jelly_fish/Super_dangerous/Pink3.png',
+        './assets/img/2.Enemy/2.Jelly_fish/Super_dangerous/Pink4.png',
+    ];
+
     minY;
     maxY;
     movingUp = true;
@@ -29,6 +41,7 @@ export class Jellyfish extends MovableObject {
     constructor(x, y) {
         super().loadImage('./assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png');
         this.loadImages(this.JELLY_IMAGES_SWIM);
+        this.loadImages(this.JELLY_IMAGES_DANGEROUS);
         this.speed = 0.15 +Math.random() * 0.5;
         this.x = x;
         this.y =y;
@@ -40,7 +53,32 @@ export class Jellyfish extends MovableObject {
     }
 
     // Wird jeden Frame von World.update() aufgerufen
-    update(deltaTime){
+    update(deltaTime, character){
+        let distance = Infinity;
+        if (character) {
+            let charLeft = character.rX;
+            let charRight = character.rX + character.rW;
+            let charTop = character.rY;
+            let charBottom = character.rY + character.rH;
+            let jellyLeft = this.rX;
+            let jellyRight = this.rX + this.rW;
+            let jellyTop = this.rY;
+            let jellyBottom = this.rY + this.rH;
+            let dx = Math.max(charLeft - jellyRight, jellyLeft - charRight, 0);
+            let dy = Math.max(charTop - jellyBottom, jellyTop - charBottom, 0);
+            distance = Math.sqrt(dx * dx + dy * dy);
+        }
+
+        let characterBelow = character && (character.y + character.height / 2) > (this.y + this.height / 2);
+        let visible = !characterBelow;
+
+        if (!this.isAlerted && distance <= this.detectionRange && visible) {
+            this.isAlerted = true;
+        } else if (this.isAlerted && distance > this.exitRange) {
+            this.isAlerted = false;
+        }
+        this.damage = this.isAlerted ? 5 : 2;
+
         if (this.movingUp) {
             this.moveUp(deltaTime);
             if (this.y <= this.minY) {
@@ -52,6 +90,10 @@ export class Jellyfish extends MovableObject {
                 this.movingUp = true;
             }
         }
-        this.animateImages(this.JELLY_IMAGES_SWIM, deltaTime, 255)
+        if (this.isAlerted) {
+            this.animateImages(this.JELLY_IMAGES_DANGEROUS, deltaTime, 200);
+        } else {
+            this.animateImages(this.JELLY_IMAGES_SWIM, deltaTime, 255);
+        }
     }
 }

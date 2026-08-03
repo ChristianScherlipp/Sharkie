@@ -140,23 +140,53 @@ export class World {
     }
 
     checkPoisonFiringObjects(){
-    if (this.character.justFiredPoison) {
-        this.character.justFiredPoison = false;
-        let direction = this.character.otherDirection ? -1 : 1;
-        let spawnX = this.character.otherDirection
-            ? this.character.x - 20
-            : this.character.x + this.character.width - 60;
-        let poisonShot = new PoisonBubble(spawnX, this.character.y + 150, direction);
-        this.firingObjects.push(poisonShot);
+        if (this.character.justFiredPoison) {
+            this.character.justFiredPoison = false;
+            let direction = this.character.otherDirection ? -1 : 1;
+            let spawnX = this.character.otherDirection
+                ? this.character.x - 20
+                : this.character.x + this.character.width - 60;
+            let poisonShot = new PoisonBubble(spawnX, this.character.y + 150, direction);
+            this.firingObjects.push(poisonShot);
+        }
     }
-}
+
+    applyKnockback(enemy){
+        let charLeft = this.character.rX;
+        let charRight = this.character.rX + this.character.rW;
+        let charTop = this.character.rY;
+        let charBottom = this.character.rY + this.character.rH;
+        let enemyLeft = enemy.rX;
+        let enemyRight = enemy.rX + enemy.rW;
+        let enemyTop = enemy.rY;
+        let enemyBottom = enemy.rY + enemy.rH;
+        let overlapX = Math.min(charRight, enemyRight) - Math.max(charLeft, enemyLeft);
+        let overlapY = Math.min(charBottom, enemyBottom) - Math.max(charTop, enemyTop);
+        let distance = enemy.knockbackDistance ?? 100;
+        if (overlapX < overlapY) {
+            if (this.character.x < enemy.x) {
+                this.character.x -= distance;
+            } else {
+                this.character.x += distance;
+            }
+        } else {
+            if (this.character.y < enemy.y) {
+                this.character.y -= distance;
+            } else {
+                this.character.y += distance;
+            }
+        }
+        this.character.getRealFrame();
+    }
 
     checkCollision(){
         this.level.enemies.forEach((enemy) =>{
                 if(this.character.isColliding(enemy)) {
                     this.character.hit(enemy.damage);
                     this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR)
-                    
+                    if (enemy.knocksBack) {
+                        this.applyKnockback(enemy);
+                    }
                 }
             })
     }
