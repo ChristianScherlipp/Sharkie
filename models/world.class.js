@@ -163,20 +163,22 @@ export class World {
         let overlapX = Math.min(charRight, enemyRight) - Math.max(charLeft, enemyLeft);
         let overlapY = Math.min(charBottom, enemyBottom) - Math.max(charTop, enemyTop);
         let distance = enemy.knockbackDistance ?? 100;
+        let targetX = this.character.x;
+        let targetY = this.character.y;
         if (overlapX < overlapY) {
-            if (this.character.x < enemy.x) {
-                this.character.x -= distance;
-            } else {
-                this.character.x += distance;
-            }
+            targetX += (this.character.x < enemy.x) ? -distance : distance;
         } else {
-            if (this.character.y < enemy.y) {
-                this.character.y -= distance;
-            } else {
-                this.character.y += distance;
-            }
+            targetY += (this.character.y < enemy.y) ? -distance : distance;
         }
-        this.character.getRealFrame();
+        let minX = this.level.level_start_x;
+        let maxX = this.level.level_end_x - this.character.width;
+        targetX = Math.min(maxX, Math.max(minX, targetX));
+        this.character.knockbackActive = true;
+        this.character.knockbackStartX = this.character.x;
+        this.character.knockbackStartY = this.character.y;
+        this.character.knockbackTargetX = targetX;
+        this.character.knockbackTargetY = targetY;
+        this.character.knockbackElapsed = 0;
     }
 
     checkCollision(){

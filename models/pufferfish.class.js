@@ -15,6 +15,8 @@ export class Pufferfish extends MovableObject {
     transitionFrameDuration = 100;
     chargeDeadzone = 20;
     chargeDirectionLeft = true;
+    knocksBack = true;
+    knockbackDistance = 50;
 
     minX;
     maxX;

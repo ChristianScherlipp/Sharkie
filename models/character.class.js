@@ -11,6 +11,14 @@ export class Character extends MovableObject {
     longIdleThreshold = 8000;
     idleTime = 0;
 
+    knockbackActive = false;
+    knockbackStartX = 0;
+    knockbackStartY = 0;
+    knockbackTargetX = 0;
+    knockbackTargetY = 0;
+    knockbackElapsed = 0;
+    knockbackDuration = 200;
+
     offset = {
         top : 160,
         left : 60,
@@ -158,20 +166,29 @@ export class Character extends MovableObject {
         let factor = deltaTime / (1000 / 60);
         let prevX = this.x;
         let prevY = this.y;
-        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x - this.width) {
-            this.x += this.speed * factor;
-            this.otherDirection = false;
-        } 
-        if (this.world.keyboard.LEFT && this.x > this.world.level.level_start_x) {
-            this.x -= this.speed * factor;
-            this.otherDirection = true;
-        }
-        if (this.world.keyboard.UP && this.y > -130) {
-            this.y -= this.speed * factor;
-            this.acceleration = 0;
-        }
-        if (this.world.keyboard.DOWN && this.isAboveGround()) {
-            this.y += this.speed * factor;
+        if (this.knockbackActive) {
+            this.knockbackElapsed += deltaTime;
+            let t = Math.min(this.knockbackElapsed / this.knockbackDuration, 1);
+            let eased = 1 - Math.pow(1 - t, 3);
+            this.x = this.knockbackStartX + (this.knockbackTargetX - this.knockbackStartX) * eased;
+            this.y = this.knockbackStartY + (this.knockbackTargetY - this.knockbackStartY) * eased;
+            if (t >= 1) { this.knockbackActive = false; }
+        } else{
+            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x - this.width) {
+                this.x += this.speed * factor;
+                this.otherDirection = false;
+            } 
+            if (this.world.keyboard.LEFT && this.x > this.world.level.level_start_x) {
+                this.x -= this.speed * factor;
+                this.otherDirection = true;
+            }
+            if (this.world.keyboard.UP && this.y > -130) {
+                this.y -= this.speed * factor;
+                this.acceleration = 0;
+            }
+            if (this.world.keyboard.DOWN && this.isAboveGround()) {
+                this.y += this.speed * factor;
+            }
         }
         // Kamera mit Totzone: bleibt stehen, solange der Hintergrund sonst eine
         // schwarze Lücke zeigen würde (Weltanfang/-ende), folgt Sharkie sonst
