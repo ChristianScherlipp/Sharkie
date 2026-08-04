@@ -24,6 +24,7 @@ export class World {
     collectedCoins = 0;
     totalPoisons = this.level.poisons.reduce((sum, poison) => sum + poison.value, 0);
     collectedPoisons = 0;
+    experience = 0;
 
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
@@ -91,6 +92,7 @@ export class World {
         this.addToMap(this.coinBar);
         this.addToMap(this.posionBar);
         this.addToMap(this.healthBar);
+        this.drawExperience();
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.firingObjects);
         this.addToMap(this.character); // Character laden
@@ -132,6 +134,21 @@ export class World {
         this.character.world = this;
     }
 
+    drawExperience(){
+        let text = String(this.experience).padStart(6, '0');
+        let x = this.canvas.width / 2;
+        let y = 30;
+        this.ctx.save();
+        this.ctx.font = 'bold 24px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.lineWidth = 4;
+        this.ctx.strokeStyle = 'black';
+        this.ctx.strokeText(text, x, y);
+        this.ctx.fillStyle = 'white';
+        this.ctx.fillText(text, x, y);
+        this.ctx.restore();
+    }
 
     checkFiringObjects(){
         if (this.character.justFiredBubble) {
@@ -255,6 +272,7 @@ export class World {
                 hitSomething = true;
                 if(enemy.health <= 0){
                     enemy.startDying();
+                    this.experience += 200;
                 }
             }
         });
@@ -274,6 +292,7 @@ export class World {
                     this.firingObjects.splice(i, 1);
                     if (enemy.health <= 0) {
                         enemy.startDying();
+                        this.experience += 100;
                     }
                     break;
                 }
