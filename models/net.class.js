@@ -5,7 +5,7 @@ export class Net extends MovableObject {
     y = 0;
     width = 75;
     height = 480;
-    blocksMovement = true;
+    blocksMovement = false;
 
     NET_IMAGES_UNROLL = [
         './assets/img/3.Background/Barrier/Net_unroll/net_unroll_01.png',
@@ -42,6 +42,7 @@ export class Net extends MovableObject {
     }
 
     startUnrolling() {
+        this.blocksMovement = true;
         this.isUnrolling = true;
         this.unrollFrame = 0;
         this.unrollTimer = 0;
