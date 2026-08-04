@@ -66,7 +66,7 @@ export class World {
         this.checkPoisonCollision();
         
         if (this.character.justAttacked) {
-            this.checkCoinHit();
+            this.character.lastAttackHit = this.checkCoinHit();
             this.character.justAttacked = false;
         }
     }
@@ -209,11 +209,13 @@ export class World {
     }
     
     checkCoinHit(){
+        let hitSomething = false;
         for (let i = this.level.coins.length - 1; i >= 0; i--){ // Rückwärts itterieren, damit das Entfernen (splice) während des  Durchlaufs keine Coins überspringt
             let coin = this.level.coins[i];
             if (!coin.collectOnTouch && this.character.isNear(coin)) {
                 coin.value--;
                 this.collectedCoins++;
+                hitSomething = true;
                 let percentage = (this.collectedCoins / this.totalCoins) * 100;
                 this.coinBar.setPercentage(percentage, this.coinBar.IMAGES_COINBAR, this.collectedCoins);
                 if (coin.value <= 0) {
@@ -221,6 +223,7 @@ export class World {
                 }
             }
         }
+        return hitSomething;
     }
 
     checkPoisonCollision(){

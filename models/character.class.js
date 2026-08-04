@@ -10,6 +10,7 @@ export class Character extends MovableObject {
     world;
     longIdleThreshold = 8000;
     idleTime = 0;
+    lastAttackHit = false;
 
     knockbackActive = false;
     knockbackStartX = 0;
@@ -228,6 +229,9 @@ export class Character extends MovableObject {
             if (this.attackTimer > this.attackFrameDuration) {
                 this.attackTimer = 0;
                 this.attackFrame++;
+                if (!this.lastAttackHit && this.attackFrame >= 4 && this.attackFrame <= 6) {
+                    this.attackFrame = 7;
+                }
                 if (this.attackFrame >= this.IMAGES_FIN_SLAP_ATTACK.length) {
                     this.isAttacking = false;
                 } else {
