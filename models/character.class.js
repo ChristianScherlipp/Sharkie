@@ -44,6 +44,13 @@ export class Character extends MovableObject {
     poisonTimer = 0;
     poisonFrameDuration = 100;
     justFiredPoison = false;
+
+    isFrozen = false;
+    showingConfusion = false;
+    confusionFrame = 0;
+    confusionTimer = 0;
+    confusionFrameDuration = 200;
+    confusionFrameCount = 4;
     
     IMAGES_SWIM = [
             './assets/img/1.Sharkie/3.Swim/1.png',
@@ -164,6 +171,18 @@ export class Character extends MovableObject {
     
 
     update(deltaTime) {
+
+        if (this.isFrozen) {
+            if (this.showingConfusion) {
+                this.confusionTimer += deltaTime;
+                if (this.confusionTimer > this.confusionFrameDuration) {
+                    this.confusionTimer = 0;
+                    this.confusionFrame = (this.confusionFrame + 1) % this.confusionFrameCount;
+                }
+            }
+            return;
+        }
+
         let factor = deltaTime / (1000 / 60);
         let prevX = this.x;
         let prevY = this.y;
@@ -203,7 +222,11 @@ export class Character extends MovableObject {
 
         this.getRealFrame();
 
-        let blocked = this.world.level.coins.some(coin => coin.blocksMovement && this.isColliding(coin));
+        let blockedByCoin = this.world.level.coins.some(coin => coin.blocksMovement && this.isColliding(coin));
+        let net = this.world.level.net;
+        let blockedByNet = net && net.blocksMovement && this.isColliding(net);
+        let blocked = blockedByCoin || blockedByNet;
+
         if (blocked){
             this.x = prevX;
             this.y = prevY;

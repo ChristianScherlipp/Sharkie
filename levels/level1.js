@@ -7,6 +7,7 @@ import { Light } from "../models/light.class.js";
 import { BackgroundObject } from "../models/background-object.class.js";
 import { BigCoin } from "../models/big-coin.class.js";
 import { Poison } from "../models/poison.class.js";
+import { Net } from "../models/net.class.js";
 
 export const level1 = new Level(
     [
@@ -129,6 +130,8 @@ export const level1 = new Level(
         new Poison(6126, 100),
         new Poison(6548, 180),
     ],
+    
+        new Net(5752),
 
     [
         new Light()

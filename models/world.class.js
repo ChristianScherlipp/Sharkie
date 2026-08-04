@@ -52,6 +52,7 @@ export class World {
         this.level.coins.forEach(coin => coin.update(deltaTime));
         this.level.poisons.forEach(poison => poison.update(deltaTime));
         this.level.lights.forEach(light => light.update(deltaTime));
+        this.level.net.update(deltaTime);
         this.firingObjects.forEach(fo => fo.update(deltaTime));
         this.xpPopups.forEach(popup => popup.elapsed += deltaTime);
         this.xpPopups = this.xpPopups.filter(popup => popup.elapsed < popup.duration);
@@ -63,6 +64,7 @@ export class World {
             this.collisionTimer = 0;
         }
         
+        this.checkNetTrigger();
         this.checkFiringObjects();
         this.checkPoisonFiringObjects();
         
@@ -98,7 +100,9 @@ export class World {
         this.drawExperience();
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.firingObjects);
+        this.addToMap(this.level.net);
         this.addToMap(this.character); // Character laden
+        this.drawConfusion();
         this.ctx.translate(-this.camera_x, 0);
     }
 
@@ -345,5 +349,45 @@ export class World {
                 this.posionBar.setPercentage(percentage, [], this.collectedPoisons);
             }
         }
+    }
+
+    checkNetTrigger(){
+        if (!this.netTriggered) {
+            if (this.character.x < this.level.net.x) return;
+            this.netTriggered = true;
+            this.character.isFrozen = true;
+            this.character.showingConfusion = true;
+            this.character.confusionFrame = 0;
+            this.character.confusionTimer = 0;
+            this.character.otherDirection = true;  // zum Netz umdrehen
+            this.level.net.startUnrolling();
+            return;
+        }
+        if (this.character.isFrozen && this.level.net.unrollDone) {
+            this.character.isFrozen = false;
+            this.character.showingConfusion = false;
+        }
+    }
+
+    drawConfusion() {
+        if (!this.character.showingConfusion) return;
+        let bounceOffsets = [0, -6, -10, -6];
+        let baseX = this.character.x + this.character.width / 2;
+        let baseY = this.character.y - 30;
+        this.ctx.save();
+        this.ctx.font = 'bold 22px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeStyle = 'black';
+        this.ctx.fillStyle = 'white';
+        let marks = [-24, 0, 24];
+        marks.forEach((dx, i) => {
+            let offsetIndex = (this.character.confusionFrame + i) % bounceOffsets.length;
+            let y = baseY + bounceOffsets[offsetIndex];
+            this.ctx.strokeText('?', baseX + dx, y);
+            this.ctx.fillText('?', baseX + dx, y);
+        });
+        this.ctx.restore();
     }
 }
