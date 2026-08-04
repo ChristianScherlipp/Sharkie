@@ -21,8 +21,8 @@ export const level1 = new Level(
         new Pufferfish(4572, 320),
         new Jellyfish(5081, 180),
         new Pufferfish(5590, 260),
-        new Jellyfish(6099, 140),
-        new Finalboss(6700, 150),
+        new Jellyfish(5099, 140),
+        new Finalboss(5700, 150),
     ],
 
     [

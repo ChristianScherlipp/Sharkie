@@ -53,12 +53,14 @@ export class Pufferfish extends MovableObject {
     ];
 
 
-    constructor(){
+    constructor(x, y){
         super().loadImage('./assets/img/2.Enemy/1.Puffer_fish_3_color_options/1.Swim/1.swim1.png');
         this.loadImages(this.PUFFERFISH_IMAGES_SWIM);
         this.loadImages(this.PUFFERFISH_IMAGES_TRANSITION);
         this.loadImages(this.PUFFERFISH_IMAGES_BUBBLESWIM);
         this.speed = 0.15 + Math.random() * 0.5;
+        this.x = x;
+        this.y = y;
         this.minX = this.x - (200 + Math.random() * 200);
         this.maxX = this.x + (200 + Math.random() * 200);
         this.getRealFrame();
