@@ -210,7 +210,7 @@ export class Character extends MovableObject {
             this.getRealFrame();
         }
         
-        let isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN || this.world.keyboard.E || this.world.keyboard.SPACE;
+        let isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN || this.world.keyboard.E || this.world.keyboard.SPACE || this.world.keyboard.Q;
         if (isMoving) {
             this.idleTime = 0;
         } else {
