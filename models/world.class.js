@@ -66,9 +66,15 @@ export class World {
         this.checkPoisonCollision();
         
         if (this.character.justAttacked) {
+            let hitCoin = this.checkCoinHit();
+            let hitEnemy = this.checkFinSlapOnEnemies();
+            this.character.lastAttackHit = hitCoin || hitEnemy;
             this.character.lastAttackHit = this.checkCoinHit();
             this.character.justAttacked = false;
         }
+
+        this.checkBubbleHitOnEnemies();
+        this.level.enemies = this.level.enemies.filter(enemy => !enemy.markedForRemoval);
     }
 
     draw(){
@@ -186,14 +192,15 @@ export class World {
 
     checkCollision(){
         this.level.enemies.forEach((enemy) =>{
-                if(this.character.isColliding(enemy)) {
-                    this.character.hit(enemy.damage);
-                    this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR)
-                    if (enemy.knocksBack) {
-                        this.applyKnockback(enemy);
-                    }
+        if (enemy.isDying) return;
+        if(this.character.isColliding(enemy)) {
+                this.character.hit(enemy.damage);
+                this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR)
+                if (enemy.knocksBack) {
+                    this.applyKnockback(enemy);
                 }
-            })
+            }
+        })
     }
 
     checkCoinCollision() {
@@ -224,6 +231,54 @@ export class World {
             }
         }
         return hitSomething;
+    }
+
+    checkFinSlapOnEnemies(){
+        let hitSomething = false;
+        this.level.enemies.forEach((enemy) => {
+            if (enemy.isDying) return;
+            if (enemy.constructor.name !== 'Pufferfish') return;
+            if (!this.character.isNear(enemy)) return;
+
+            let facingLeft = !enemy.otherDirection;
+            let characterInFront = facingLeft 
+                ? (this.character.x + this.character.width / 2) <= (enemy.x + enemy.width / 2)
+                : (this.character.x + this.character.width / 2) >= (enemy.x + enemy.width / 2);
+
+            if (characterInFront) {
+                // von Vorne: Stacheln, Sharkie bekommt selber schaden
+                this.character.hit(enemy.damage);
+                this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR);
+            } else {
+                // von Hinten: Fin Slap trifft, 2 schaden
+                enemy.health -= 2;
+                hitSomething = true;
+                if(enemy.health <= 0){
+                    enemy.startDying();
+                }
+            }
+        });
+        return hitSomething;
+    }
+
+    checkBubbleHitOnEnemies(){
+        for (let i = this.firingObjects.length - 1; i >= 0; i--){
+            let bubble = this.firingObjects[i];
+            if (bubble instanceof PoisonBubble) continue; // nur Normale Bubble
+
+            for (let j = this.level.enemies.length - 1; j >= 0; j--) {
+                let enemy = this.level.enemies[j];
+                if (enemy.isDying) continue;
+                if (bubble.isColliding(enemy)) {
+                    enemy.health -= 1;
+                    this.firingObjects.splice(i, 1);
+                    if (enemy.health <= 0) {
+                        enemy.startDying();
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     checkPoisonCollision(){

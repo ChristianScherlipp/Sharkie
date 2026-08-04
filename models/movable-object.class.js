@@ -24,6 +24,12 @@ export class MovableObject extends DrawableObject {
     // Zähler für Sprite-Animationen, wird von animateImages() genutzt
     animationTimer = 0;
 
+    isDying = false;
+    dieFrame = 0;
+    dieTimer = 0;
+    dieFrameDuration = 150;
+    markedForRemoval = false;
+
     constructor() {
         super();
     }
@@ -129,6 +135,25 @@ export class MovableObject extends DrawableObject {
 
     isDead() {
         return this.energy == 0;
+    }
+
+    startDying() {
+        this.isDying = true;
+        this.dieFrame = 0;
+        this.dieTimer = 0;
+    }
+
+    updateDying(deltaTime, images) {
+        this.dieTimer += deltaTime;
+        if (this.dieTimer > this.dieFrameDuration) {
+            this.dieTimer = 0;
+            this.dieFrame++;
+            if (this.dieFrame >= images.length) {
+                this.markedForRemoval = true;
+            } else {
+                this.img = this.imageCache[images[this.dieFrame]];
+            }
+        }
     }
 
     //  Wird von der zentralen Game-Loop in World jeden Frame aufgerufen.

@@ -6,6 +6,7 @@ export class Pufferfish extends MovableObject {
     y = Math.random() * 450;
     width = 140;
     height = 110;
+    health = 2;
     damage = 2;
     detectionRange = 100;
     exitRange = 130;  // Hysterese gegen Flackern an der Grenze
@@ -52,12 +53,19 @@ export class Pufferfish extends MovableObject {
         './assets/img/2.Enemy/1.Puffer_fish_3_color_options/3.Bubbleeswim/1.bubbleswim5.png',
     ];
 
+    PUFFERFISH_IMAGES_DIE = [
+        './assets/img/2.Enemy/1.Puffer_fish_3_color_options/4.DIE/1.Dead.1.png',
+        './assets/img/2.Enemy/1.Puffer_fish_3_color_options/4.DIE/1.Dead.2.png',
+        './assets/img/2.Enemy/1.Puffer_fish_3_color_options/4.DIE/1.Dead.3.png',
+    ];
+
 
     constructor(x, y){
         super().loadImage('./assets/img/2.Enemy/1.Puffer_fish_3_color_options/1.Swim/1.swim1.png');
         this.loadImages(this.PUFFERFISH_IMAGES_SWIM);
         this.loadImages(this.PUFFERFISH_IMAGES_TRANSITION);
         this.loadImages(this.PUFFERFISH_IMAGES_BUBBLESWIM);
+        this.loadImages(this.PUFFERFISH_IMAGES_DIE);
         this.speed = 0.15 + Math.random() * 0.5;
         this.x = x;
         this.y = y;
@@ -69,6 +77,12 @@ export class Pufferfish extends MovableObject {
      // Wird jeden Frame von World.update() aufgerufen.
     update(deltaTime, character) {
         let distance = Infinity;
+
+        if (this.isDying) {
+            this.updateDying(deltaTime, this.PUFFERFISH_IMAGES_DIE);
+            return;
+        }
+
         if (character) {
             let charLeft = character.rX;
             let charRight = character.rX + character.rW;

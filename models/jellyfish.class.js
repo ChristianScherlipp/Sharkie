@@ -7,6 +7,7 @@ export class Jellyfish extends MovableObject {
     width = 70;
     height = 120;
     damage = 2;
+    health = 1;
     detectionRange = 100;
     exitRange = 130;
     isAlerted = false;
@@ -34,6 +35,13 @@ export class Jellyfish extends MovableObject {
         './assets/img/2.Enemy/2.Jelly_fish/Super_dangerous/Pink4.png',
     ];
 
+    JELLY_IMAGES_DIE = [
+        './assets/img/2.Enemy/2.Jelly_fish/Dead/Lila/L1.png',
+        './assets/img/2.Enemy/2.Jelly_fish/Dead/Lila/L2.png',
+        './assets/img/2.Enemy/2.Jelly_fish/Dead/Lila/L3.png',
+        './assets/img/2.Enemy/2.Jelly_fish/Dead/Lila/L4.png',
+    ];
+
     minY;
     maxY;
     movingUp = true;
@@ -42,6 +50,7 @@ export class Jellyfish extends MovableObject {
         super().loadImage('./assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png');
         this.loadImages(this.JELLY_IMAGES_SWIM);
         this.loadImages(this.JELLY_IMAGES_DANGEROUS);
+        this.loadImages(this.JELLY_IMAGES_DIE);
         this.speed = 0.15 +Math.random() * 0.5;
         this.x = x;
         this.y =y;
@@ -54,6 +63,11 @@ export class Jellyfish extends MovableObject {
 
     // Wird jeden Frame von World.update() aufgerufen
     update(deltaTime, character){
+        if (this.isDying) {
+            this.updateDying(deltaTime, this.JELLY_IMAGES_DIE);
+            return;
+        }
+
         let distance = Infinity;
         if (character) {
             let charLeft = character.rX;
