@@ -24,6 +24,7 @@ export class World {
     collectedCoins = 0;
     totalPoisons = this.level.poisons.reduce((sum, poison) => sum + poison.value, 0);
     collectedPoisons = 0;
+    xpPopups = [];
     experience = 0;
 
     constructor(canvas, keyboard) {
@@ -52,6 +53,8 @@ export class World {
         this.level.poisons.forEach(poison => poison.update(deltaTime));
         this.level.lights.forEach(light => light.update(deltaTime));
         this.firingObjects.forEach(fo => fo.update(deltaTime));
+        this.xpPopups.forEach(popup => popup.elapsed += deltaTime);
+        this.xpPopups = this.xpPopups.filter(popup => popup.elapsed < popup.duration);
         //Kollision & Schießen liefen früher alle 200ms per eigenen Interval,
         // das wird hier über einen zähler nachgebildet.
         this.collisionTimer += deltaTime;
@@ -70,7 +73,6 @@ export class World {
             let hitCoin = this.checkCoinHit();
             let hitEnemy = this.checkFinSlapOnEnemies();
             this.character.lastAttackHit = hitCoin || hitEnemy;
-            this.character.lastAttackHit = this.checkCoinHit();
             this.character.justAttacked = false;
         }
 
@@ -88,6 +90,7 @@ export class World {
         this.addObjectsToMap(this.level.enemies); // Gegner aus dem Array enemies laden
         this.addObjectsToMap(this.level.coins);
         this.addObjectsToMap(this.level.poisons);
+        this.drawXpPopups();
         this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.coinBar);
         this.addToMap(this.posionBar);
@@ -148,6 +151,38 @@ export class World {
         this.ctx.fillStyle = 'white';
         this.ctx.fillText(text, x, y);
         this.ctx.restore();
+    }
+
+    awardExperience(amount, enemy) {
+        this.experience += amount;
+        this.xpPopups.push({
+            x: enemy.x + enemy.width / 2,
+            y: enemy.y,
+            text: `+${amount}`,
+            elapsed: 0,
+            duration: 800,
+            riseDistance: 75
+        });
+    }
+
+    drawXpPopups(){
+        this.xpPopups.forEach(popup => {
+            let t = Math.min(popup.elapsed / popup.duration, 1);
+            let y = popup.y - popup.riseDistance * t;
+            let alpha = 1 - t;
+
+            this.ctx.save();
+            this.ctx.globalAlpha = alpha;
+            this.ctx.font = 'bold 15px Arial';
+            this.ctx.textAlign = 'center';
+            this.ctx.textBaseline = 'middle';
+            this.ctx.lineWidth = 3;
+            this.ctx.strokeStyle = 'black';
+            this.ctx.strokeText(popup.text, popup.x, y);
+            this.ctx.fillStyle = 'yellow';
+            this.ctx.fillText(popup.text, popup.x, y);
+            this.ctx.restore();
+        })
     }
 
     checkFiringObjects(){
@@ -272,7 +307,7 @@ export class World {
                 hitSomething = true;
                 if(enemy.health <= 0){
                     enemy.startDying();
-                    this.experience += 200;
+                    this.awardExperience(200, enemy);
                 }
             }
         });
@@ -292,7 +327,7 @@ export class World {
                     this.firingObjects.splice(i, 1);
                     if (enemy.health <= 0) {
                         enemy.startDying();
-                        this.experience += 100;
+                        this.awardExperience(100, enemy)
                     }
                     break;
                 }
