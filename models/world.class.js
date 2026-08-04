@@ -142,6 +142,9 @@ export class World {
     checkPoisonFiringObjects(){
         if (this.character.justFiredPoison) {
             this.character.justFiredPoison = false;
+            this.collectedPoisons--;
+            let percentage = (this.collectedPoisons / this.totalPoisons) * 100;
+            this.posionBar.setPercentage(percentage, [], this.collectedPoisons);
             let direction = this.character.otherDirection ? -1 : 1;
             let spawnX = this.character.otherDirection
                 ? this.character.x - 20

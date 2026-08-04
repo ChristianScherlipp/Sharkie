@@ -258,7 +258,7 @@ export class Character extends MovableObject {
             return;
         }
 
-        if (this.world.keyboard.Q && !this.isFormingPoison && !this.isAttacking && !this.isFormingBubble) {
+        if (this.world.keyboard.Q && !this.isFormingPoison && !this.isAttacking && !this.isFormingBubble && this.world.collectedPoisons > 0) {
             this.isFormingPoison = true;
             this.poisonFrame = 0;
             this.poisonTimer = 0;
