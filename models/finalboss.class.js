@@ -6,6 +6,7 @@ export class Finalboss extends MovableObject {
     y = Math.random() * 300;
     width = 250;
     height = 220;
+
     minX = 5752;
     maxX = 7191 - 250;
     minY = 0;
@@ -14,6 +15,16 @@ export class Finalboss extends MovableObject {
     vy = 0;
     directionChangeTimer = 0;
     directionChangeInterval = 3000;
+
+    state = 'wander';
+    followRange = 200;
+    followExitRange = 250;
+    attackRange = 100;
+    attackExitRange = 130;
+    verticalSightTolerance = 80;
+    folloSpeedMultiplier = 2;
+    attackSpeedMultuplier = 3.5;
+
 
     offset = {
         top : 80,
@@ -38,9 +49,19 @@ export class Finalboss extends MovableObject {
             './assets/img/2.Enemy/3.Final_Enemy/2.floating/13.png',
     ];
 
+    FINALBOSS_IMAGES_ATTACK = [
+        './assets/img/2.Enemy/3.Final_Enemy/Attack/1.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Attack/2.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Attack/3.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Attack/4.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Attack/5.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Attack/6.png',
+    ];
+
     constructor (x, y){
         super().loadImage('./assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png');
         this.loadImages(this.FINALBOSS_IMAGES_SWIM);
+        this.loadImages(this.FINALBOSS_IMAGES_ATTACK);
         this.x = x;
         this.y = y;
         this.speed = 1;
@@ -60,22 +81,78 @@ export class Finalboss extends MovableObject {
         this.directionChangeInterval = 3000 + Math.random() * 3000;
     }
 
+    edgeDistanceTo(character){
+        let charLeft = character.rX, charRight = character.rX + character.rW;
+        let charTop = character.rY, charBottom = character.rY + character.rH;
+        let bossLeft = this.rX, bossRight = this.rX + this.rW;
+        let bossTop = this.rY, bossBottom = this.rY + this.rH;
+        let dx = Math.max(charLeft - bossRight, bossLeft - charRight, 0);
+        let dy = Math.max(charTop - bossBottom, bossTop - charBottom, 0);
+        return Math.sqrt(dx * dx + dy *dy);
+    }
     // Wird jeden Frame von World.update() aufgerufen.
-    update(deltaTime){
-        this.directionChangeTimer += deltaTime;
-        if (this.directionChangeTimer > this.directionChangeInterval) {
-            this.pickRandomDirection();
+    update(deltaTime, character){
+        this.getRealFrame();
+
+        if (character) {
+            let inSight = this.isCharacterInSight(character);
+            let distance = this.edgeDistanceTo(character)
+            if (this.state !== 'attacking' && inSight && distance <= this.attackRange) {
+                this.state = 'attacking';
+            }else if (this.state === 'attacking' && (!inSight || distance > this.attackExitRange)) {
+                this.state = inSight && distance <= this.followExitRange ? 'following' : 'wander';
+            } else if (this.state === 'wander' && inSight && distance <= this.followRange) {
+                this.state = 'following';
+            }else if (this.state === 'following' && (!inSight || distance >= this.followExitRange)) {
+                this.state = 'wander';
+            }
+        } else {
+            this.state = 'wander';
         }
+
+        if (this.state === ' wander') {
+            this.directionChangeTimer += deltaTime;
+            if (this.directionChangeTimer > this.directionChangeInterval) {
+                this.pickRandomDirection();
+            }
+        } else {
+            let dx = (character.x + character.width / 2) - (this.x + this.width / 2);
+            let dy = (character.y + character.height / 2) - ( this.y +this.height / 2);
+            let len = Math.sqrt(dx * dx + dy *dy) || 1;
+            this.vx = dx / len;
+            this.vy = dy / len;
+        }
+        let speedMultiplier = 1;
+        if (this.state === 'following') speedMultiplier = this.folloSpeedMultiplier;
+        if (this.state === 'attacking') speedMultiplier = this.attackSpeedMultuplier;
+
         let factor = deltaTime / (1000 / 120);
         this.x += this.vx * this.speed * factor;
         this.y += this.vy * this.speed * factor;
+        this.x += this.vx * this.speed * speedMultiplier * factor;
+        this.y += this.vy * this.speed * speedMultiplier * factor;
         if (this.x <= this.minX) { this.x = this.minX; this.vx = 1; }
         if (this.x >= this.maxX) { this.x = this.maxX; this.vx = -1; }
         if (this.y <= this.minY) { this.y = this.minY; this.vy = 1; }
         if (this.y >= this.maxY) { this.y = this.maxY; this.vy = -1; }
         if (this.vx < 0) { this.otherDirection = false; }
         else if (this.vx > 0) { this.otherDirection = true; }
-        this.getRealFrame();
-        this.animateImages(this.FINALBOSS_IMAGES_SWIM, deltaTime, 150);
+        if (this.state === 'attacking') {
+            this.animateImages(this.FINALBOSS_IMAGES_ATTACK, deltaTime, 100)
+        } else {
+            this.animateImages(this.FINALBOSS_IMAGES_SWIM, deltaTime, 150);
+            this.animateImages(this.FINALBOSS_IMAGES_SWIM, deltaTime, 150);
+        }
     }
+
+    isCharacterInSight(character){
+        let facingLeft = !this.otherDirection;
+        let inFront = facingLeft 
+            ? (character.x + character.width / 2) <= (this.x + this.width / 2)
+            : (character.x + character.width / 2) >= (this.x + this.width / 2);
+
+        let verticalDiff = Math.abs((character.y * character.height / 2) - ( this.y * this.height / 2));
+        return inFront && verticalDiff <= this.verticalSightTolerance;
+    }
+
 }
