@@ -110,7 +110,7 @@ export class Finalboss extends MovableObject {
             this.state = 'wander';
         }
 
-        if (this.state === ' wander') {
+        if (this.state === 'wander') {
             this.directionChangeTimer += deltaTime;
             if (this.directionChangeTimer > this.directionChangeInterval) {
                 this.pickRandomDirection();
@@ -127,8 +127,6 @@ export class Finalboss extends MovableObject {
         if (this.state === 'attacking') speedMultiplier = this.attackSpeedMultuplier;
 
         let factor = deltaTime / (1000 / 120);
-        this.x += this.vx * this.speed * factor;
-        this.y += this.vy * this.speed * factor;
         this.x += this.vx * this.speed * speedMultiplier * factor;
         this.y += this.vy * this.speed * speedMultiplier * factor;
         if (this.x <= this.minX) { this.x = this.minX; this.vx = 1; }
@@ -151,7 +149,7 @@ export class Finalboss extends MovableObject {
             ? (character.x + character.width / 2) <= (this.x + this.width / 2)
             : (character.x + character.width / 2) >= (this.x + this.width / 2);
 
-        let verticalDiff = Math.abs((character.y * character.height / 2) - ( this.y * this.height / 2));
+        let verticalDiff = Math.abs((character.y + character.height / 2) - ( this.y + this.height / 2));
         return inFront && verticalDiff <= this.verticalSightTolerance;
     }
 
