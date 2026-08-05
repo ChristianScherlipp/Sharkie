@@ -353,7 +353,7 @@ export class World {
 
     checkNetTrigger(){
         if (!this.netTriggered) {
-            if (this.character.x < this.level.net.x) return;
+            if (this.character.x < this.level.net.x + this.level.net.width) return;
             this.netTriggered = true;
             this.character.isFrozen = true;
             this.character.showingConfusion = true;
