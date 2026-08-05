@@ -373,7 +373,7 @@ export class World {
         if (!this.character.showingConfusion) return;
         let bounceOffsets = [0, -6, -10, -6];
         let baseX = this.character.x + this.character.width / 2;
-        let baseY = this.character.y - 30;
+        let baseY = this.character.y + this.character.offset.top - 20;
         this.ctx.save();
         this.ctx.font = 'bold 22px Arial';
         this.ctx.textAlign = 'center';

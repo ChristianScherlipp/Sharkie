@@ -30,14 +30,14 @@ export class Character extends MovableObject {
     isAttacking = false;
     attackFrame = 0;
     attackTimer = 0;
-    attackFrameDuration = 100; // ms pro Frame, 8 Frames = 800ms gesamt
-    justAttacked = false; // World prüft dann einmalig auf Coin-Treffer
+    attackFrameDuration = 100;
+    justAttacked = false; 
 
     isFormingBubble = false;
     bubbleFrame = 0;
     bubbleTimer = 0;
     bubbleFrameDuration = 100;
-    justFiredBubble = false; //world erzeugt daraufhin das FiringObject
+    justFiredBubble = false;
 
     sFormingPoison = false;
     poisonFrame = 0;
