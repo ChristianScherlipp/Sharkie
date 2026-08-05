@@ -25,6 +25,21 @@ export class Finalboss extends MovableObject {
     folloSpeedMultiplier = 2;
     attackSpeedMultuplier = 3.5;
 
+    health = 50;
+    maxHealth = 50;
+    xpAwarded = false;
+
+    isHurt = false;
+    hurtFrame = 0;
+    hurtTimer = 0;
+    hurtFrameDuration = 120;
+
+    poisonHitCount = 0;
+    isPoisoned = false;
+    poisonTickTimer = 0;
+    poisonTickInterval = 1500;
+    poisonTickDamage = 2;
+    justPoisonTicked = false;
 
     offset = {
         top : 80,
@@ -58,10 +73,29 @@ export class Finalboss extends MovableObject {
         './assets/img/2.Enemy/3.Final_Enemy/Attack/6.png',
     ];
 
+    FINALBOSS_IMAGES_HURT = [
+        './assets/img/2.Enemy/3.Final_Enemy/Hurt/1.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Hurt/2.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Hurt/3.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Hurt/4.png',
+    ];
+
+    FINALBOSS_IMAGES_DEATH = [
+        './assets/img/2.Enemy/3.Final_Enemy/Dead/2death1.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Dead/2death6.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Dead/2death7.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Dead/2death8.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Dead/2death9.png',
+        './assets/img/2.Enemy/3.Final_Enemy/Dead/2death10.png',
+    ];
+
+
     constructor (x, y){
         super().loadImage('./assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png');
         this.loadImages(this.FINALBOSS_IMAGES_SWIM);
         this.loadImages(this.FINALBOSS_IMAGES_ATTACK);
+        this.loadImages(this.FINALBOSS_IMAGES_HURT);
+        this.loadImages(this.FINALBOSS_IMAGES_DEATH);
         this.x = x;
         this.y = y;
         this.speed = 1;
@@ -92,7 +126,29 @@ export class Finalboss extends MovableObject {
     }
     // Wird jeden Frame von World.update() aufgerufen.
     update(deltaTime, character){
-        this.getRealFrame();
+        if (this.isDying) {this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
+
+        if (this.isPoisoned) {
+            this.poisonTickTimer += deltaTime;
+            if (this.poisonTickTimer > this.poisonTickInterval) {
+                this.poisonTickTimer = 0;
+                this.takeDamage(this.poisonTickDamage);
+                this.justPoisonTicked = true;
+            }
+        }
+        if (this.isDying) {this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
+        if (this.isHurt) {
+            this.hurtTimer += deltaTime;
+            if (this.hurtTimer > this.hurtFrameDuration) {
+                this.hurtTimer = 0;
+                this.hurtFrame++;
+                if (this.hurtFrame >= this.FINALBOSS_IMAGES_HURT.length) {
+                    this.isHurt = false;
+                }
+            }
+        }
+
+
 
         if (character) {
             let inSight = this.isCharacterInSight(character);
@@ -141,6 +197,16 @@ export class Finalboss extends MovableObject {
             this.animateImages(this.FINALBOSS_IMAGES_SWIM, deltaTime, 150);
             this.animateImages(this.FINALBOSS_IMAGES_SWIM, deltaTime, 150);
         }
+
+        this.getRealFrame();
+
+        if (this.isHurt) {
+            this.img = this.imageCache[this.FINALBOSS_IMAGES_HURT[this.hurtFrame]];
+        }else if (this.state === 'attacking') {
+            this.animateImages(this.FINALBOSS_IMAGES_ATTACK, deltaTime, 100);
+        }else {
+            this.animateImages(this.FINALBOSS_IMAGES_SWIM, deltaTime, 150);
+        }
     }
 
     isCharacterInSight(character){
@@ -151,6 +217,28 @@ export class Finalboss extends MovableObject {
 
         let verticalDiff = Math.abs((character.y + character.height / 2) - ( this.y + this.height / 2));
         return inFront && verticalDiff <= this.verticalSightTolerance;
+    }
+
+    takeDamage (amount) {
+        if (this.isDying) return;
+        this.health -= amount;
+        if (this.health <= 0) {
+            this.health = 0;
+            this.startDying();
+            return;
+        }
+        this.isHurt = true;
+        this.hurtFrame = 0;
+        this.hurtTimer = 0;
+    }
+
+    registerPoisonHit() {
+        if (this.isPoisoned) return;
+        this.poisonHitCount++;
+        if (this.poisonHitCount >= 3) {
+            this.isPoisoned = true;
+            this.poisonTickTimer = 0;
+        }
     }
 
 }
