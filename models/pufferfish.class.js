@@ -16,6 +16,11 @@ export class Pufferfish extends MovableObject {
     transitionFrameDuration = 100;
     chargeDeadzone = 20;
     chargeDirectionLeft = true;
+    // Nach einem Bounce (Rand/BigCoin) wird die Charge-Richtung für diese
+    // Dauer nicht aus der Spielerposition neu berechnet - verhindert, dass
+    // der Fisch am Hindernis "vibriert", wenn der Spieler dahinter steht.
+    chargeBounceCooldown = 0;
+    chargeBounceCooldownDuration = 400;
     knocksBack = true;
     knockbackDistance = 50;
 
@@ -130,7 +135,9 @@ export class Pufferfish extends MovableObject {
         }
 
         if (this.alertState === 'charging') {
-            if (character) {
+            if (this.chargeBounceCooldown > 0) {
+                this.chargeBounceCooldown -= deltaTime;
+            } else if (character) {
                 let dx = (character.x + character.width / 2) - (this.x + this.width / 2);
                 if (Math.abs(dx) > this.chargeDeadzone) {
                     this.chargeDirectionLeft = dx < 0;
@@ -149,9 +156,11 @@ export class Pufferfish extends MovableObject {
             if (hitLeft || (hitCoin && this.chargeDirectionLeft)) {
                 if (level && this.x < level.level_start_x) this.x = level.level_start_x;
                 this.chargeDirectionLeft = false;
+                this.chargeBounceCooldown = this.chargeBounceCooldownDuration;
             } else if (hitRight || (hitCoin && !this.chargeDirectionLeft)) {
                 if (level) this.x = level.level_end_x - this.width;
                 this.chargeDirectionLeft = true;
+                this.chargeBounceCooldown = this.chargeBounceCooldownDuration;
             }
             this.getRealFrame();
             this.otherDirection = !this.chargeDirectionLeft;

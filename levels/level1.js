@@ -23,7 +23,7 @@ export const level1 = new Level(
         new Jellyfish(5081, 180),
         new Pufferfish(5590, 260),
         new Jellyfish(5099, 140),
-        new Finalboss(6700, 150),
+        new Finalboss(6900, 5),
     ],
 
     // Hinweis: Alle Coins bleiben vor x=5752 - die letzten beiden
