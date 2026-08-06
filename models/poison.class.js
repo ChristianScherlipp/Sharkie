@@ -1,15 +1,15 @@
 import { MovableObject } from "./movable-object.class.js";
 
 export class Poison extends MovableObject {
-    showFrame = true;
+    showFrame = false;
     x;
     y;
-    width = 40;
-    height = 40;
+    width = 60;
+    height = 50;
     offset = {
         top: 5,
-        left: 5,
-        right: 5,
+        left: 17,
+        right: 17,
         bottom: 5
     };
     value = 5;
