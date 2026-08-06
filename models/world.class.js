@@ -52,6 +52,14 @@ export class World {
     // Prinzip wie xpPopups, nur andere Farbe.
     damagePopups = [];
 
+    // Boss-Erschein-Sequenz: 'pending' -> 'panning' (Kamera schwenkt zum
+    // letzten Abschnitt) -> introducing (Erschein-Animation-läuft) -> 'done'
+    bossIntroPhase = 'pending';
+    cameraPanStartX = 0;
+    cameraPanTargetX = 0;
+    cameraPanElapsed = 0;
+    cameraPanDuration = 1500;
+
     constructor(canvas, keyboard) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -81,6 +89,7 @@ export class World {
         this.firingObjects.forEach(fo => fo.update(deltaTime));
 
         this.checkNetTrigger();
+        this.updateBossIntro(deltaTime);
 
         //Kollision lief früher alle 200ms per eigenem Interval,
         // das wird hier über einen zähler nachgebildet.
@@ -111,7 +120,7 @@ export class World {
 
         // Boss-Sonderfälle: Healthbar-Sichtbarkeit, einmalige Todes-XP
         // (egal wodurch er gestorben ist), Gift-Tick-Popup.
-        this.showFinalbossHealthbar = this.netTriggered;
+        this.showFinalbossHealthbar = !!(this.finalboss && this.finalboss.introduced);
         if (this.finalboss) {
             if (this.finalboss.isDying && !this.finalboss.xpAwarded) {
                 this.finalboss.xpAwarded = true;
@@ -323,6 +332,8 @@ export class World {
     }
 
     addToMap (mo){
+        if (mo.hasAppeared === false) return;
+
         if (mo.otherDirection) {
             this.flipImage(mo);
         }
@@ -374,12 +385,35 @@ export class World {
             return;
         }
 
-        if (this.character.isFrozen && this.level.net.unrollDone) {
-            this.character.isFrozen = false;
+        if (this.character.isFrozen && this.level.net.unrollDone && this.bossIntroPhase === 'pending') {
+            // Netz fertig: Verwunderung abschalten, Kamera-Schwenk zum
+            // Boss-Bereich starten (Sharkie bleibt eingefroren, siehe
+            // updateBossIntro())
             this.character.showingConfusion = false;
+            this.bossIntroPhase = 'panning';
+            this.cameraPanStartX = this.camera_x;
+            this.cameraPanTargetX = this.canvas.width - this.level.level_end_x;
+            this.cameraPanElapsed = 0;
         }
     }
 
+    updateBossIntro(deltaTime) {
+        if (this.bossIntroPhase === 'panning') {
+            this.cameraPanElapsed += deltaTime;
+            let t = Math.min(this.cameraPanElapsed / this.cameraPanDuration, 1);
+            let eased = 1 - Math.pow(1 - t, 3) // Ease-out, wie beim Rückstoß
+            this.camera_x = this.cameraPanStartX + (this.cameraPanTargetX - this.cameraPanStartX) * eased;
+            if (t >= 1) {
+                this.bossIntroPhase = 'introducing';
+                if (this.finalboss) this.finalboss.startIntroducing();
+            }
+        } else if (this.bossIntroPhase === 'introducing'){
+            if (this.finalboss && this.finalboss.introduced) {
+                this.bossIntroPhase = 'done';
+                this.character.isFrozen = false;
+            }
+        }
+    }
 
     checkFiringObjects(){
         if (this.character.justFiredBubble) {
@@ -416,6 +450,7 @@ export class World {
     checkCollision(){
         this.level.enemies.forEach((enemy) =>{
                 if (enemy.isDying) return;
+                if (enemy instanceof Finalboss && !enemy.introduced) return;
                 if(this.character.isColliding(enemy)) {
                     this.character.hit(enemy.damage);
                     this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR)
@@ -438,6 +473,7 @@ export class World {
             let isPufferfish = enemy.constructor.name === 'Pufferfish';
             let isFinalboss = enemy instanceof Finalboss;
             if (!isPufferfish && !isFinalboss) return;
+            if (isFinalboss && !enemy.introduced) return;
             if (!this.character.isNear(enemy)) return;
 
             // Blickrichtung des Gegners: false = links, true = rechts
@@ -482,6 +518,7 @@ export class World {
             for (let j = this.level.enemies.length - 1; j >= 0; j--) {
                 let enemy = this.level.enemies[j];
                 if (enemy.isDying) continue;
+                if (enemy instanceof Finalboss && !enemy.introduced) continue;
                 if (bubble.isColliding(enemy)) {
                     let dmg = Math.round(bubble.currentDamage);
                     this.firingObjects.splice(i, 1);
@@ -514,6 +551,7 @@ export class World {
                 let enemy = this.level.enemies[j];
                 if (!(enemy instanceof Finalboss)) continue;
                 if (enemy.isDying) continue;
+                if (!enemy.introduced) continue;
                 if (bubble.isColliding(enemy)) {
                     let dmg = Math.round(bubble.currentDamage);
                     this.firingObjects.splice(i, 1);

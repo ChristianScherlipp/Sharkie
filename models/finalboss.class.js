@@ -42,12 +42,32 @@ export class Finalboss extends MovableObject {
     poisonTickDamage = 2;
     justPoisonTicked = false;
 
+    hasAppeared = false;
+    introduced = false;
+    isIntroducing = false;
+    introFrame = 0;
+    introTimer = 0;
+    introFrameDuration = 100;
+
     offset = {
         top : 80,
         left : 15,
         right : 20,
         bottom : 40
     };
+
+    FINALBOSS_IMAGES_INTRODUCE = [
+        './assets/img/2.Enemy/3.Final_Enemy/1.Introduce/1.png',
+        './assets/img/2.Enemy/3.Final_Enemy/1.Introduce/2.png',
+        './assets/img/2.Enemy/3.Final_Enemy/1.Introduce/3.png',
+        './assets/img/2.Enemy/3.Final_Enemy/1.Introduce/4.png',
+        './assets/img/2.Enemy/3.Final_Enemy/1.Introduce/5.png',
+        './assets/img/2.Enemy/3.Final_Enemy/1.Introduce/6.png',
+        './assets/img/2.Enemy/3.Final_Enemy/1.Introduce/7.png',
+        './assets/img/2.Enemy/3.Final_Enemy/1.Introduce/8.png',
+        './assets/img/2.Enemy/3.Final_Enemy/1.Introduce/9.png',
+        './assets/img/2.Enemy/3.Final_Enemy/1.Introduce/10.png',
+    ];
 
     FINALBOSS_IMAGES_SWIM = [
             './assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png',
@@ -97,6 +117,7 @@ export class Finalboss extends MovableObject {
         this.loadImages(this.FINALBOSS_IMAGES_ATTACK);
         this.loadImages(this.FINALBOSS_IMAGES_HURT);
         this.loadImages(this.FINALBOSS_IMAGES_DEATH);
+        this.loadImages(this.FINALBOSS_IMAGES_INTRODUCE);
         this.x = x;
         this.y = y;
         this.speed = 1;
@@ -116,6 +137,14 @@ export class Finalboss extends MovableObject {
         this.directionChangeInterval = 3000 + Math.random() * 3000;
     }
 
+    startIntroducing() {
+        this.hasAppeared = true;
+        this.isIntroducing = true;
+        this.introFrame = 0;
+        this.introTimer = 0;
+        this.img = this.imageCache[this.FINALBOSS_IMAGES_INTRODUCE[0]];
+    }
+
     edgeDistanceTo(character){
         let charLeft = character.rX, charRight = character.rX + character.rW;
         let charTop = character.rY, charBottom = character.rY + character.rH;
@@ -127,6 +156,25 @@ export class Finalboss extends MovableObject {
     }
     // Wird jeden Frame von World.update() aufgerufen.
     update(deltaTime, character){
+        if (this.isIntroducing) {
+            this.introTimer += deltaTime;
+            if (this.introTimer > this.introFrameDuration) {
+                this.introTimer = 0;
+                this.introFrame++;
+                if (this.introFrame >= this.FINALBOSS_IMAGES_INTRODUCE.length) {
+                    this.isIntroducing = false;
+                    this.introduced = true;
+                } else {
+                    this.img = this.imageCache[this.FINALBOSS_IMAGES_INTRODUCE[this.introFrame]];
+                }
+            }
+            return;
+        }
+        if (!this.introduced) {
+            
+            return;
+        }
+
         if (this.isDying) {this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
 
         if (this.isPoisoned) {
@@ -138,6 +186,17 @@ export class Finalboss extends MovableObject {
             }
         }
         if (this.isDying) {this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
+
+        if (this.isPoisoned) {
+            this.poisonTickTimer += deltaTime;
+            if (this.poisonTickTimer > this.poisonTickInterval) {
+                this.poisonTickTimer = 0;
+                this.takeDamage(this.poisonTickDamage);
+                this.justPoisonTicked = true;
+            }
+        }
+
+        if (this.isDying) {this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
         if (this.isHurt) {
             this.hurtTimer += deltaTime;
             if (this.hurtTimer > this.hurtFrameDuration) {
@@ -148,8 +207,6 @@ export class Finalboss extends MovableObject {
                 }
             }
         }
-
-
 
         if (character) {
             let inSight = this.isCharacterInSight(character);
