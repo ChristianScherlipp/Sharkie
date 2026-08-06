@@ -25,6 +25,200 @@ body h1 {
     margin: 0;
 }
 
+/* ================================= */
+/* Startbildschirm */
+/* ================================= */
+
+#start-screen {
+    position: absolute;
+    width: 720px;
+    height: 480px;
+
+    border-radius: 1rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+
+    box-shadow: 0 10px 20px rgba(0,0,0,.8);
+}
+
+#logo{
+    text-align:center;
+    color:white;
+    margin-bottom:40px;
+}
+
+#logo h1{
+    font-size:4rem;
+    margin:0;
+}
+
+#logo p{
+    font-size:1.2rem;
+    margin-top:10px;
+}
+
+/* ================================= */
+/* Menü */
+/* ================================= */
+
+#menu{
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+}
+
+#menu button{
+
+    width:260px;
+    padding:14px;
+
+    border:none;
+    border-radius:50px;
+
+    font-family:'rye', Arial;
+    font-size:1.2rem;
+
+    cursor:pointer;
+
+    background:#0d9dd8;
+    color:white;
+
+    transition:.25s;
+}
+
+#menu button:hover{
+
+    transform:scale(1.05);
+
+    background:#12b4f0;
+
+    box-shadow:0 0 15px rgba(255,255,255,.5);
+
+}
+
+/* ========================= */
+/* Blasen */
+/* ========================= */
+
+.bubbles{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    pointer-events:none;
+}
+
+.bubbles span{
+
+    position:absolute;
+
+    bottom:-80px;
+
+    width:25px;
+    height:25px;
+
+    border-radius:50%;
+
+    background:rgba(255,255,255,.35);
+
+    animation:bubble 12s linear infinite;
+}
+
+.bubbles span:nth-child(1){left:10%;animation-duration:10s;}
+.bubbles span:nth-child(2){left:25%;animation-duration:14s;}
+.bubbles span:nth-child(3){left:40%;animation-duration:12s;}
+.bubbles span:nth-child(4){left:60%;animation-duration:15s;}
+.bubbles span:nth-child(5){left:75%;animation-duration:11s;}
+.bubbles span:nth-child(6){left:90%;animation-duration:13s;}
+
+@keyframes bubble{
+
+    from{
+        transform:translateY(0) scale(.5);
+        opacity:0;
+    }
+
+    20%{
+        opacity:.6;
+    }
+
+    to{
+        transform:translateY(-620px) scale(1.3);
+        opacity:0;
+    }
+
+}
+
+#start-screen.fade-out{
+    animation:fadeOut .8s forwards;
+}
+
+@keyframes fadeOut{
+
+    to{
+        opacity:0;
+        transform:scale(.95);
+    }
+
+}
+
+/* ================================= */
+/* Popup */
+/* ================================= */
+
+.hidden{
+    display:none !important;
+}
+
+#popup{
+
+    position:fixed;
+    inset:0;
+
+    display:flex;
+
+    justify-content:center;
+    align-items:center;
+
+    background:rgba(0,0,0,.7);
+
+}
+
+.popup-content{
+
+    width:450px;
+
+    background:rgb(124 124 211);
+
+    border-radius:20px;
+
+    padding:30px;
+
+    text-align:center;
+
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+.popup-content button{
+
+    margin-top:20px;
+
+    padding:10px 25px;
+
+    cursor:pointer;
+}
+
+canvas{
+
+    display:none;
+
+}
+
 canvas {
     background-color: black;
     border: 2px solid black;

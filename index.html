@@ -10,7 +10,71 @@
     <script type="module" src="./models/world.class.js"></script>
 </head>
 <body>
-    <h1>Sharkie</h1>
+    <!-- ========================= -->
+    <!-- Startbildschirm           -->
+    <!-- ========================= -->
+
+    <div id="start-screen">
+
+        <div id="logo">
+            <h1>🦈 Sharkie</h1>
+            <p>Das Unterwasser-Abenteuer</p>
+        </div>
+
+        <div class="bubbles">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <div id="menu">
+
+            <button id="start-btn">
+                ▶ Spiel starten
+            </button>
+
+            <button id="controls-btn">
+                🎮 Steuerung
+            </button>
+
+            <button id="music-btn">
+                🔊 Musik AN
+            </button>
+
+            <button id="credits-btn">
+                ℹ Impressum
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- Popup                     -->
+    <!-- ========================= -->
+
+    <div id="popup" class="hidden">
+
+        <div class="popup-content">
+
+            <div id="popup-text"></div>
+
+            <button id="close-popup">
+                Schließen
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- Spiel                     -->
+    <!-- ========================= -->
+
+
     <canvas id="canvas" width="720" height="480"></canvas>  
 </body>
 </html>
