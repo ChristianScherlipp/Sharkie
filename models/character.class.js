@@ -1,7 +1,7 @@
 import { MovableObject } from "./movable-object.class.js";
 
 export class Character extends MovableObject {
-    showFrame = true;
+    showFrame = false;
     x = 20;
     y = 150;
     width = 250;
