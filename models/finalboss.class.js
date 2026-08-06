@@ -33,6 +33,7 @@ export class Finalboss extends MovableObject {
     hurtFrame = 0;
     hurtTimer = 0;
     hurtFrameDuration = 120;
+    damage = 3;
 
     poisonHitCount = 0;
     isPoisoned = false;
@@ -191,12 +192,6 @@ export class Finalboss extends MovableObject {
         if (this.y >= this.maxY) { this.y = this.maxY; this.vy = -1; }
         if (this.vx < 0) { this.otherDirection = false; }
         else if (this.vx > 0) { this.otherDirection = true; }
-        if (this.state === 'attacking') {
-            this.animateImages(this.FINALBOSS_IMAGES_ATTACK, deltaTime, 100)
-        } else {
-            this.animateImages(this.FINALBOSS_IMAGES_SWIM, deltaTime, 150);
-            this.animateImages(this.FINALBOSS_IMAGES_SWIM, deltaTime, 150);
-        }
 
         this.getRealFrame();
 
