@@ -7,7 +7,7 @@ import { PoisonBubble } from "./poison-bubble.class.js";
 import { Finalboss } from "./finalboss.class.js";
 import { level1 } from "../levels/level1.js"
 import { Light } from "./light.class.js";
- 
+
 export class World {
     character = new Character();
     level = level1;
@@ -73,7 +73,7 @@ export class World {
 
     update(deltaTime){
         this.character.update(deltaTime);
-        this.level.enemies.forEach(enemy => enemy.update(deltaTime, this.character));
+        this.level.enemies.forEach(enemy => enemy.update(deltaTime, this.character, this.level));
         this.level.coins.forEach(coin => coin.update(deltaTime));
         this.level.poisons.forEach(poison => poison.update(deltaTime));
         this.level.lights.forEach(light => light.update(deltaTime));

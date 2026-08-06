@@ -111,6 +111,22 @@ export class MovableObject extends DrawableObject {
             this.rY < mo.rY + mo.rH;
     }
 
+    // Prüft, ob dieses Objekt gerade ein Objekt berührt, das die Bewegung
+    // blockiert (z.B. BigCoin, blocksMovement = true). Wird von Gegnern
+    // genutzt, damit sie nicht durch BigCoins hindurchschwimmen.
+    isBlockedByObstacle(level){
+        return !!(level && level.coins && level.coins.some(obj => obj.blocksMovement && this.isColliding(obj)));
+    }
+
+    // Level-Rand links/rechts erreicht (statt Canvas, da das Level scrollt).
+    isAtLeftLevelBound(level){
+        return !!(level && this.x <= level.level_start_x);
+    }
+
+    isAtRightLevelBound(level){
+        return !!(level && this.x + this.width >= level.level_end_x);
+    }
+
     isNear(mo, range = 30){
         return this.rX + this.rW + range > mo.rX &&
             this.rY + this.rH + range > mo.rY &&

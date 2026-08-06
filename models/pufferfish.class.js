@@ -75,7 +75,7 @@ export class Pufferfish extends MovableObject {
     }
 
      // Wird jeden Frame von World.update() aufgerufen.
-    update(deltaTime, character) {
+    update(deltaTime, character, level) {
         let distance = Infinity;
 
         if (this.isDying) {
@@ -138,11 +138,23 @@ export class Pufferfish extends MovableObject {
             }
             if (this.chargeDirectionLeft) {
                 this.moveLeft(deltaTime);
-                this.otherDirection = false;
             } else {
                 this.moveRight(deltaTime);
-                this.otherDirection = true;
             }
+            // Rand des Levels bzw. eine BigCoin im Weg: Richtung umkehren,
+            // statt hindurchzuschwimmen.
+            let hitLeft = this.isAtLeftLevelBound(level);
+            let hitRight = this.isAtRightLevelBound(level);
+            let hitCoin = this.isBlockedByObstacle(level);
+            if (hitLeft || (hitCoin && this.chargeDirectionLeft)) {
+                if (level && this.x < level.level_start_x) this.x = level.level_start_x;
+                this.chargeDirectionLeft = false;
+            } else if (hitRight || (hitCoin && !this.chargeDirectionLeft)) {
+                if (level) this.x = level.level_end_x - this.width;
+                this.chargeDirectionLeft = true;
+            }
+            this.getRealFrame();
+            this.otherDirection = !this.chargeDirectionLeft;
             this.animateImages(this.PUFFERFISH_IMAGES_BUBBLESWIM, deltaTime, 150);
             return;
         }
@@ -166,15 +178,21 @@ export class Pufferfish extends MovableObject {
 
         if (this.movingLeft) {
             this.moveLeft(deltaTime);
-            if (this.x <= this.minX) {
+            let hitCoin = this.isBlockedByObstacle(level);
+            if (this.x <= this.minX || this.isAtLeftLevelBound(level) || hitCoin) {
+                if (level && this.x < level.level_start_x) this.x = level.level_start_x;
                 this.movingLeft = false;
                 this.otherDirection = true;
+                this.getRealFrame();
             }
         } else {
             this.moveRight(deltaTime);
-            if (this.x >= this.maxX) {
+            let hitCoin = this.isBlockedByObstacle(level);
+            if (this.x >= this.maxX || this.isAtRightLevelBound(level) || hitCoin) {
+                if (level && this.x + this.width > level.level_end_x) this.x = level.level_end_x - this.width;
                 this.movingLeft = true;
                 this.otherDirection = false;
+                this.getRealFrame();
             }
         }
         this.animateImages(this.PUFFERFISH_IMAGES_SWIM, deltaTime, 150);

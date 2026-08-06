@@ -62,7 +62,7 @@ export class Jellyfish extends MovableObject {
     }
 
     // Wird jeden Frame von World.update() aufgerufen
-    update(deltaTime, character){
+    update(deltaTime, character, level){
         if (this.isDying) {
             this.updateDying(deltaTime, this.JELLY_IMAGES_DIE);
             return;
@@ -95,13 +95,17 @@ export class Jellyfish extends MovableObject {
 
         if (this.movingUp) {
             this.moveUp(deltaTime);
-            if (this.y <= this.minY) {
+            if (this.y <= this.minY || this.isBlockedByObstacle(level)) {
+                if (this.y < this.minY) this.y = this.minY;
                 this.movingUp = false;
+                this.getRealFrame();
             }
         } else {
             this.moveDown(deltaTime);
-            if (this.y >= this.maxY) {
+            if (this.y >= this.maxY || this.isBlockedByObstacle(level)) {
+                if (this.y > this.maxY) this.y = this.maxY;
                 this.movingUp = true;
+                this.getRealFrame();
             }
         }
         if (this.isAlerted) {
