@@ -1,5 +1,6 @@
 import { Keyboard } from '../models/keyboard.class.js';
 import { World } from "../models/world.class.js";
+import { getControlTemplate, getCreditsTemplate } from './template.js';
 
 let canvas;
 let world;
@@ -36,19 +37,7 @@ function openControls() {
     const popup = document.getElementById("popup");
     const text = document.getElementById("popup-text");
 
-    text.innerHTML = `
-        <h2>Steuerung</h2>
-
-        <br>
-
-        ⬅️ ➡️ Pfeiltasten oder A / D<br><br>
-
-        ⬆️ ⬇️ W / S<br><br>
-
-        Leertaste = Angriff<br><br>
-
-        Q / E = Spezial
-    `;
+    text.innerHTML = getControlTemplate();
 
     popup.classList.remove("hidden");
 
@@ -59,25 +48,7 @@ function openCredits() {
     const popup = document.getElementById("popup");
     const text = document.getElementById("popup-text");
 
-    text.innerHTML = `
-        <h2>Sharkie</h2>
-
-        <br>
-
-        Entwickelt von
-
-        <br><br>
-
-        Christian Scherlipp
-
-        <br><br>
-
-        in Zusammenarbeit mit der
-
-        <br><br>
-
-        Developer Akademie
-    `;
+    text.innerHTML = getCreditsTemplate();
 
     popup.classList.remove("hidden");
 
