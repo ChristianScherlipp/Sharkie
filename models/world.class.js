@@ -5,6 +5,7 @@ import { Posionbar } from "./posionbar-object.class.js";
 import { FiringObject } from "./firing-object.class.js";
 import { PoisonBubble } from "./poison-bubble.class.js";
 import { Finalboss } from "./finalboss.class.js";
+import { Jellyfish } from "./jellyfish.class.js";
 import { level1 } from "../levels/level1.js"
 import { Light } from "./light.class.js";
 
@@ -40,7 +41,6 @@ export class World {
     // hochsteigen und dabei ausblenden (siehe awardExperience()).
     xpPopups = [];
 
-    // wird einmalig true, sobald Sharkie die Netz-Trigger-Position erreicht
     netTriggered = false;
 
     // feste Referenz auf den Boss, damit World ihn nicht jeden Frame neu
@@ -81,7 +81,7 @@ export class World {
 
     update(deltaTime){
         this.character.update(deltaTime);
-        this.level.enemies.forEach(enemy => enemy.update(deltaTime, this.character, this.level));
+        this.level.enemies.forEach(enemy => enemy.update(deltaTime, this.character));
         this.level.coins.forEach(coin => coin.update(deltaTime));
         this.level.poisons.forEach(poison => poison.update(deltaTime));
         this.level.lights.forEach(light => light.update(deltaTime));
@@ -453,6 +453,7 @@ export class World {
                 if (enemy instanceof Finalboss && !enemy.introduced) return;
                 if(this.character.isColliding(enemy)) {
                     this.character.hit(enemy.damage);
+                    this.character.lastHitByJellyfish = enemy instanceof Jellyfish;
                     this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR)
 
                     if (enemy.knocksBack) {
@@ -486,6 +487,7 @@ export class World {
             if (characterInFront) {
                 // von vorne: Stacheln oben, Sharkie bekommt selbst Schaden
                 this.character.hit(enemy.damage);
+                this.character.lastHitByJellyfish = false;
                 this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR);
             } else if (isPufferfish) {
                 // von hinten: Fin Slap trifft, macht 2 Schaden

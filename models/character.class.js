@@ -51,6 +51,11 @@ export class Character extends MovableObject {
     confusionTimer = 0;
     confusionFrameDuration = 200;
     confusionFrameCount = 4;
+
+    lastHitByJellyfish = false;
+    deathAnimationStarted = false;
+    deathFrame = 0;
+    deathStartY = 0;
     
     IMAGES_SWIM = [
             './assets/img/1.Sharkie/3.Swim/1.png',
@@ -74,6 +79,19 @@ export class Character extends MovableObject {
         './assets/img/1.Sharkie/6.dead/1.Poisoned/10.png',
         './assets/img/1.Sharkie/6.dead/1.Poisoned/11.png',
         './assets/img/1.Sharkie/6.dead/1.Poisoned/12.png'
+    ];
+
+    IMAGES_DEAD_ELECTRO = [
+        './assets/img/1.Sharkie/6.dead/2.Electro_shock/1.png',
+        './assets/img/1.Sharkie/6.dead/2.Electro_shock/2.png',
+        './assets/img/1.Sharkie/6.dead/2.Electro_shock/3.png',
+        './assets/img/1.Sharkie/6.dead/2.Electro_shock/4.png',
+        './assets/img/1.Sharkie/6.dead/2.Electro_shock/5.png',
+        './assets/img/1.Sharkie/6.dead/2.Electro_shock/6.png',
+        './assets/img/1.Sharkie/6.dead/2.Electro_shock/7.png',
+        './assets/img/1.Sharkie/6.dead/2.Electro_shock/8.png',
+        './assets/img/1.Sharkie/6.dead/2.Electro_shock/9.png',
+        './assets/img/1.Sharkie/6.dead/2.Electro_shock/10.png',
     ];
 
     IMAGES_HURT = [
@@ -159,6 +177,7 @@ export class Character extends MovableObject {
         super().loadImage('./assets/img/1.Sharkie/3.Swim/1.png');
         this.loadImages(this.IMAGES_SWIM);
         this.loadImages(this.IMAGES_DEAD);
+        this.loadImages(this.IMAGES_DEAD_ELECTRO);
         this.loadImages(this.IMAGES_HURT);
         this.loadImages(this.IMAGES_IDLE);
         this.loadImages(this.IMAGES_LONG_IDLE);
@@ -309,7 +328,7 @@ export class Character extends MovableObject {
         this.animationTimer += deltaTime;
         if(this.animationTimer > 150){
             if (this.isDead()) {
-                this.playAnimation(this.IMAGES_DEAD);
+                this.playDeathAnimation();
             } else if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
             } else if (isMoving) {
@@ -321,6 +340,36 @@ export class Character extends MovableObject {
                 this.playAnimation(this.IMAGES_IDLE);
             }
             this.animationTimer = 0;
+        }
+    }
+
+    // Eigene Sterbe-Steuerung (statt playAnimation()): läuft einmalig bis
+    // zum letzten Bild durch und bleibt dort stehen, statt zu loopen - nutzt
+    // einen eigenen Frame-Zähler, damit die Animation zuverlässig bei Bild 1
+    // startet (playAnimation() teilt sich sonst den Zähler mit Swim/Idle/etc.).
+    // Bei der Stromschlag-Variante (Tod durch Qualle) sinkt Sharkie ab Bild 7
+    // zusätzlich auf den Boden des Canvas ab.
+    playDeathAnimation(){
+        if (!this.deathAnimationStarted) {
+            this.deathAnimationStarted = true;
+            this.deathFrame = 0;
+            this.deathStartY = this.y;
+        }
+
+        let images = this.lastHitByJellyfish ? this.IMAGES_DEAD_ELECTRO : this.IMAGES_DEAD;
+
+        if (this.deathFrame < images.length -1) {
+            this.deathFrame++;
+        }
+        this.img = this.imageCache[images[this.deathFrame]];
+
+        // Nur bei der Stromschlag-Variante: ab Bild 7 (Index 6) auf den
+        // Boden des Canvas absinken, verteilt über die restlichen Bilder.
+        if (this.lastHitByJellyfish && this.deathFrame >= 6) {
+            let floorY = 480 -this.height;
+            let progress = (this.deathFrame - 6) / (images.length -1 -6);
+            this.y = this.deathStartY + (floorY - this.deathStartY) * progress;
+            this.getRealFrame();
         }
     }
 }
