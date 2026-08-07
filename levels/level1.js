@@ -9,7 +9,8 @@ import { BigCoin } from "../models/big-coin.class.js";
 import { Poison } from "../models/poison.class.js";
 import { Net } from "../models/net.class.js";
 
-export const level1 = new Level(
+export function createLevl1() {
+    return new Level(
     [
         new Pufferfish(500, 250),
         new Jellyfish(1009, 150),
@@ -168,4 +169,5 @@ export const level1 = new Level(
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D2.png', 6471),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D2.png', 6471),
     ]
-);
+    );
+}

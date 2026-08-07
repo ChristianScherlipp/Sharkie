@@ -1,17 +1,63 @@
 import { Keyboard } from '../models/keyboard.class.js';
 import { World } from "../models/world.class.js";
+import { GameOverlay } from "../models/game-overlay.class.js"
 import { getControlTemplate, getCreditsTemplate } from './template.js';
 
 let canvas;
 let world;
 let keyboard = new Keyboard();
 
+let overlay = new GameOverlay(
+    {
+        overlay: document.getElementById('overlay'),
+        banner: document.getElementById('overlay-banner'),
+        buttons: document.getElementById('overlay-buttons'),
+        tryAgainBtn: document.getElementById('btn-try-again'),
+        backMenuBtn: document.getElementById('btn-back-menu'),
+    },
+    {
+        onTryAgain: () => restartGame(),
+        onBackToMenu: () => backToMenu(),
+    }
+);
+
 function init() {
     canvas = document.getElementById('canvas');
-    world = new World(canvas, keyboard);
+    overlay.reset();
+    resetKeyboard();
+    
+    world = new World(canvas, keyboard, {
+        onGameOver: () => overlay.showGameOver(),
+        onWinBanner: () => overlay.showWinBanner(),
+        onWinFinal: () => overlay.showWinFinal(),
+    });
 
     console.log('My Character is', world.character);
     
+}
+
+// Startet das Spiel neu, ohne die komplette Seite neu zu laden - erzeugt
+// einfach eine frische World (inkl. frischem Level dank createLevel1()).
+function restartGame() {
+    init();
+}
+
+// Für "Back to Menu" gibt es aktuell noch keine eigene Menü-Ansicht im
+// Projekt - die Seite selbst ist momentan der Einstiegspunkt, deshalb landet
+// man hier vorerst wieder ganz am Anfang. Sobald es eine echte Menü-Seite
+// gibt, kann hier stattdessen z.B. dorthin navigiert werden.
+function backToMenu() {
+    location.reload();
+}
+
+function resetKeyboard() {
+    keyboard.LEFT = false;
+    keyboard.RIGHT = false;
+    keyboard.UP = false;
+    keyboard.DOWN = false;
+    keyboard.SPACE = false;
+    keyboard.E = false;
+    keyboard.Q = false;
 }
 
 function startGame() {

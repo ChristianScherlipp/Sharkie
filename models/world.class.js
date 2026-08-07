@@ -6,16 +6,23 @@ import { FiringObject } from "./firing-object.class.js";
 import { PoisonBubble } from "./poison-bubble.class.js";
 import { Finalboss } from "./finalboss.class.js";
 import { Jellyfish } from "./jellyfish.class.js";
-import { level1 } from "../levels/level1.js"
+import { createLevl1 } from "../levels/level1.js"
 import { Light } from "./light.class.js";
 
 export class World {
     character = new Character();
-    level = level1;
+    level = createLevl1();
     canvas;
     ctx;
     keyboard;
     camera_x = 0;
+    callbacks = {};
+    gameEnded = false; // true = Game-Loop stoppt komplett (Game Over oder letztes Level gewonnen)
+    gameWinning = false;  // true, sobald der Finalboss besiegt ist (verhindert Mehrfachauslösung)
+    // Es existiert aktuell nur level1 - sobald es weitere Level gibt, muss
+    // diese Prüfung durch eine echte "gibt es ein nächstes Level"-Logik
+    // ersetzt werden.
+    isLastLevel = true;
     coinBar = new Coinbar();
     healthBar = new Healthbar();
     posionBar = new Posionbar();
@@ -60,28 +67,35 @@ export class World {
     cameraPanElapsed = 0;
     cameraPanDuration = 1500;
 
-    constructor(canvas, keyboard) {
+    constructor(canvas, keyboard, callbacks = {}) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
+        this.callbacks = callbacks;
         this.setWorld();
         this.lastTime = performance.now();
         this.run();
     }
 
     // Zentraler Game-Loop läuft über requestAnimationFrame,
-    // ersetzt alle vorherigen setIntervals im Projekt
+    // ersetzt alle vorherigen setIntervals im Projekt.
+    // Sobald gameEnded true ist (Game Over oder letztes Level gewonnen),
+    // wird kein weiterer Frame mehr angefordert - der letzte gezeichnete
+    // Frame (z.B. Sharkies letztes Todes-Bild) bleibt so sichtbar stehen.
     run(time = performance.now()){
         let deltaTime = time - this.lastTime;
         this.lastTime = time;
         this.update(deltaTime);
         this.draw();
-        requestAnimationFrame((t) => this.run(t))
+        if (!this.gameEnded) {
+            requestAnimationFrame((t) => this.run(t));
+        }
     }
 
     update(deltaTime){
+        if (this.gameEnded) return;
         this.character.update(deltaTime);
-        this.level.enemies.forEach(enemy => enemy.update(deltaTime, this.character));
+        this.level.enemies.forEach(enemy => enemy.update(deltaTime, this.character, this.level));
         this.level.coins.forEach(coin => coin.update(deltaTime));
         this.level.poisons.forEach(poison => poison.update(deltaTime));
         this.level.lights.forEach(light => light.update(deltaTime));
@@ -142,6 +156,44 @@ export class World {
         // Schadens-Popups altern lassen und fertige entfernen.
         this.damagePopups.forEach(popup => popup.elapsed += deltaTime);
         this.damagePopups = this.damagePopups.filter(popup => popup.elapsed < popup.duration);
+
+        // Game Over / Levelsieg prüfen (muss nach den Updates oben laufen,
+        // damit Sharkies bzw. des Bosses Todes-Animation schon einmal
+        // durchgelaufen ist, bevor wir reagieren).
+        this.checkGameOver();
+        this.checkGameWin();
+    }
+
+    // Sobald Sharkies Todes-Animation komplett durchgelaufen ist
+    // (Character setzt dann markedForRemoval via updateDying()), wird
+    // einmalig alles angehalten und der Game-Over-Screen ausgelöst.
+    checkGameOver() {
+        if (this.gameEnded || this.gameWinning) return;
+        if (this.character.markedForRemoval) {
+            this.gameEnded = true;
+            if (this.callbacks.onGameOver) this.callbacks.onGameOver();
+        }
+    }
+
+    // Sobald der Finalboss' Todes-Animation komplett durchgelaufen ist,
+    // entscheidet isLastLevel, welche der beiden Sieg-Varianten greift:
+    // - letztes Level: Bild deckt das komplette Canvas ab, gleiche Buttons
+    //   wie bei Game Over (alles wird angehalten).
+    // - nicht letztes Level: nur ein Banner fährt von oben rein, Sharkie
+    //   schwimmt automatisch nach rechts aus dem Canvas (Spiel läuft weiter,
+    //   bis es ein echtes Folge-Level gibt).
+    checkGameWin() {
+        if (this.gameEnded || this.gameWinning) return;
+        if (this.finalboss && this.finalboss.markedForRemoval) {
+            this.gameWinning = true;
+            if (this.isLastLevel) {
+                this.gameEnded = true;
+                if (this.callbacks.onWinFinal) this.callbacks.onWinFinal();
+            } else {
+                this.character.autoSwimRight = true;
+                if (this.callbacks.onWinBanner) this.callbacks.onWinBanner();
+            }
+        }
     }
 
     draw(){

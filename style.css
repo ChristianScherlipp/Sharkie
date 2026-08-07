@@ -213,6 +213,110 @@ body h1 {
     cursor:pointer;
 }
 
+/* ================================= */
+/* Game-Over- / Sieg-Overlay          */
+/* ================================= */
+ 
+/* Wrapper um Canvas + Overlay, damit das Overlay passgenau über dem
+   Canvas positioniert werden kann */
+.game-wrapper {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+}
+ 
+/* Overlay für Game Over / Levelsieg, liegt direkt über dem Canvas.
+   Das Ein-/Ausblenden läuft über die bereits vorhandene globale
+   .hidden-Klasse (siehe Popup weiter oben). */
+.overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 1rem;
+    pointer-events: none;
+}
+ 
+/* Banner (Game Over / You Win), fährt von oben ins Canvas rein */
+.overlay-banner {
+    margin-top: 15%;
+    max-width: 85%;
+    max-height: 40%;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.7));
+    transform: translateY(-250%);
+    opacity: 0;
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.4s ease;
+}
+ 
+/* Sieg im letzten Level: Bild deckt das komplette Canvas ab statt nur
+   als kleines Banner oben zu liegen */
+.overlay-banner.fullcover {
+    margin-top: 0;
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+}
+ 
+.overlay.show-banner .overlay-banner {
+    transform: translateY(0);
+    opacity: 1;
+}
+ 
+/* Buttons fahren von unten ins Canvas rein */
+.overlay-buttons {
+    position: absolute;
+    bottom: 8%;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 5%;
+    transform: translateY(250%);
+    opacity: 0;
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.4s ease;
+    pointer-events: none;
+}
+ 
+.overlay.show-buttons .overlay-buttons {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+ 
+.overlay-btn {
+    width: 35%;
+    max-width: 190px;
+    aspect-ratio: 587 / 136;
+    background-image: url('./assets/img/6.Botones/Try_again/4.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'rye', Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    color: white;
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.85);
+    transition: transform 0.15s ease;
+}
+ 
+.overlay-btn:hover {
+    transform: scale(1.06);
+}
+ 
+.overlay-btn:active {
+    transform: scale(0.95);
+}
+
 canvas{
 
     display:none;

@@ -45,6 +45,8 @@ export class Character extends MovableObject {
     poisonFrameDuration = 100;
     justFiredPoison = false;
 
+    autoSwimRight = false;
+
     isFrozen = false;
     showingConfusion = false;
     confusionFrame = 0;
@@ -202,7 +204,34 @@ export class Character extends MovableObject {
             return;
         }
 
+         // Tod: Animation einmal komplett bis zum letzten Frame abspielen
+        // (statt wie vorher endlos zu loopen) und danach alles einfrieren -
+        // World erkennt "markedForRemoval" und löst darüber den Game-Over-
+        // Screen aus.
+        if (this.isDead()) {
+            if (!this.isDying) {
+                this.startDying();
+            }
+            this.updateDying(deltaTime, this.IMAGES_DEAD);
+            return;
+        }
+
         let factor = deltaTime / (1000 / 60);
+
+        // Levelsieg (nicht letztes Level): Sharkie ignoriert die Tastatur
+        // und schwimmt eigenständig nach rechts aus dem Canvas.
+        if (this.autoSwimRight) {
+            this.x += this.speed *factor;
+            this.otherDirection = false;
+            this.getRealFrame();
+            this.animationTimer += deltaTime;
+            if (this.animationTimer > 150) {
+                this.playAnimation(this.IMAGES_SWIM);
+                this.animationTimer = 0;
+            }
+            return;
+        }
+
         let prevX = this.x;
         let prevY = this.y;
         if (this.knockbackActive) {
@@ -327,9 +356,7 @@ export class Character extends MovableObject {
         
         this.animationTimer += deltaTime;
         if(this.animationTimer > 150){
-            if (this.isDead()) {
-                this.playDeathAnimation();
-            } else if (this.isHurt()) {
+            if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
             } else if (isMoving) {
                 this.playAnimation(this.IMAGES_SWIM);
