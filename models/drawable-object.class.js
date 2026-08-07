@@ -1,3 +1,5 @@
+import { getSharedImage } from "./image-cache.js";
+
 export class DrawableObject {
     x;
     y;
@@ -14,8 +16,7 @@ export class DrawableObject {
     
     // loadImage
     loadImage(path){
-        this.img = new Image(); // this.Image = document.getElementById('Image') <img id="image" src>
-        this.img.src = path;
+        this.img = getSharedImage(path);
     }
     
     /**
@@ -24,9 +25,7 @@ export class DrawableObject {
      */
     loadImages(arr) {
         arr.forEach((path) => {
-            let img = new Image();
-            img.src = path;
-            this.imageCache[path] = img;
+            this.imageCache[path] = getSharedImage(path);
         });
     }
     

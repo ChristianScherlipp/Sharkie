@@ -101,6 +101,10 @@ export class World {
         this.level.lights.forEach(light => light.update(deltaTime));
         this.level.net.update(deltaTime);
         this.firingObjects.forEach(fo => fo.update(deltaTime));
+        // Blasen, die 5 Sekunden lang nichts getroffen haben (z.B. ins Leere
+        //geschossen oder übers Levelende hinaus), werden entfernt - sonst
+        // würden sie für immer weiter aktualisiert und gezeichnet.
+        this.firingObjects = this.firingObjects.filter(fo => fo.age < 5000)
 
         this.checkNetTrigger();
         this.updateBossIntro(deltaTime);

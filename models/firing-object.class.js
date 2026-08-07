@@ -11,6 +11,12 @@ export class FiringObject extends MovableObject {
     antiGravityTimer = 0;
     damageDecayDuration = 1000;
 
+    // Läuft nichts ins Leere: wird jeden Frame hochgezählt und in World
+    // genutzt, um Blasen zu entfernen, die nie ein Ziel treffen (sonst
+    // blieben sie für immer im firingObjects-Array und würden weiter
+    // aktualisiert/gezeichnet).
+    age = 0;
+
     constructor(x, y, direction = 1) {
         super().loadImage('./assets/img/1.Sharkie/4.Attack/Bubble_trap/Bubble.png');
         this.x = x;
@@ -26,6 +32,8 @@ export class FiringObject extends MovableObject {
     // Wird jeden Frame von World.update() aufgerufen (ersetzt applyAintiGravity()-
     //  Interval und das seoerate x += 3-Interval)
     update(deltaTime) {
+        this.age += deltaTime;
+        
         if (!this.antiGravityActive) {
             let step = this.briskSpeed * (deltaTime / 50);
             this.x += step * this.direction;
