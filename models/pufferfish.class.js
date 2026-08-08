@@ -81,129 +81,146 @@ export class Pufferfish extends MovableObject {
 
      // Wird jeden Frame von World.update() aufgerufen.
     update(deltaTime, character, level) {
-        let distance = Infinity;
 
         if (this.isDying) {
             this.updateDying(deltaTime, this.PUFFERFISH_IMAGES_DIE);
             return;
         }
+        let distance = this.edgeDistanceTo(character);
+        this.updateAlertState(distance, character);
 
-        if (character) {
-            let charLeft = character.rX;
-            let charRight = character.rX + character.rW;
-            let charTop = character.rY;
-            let charBottom = character.rY + character.rH;
-            let fishLeft = this.rX;
-            let fishRight = this.rX + this.rW;
-            let fishTop = this.rY;
-            let fishBottom = this.rY + this.rH;
-            let dx = Math.max(charLeft - fishRight, fishLeft - charRight, 0);
-            let dy = Math.max(charTop - fishBottom, fishTop - charBottom, 0);
-            distance = Math.sqrt(dx * dx + dy * dy);
-        }
+        if (this.alertState === 'entering') { this.updateEntering(deltaTime); return; }
+        if (this.alertState === 'charging') { this.updateCharging(deltaTime, character, level); return; }
+        if (this.alertState === 'exiting') { this.updateExiting(deltaTime); return; }
 
+        this.updatePatrol(deltaTime, level);
+    }
+
+    // Wechselt zwischen idle/entering/charging/exiting je nach Abstand zu
+    // Sharkie (mit Hysterese, damit der Status nicht an der Grenze flackert).
+    updateAlertState(distance, character){
         if (this.alertState === 'idle' && distance <= this.detectionRange && character) {
-            let facingLeft = !this.otherDirection;
-            let characterInFront = facingLeft ? (character.x + character.width / 2) <= (this.x + this.width / 2) : (character.x + character.width / 2) >= (this.x + this.width / 2);
-            if (characterInFront) {
+            if (this.isCharacterInFront(character)) {
                 this.alertState = 'entering';
                 this.transitionFrame = 0;
                 this.transitionTimer = 0;
             }
         }
-        
         if ((this.alertState === 'entering' || this.alertState === 'charging') && distance > this.exitRange) {
             this.alertState = 'exiting';
         }
-
         this.damage = (this.alertState === 'idle') ? 2 : 4;
+    }
 
+    isCharacterInFront(character){
+        let facingLeft = !this.otherDirection;
+        let charCenterX = character.x + character.width / 2;
+        let myCenterX = this.x + this.width / 2;
+        return facingLeft ? charCenterX <= myCenterX : charCenterX >= myCenterX;
+    }
+
+    // Übergangs-Animation "Kugelfisch bläst sich auf", bevor er angreift.
+    updateEntering(deltaTime){
+        this.transitionTimer += deltaTime;
+        if (this.transitionTimer > this.transitionFrameDuration) {
+            this.transitionTimer = 0;
+            this.transitionFrame++;
+            if (this.transitionFrame >= this.PUFFERFISH_IMAGES_TRANSITION.length) {
+                this.alertState = 'charging';
+                this.transitionFrame = 0;
+            }
+        }
         if (this.alertState === 'entering') {
-            this.transitionTimer += deltaTime;
-            if (this.transitionTimer > this.transitionFrameDuration) {
-                this.transitionTimer = 0;
-                this.transitionFrame++;
-                if (this.transitionFrame >= this.PUFFERFISH_IMAGES_TRANSITION.length) {
-                    this.alertState = 'charging';
-                    this.transitionFrame = 0;
-                }
-            }
-            if (this.alertState === 'entering') {
-                this.img = this.imageCache[this.PUFFERFISH_IMAGES_TRANSITION[this.transitionFrame]];
-            }
-            return;
+            this.img = this.imageCache[this.PUFFERFISH_IMAGES_TRANSITION[this.transitionFrame]];
         }
+    }
 
-        if (this.alertState === 'charging') {
-            if (this.chargeBounceCooldown > 0) {
-                this.chargeBounceCooldown -= deltaTime;
-            } else if (character) {
-                let dx = (character.x + character.width / 2) - (this.x + this.width / 2);
-                if (Math.abs(dx) > this.chargeDeadzone) {
-                    this.chargeDirectionLeft = dx < 0;
-                }
+     // Übergangs-Animation zurück in den Ruhezustand, wenn Sharkie zu weit weg ist.
+    updateExiting(deltaTime){
+        this.transitionTimer += deltaTime;
+        if (this.transitionTimer > this.transitionFrameDuration) {
+            this.transitionTimer = 0;
+            this.transitionFrame--;
+            if (this.transitionFrame < 0) {
+                this.alertState = 'idle';
+                this.transitionFrame = 0;
+                this.otherDirection = !this.movingLeft;
             }
-            if (this.chargeDirectionLeft) {
-                this.moveLeft(deltaTime);
-            } else {
-                this.moveRight(deltaTime);
-            }
-            // Rand des Levels bzw. eine BigCoin im Weg: Richtung umkehren,
-            // statt hindurchzuschwimmen.
-            let hitLeft = this.isAtLeftLevelBound(level);
-            let hitRight = this.isAtRightLevelBound(level);
-            let hitCoin = this.isBlockedByObstacle(level);
-            if (hitLeft || (hitCoin && this.chargeDirectionLeft)) {
-                if (level && this.x < level.level_start_x) this.x = level.level_start_x;
-                this.chargeDirectionLeft = false;
-                this.chargeBounceCooldown = this.chargeBounceCooldownDuration;
-            } else if (hitRight || (hitCoin && !this.chargeDirectionLeft)) {
-                if (level) this.x = level.level_end_x - this.width;
-                this.chargeDirectionLeft = true;
-                this.chargeBounceCooldown = this.chargeBounceCooldownDuration;
-            }
-            this.getRealFrame();
-            this.otherDirection = !this.chargeDirectionLeft;
-            this.animateImages(this.PUFFERFISH_IMAGES_BUBBLESWIM, deltaTime, 150);
-            return;
         }
-
         if (this.alertState === 'exiting') {
-            this.transitionTimer += deltaTime;
-            if (this.transitionTimer > this.transitionFrameDuration) {
-                this.transitionTimer = 0;
-                this.transitionFrame--;
-                if (this.transitionFrame < 0) {
-                    this.alertState = 'idle';
-                    this.transitionFrame = 0;
-                    this.otherDirection = !this.movingLeft;
-                }
-            }
-            if (this.alertState === 'exiting') {
-                this.img = this.imageCache[this.PUFFERFISH_IMAGES_TRANSITION[this.transitionFrame]];
-            }
+            this.img = this.imageCache[this.PUFFERFISH_IMAGES_TRANSITION[this.transitionFrame]];
+        }
+    }
+
+    // Angriffsmodus: schwimmt zielstrebig auf Sharkies letzte X-Position zu.
+    updateCharging(deltaTime, character, level){
+        this.updateChargeDirection(deltaTime, character);
+        if (this.chargeDirectionLeft) this.moveLeft(deltaTime); else this.moveRight(deltaTime);
+        this.checkChargeBounce(level);
+        this.getRealFrame();
+        this.otherDirection = !this.chargeDirectionLeft;
+        this.animateImages(this.PUFFERFISH_IMAGES_BUBBLESWIM, deltaTime, 150);
+    }
+
+    updateChargeDirection(deltaTime, character){
+        if (this.chargeBounceCooldown > 0) {
+            this.chargeBounceCooldown -= deltaTime;
             return;
         }
+        if (!character) return;
+        let dx = (character.x + character.width / 2) - (this.x + this.width / 2);
+        if (Math.abs(dx) > this.chargeDeadzone) {
+            this.chargeDirectionLeft = dx < 0;
+        }
+    }
 
+    // Rand des Levels bzw. eine BigCoin im Weg während der Charge: Richtung
+    // umkehren, statt hindurchzuschwimmen.
+    checkChargeBounce(level){
+        let hitLeft = this.isAtLeftLevelBound(level);
+        let hitRight = this.isAtRightLevelBound(level);
+        let hitCoin = this.isBlockedByObstacle(level);
+
+        if (hitLeft || (hitCoin && this.chargeDirectionLeft)) {
+            if (level && this.x < level.level_start_x) this.x = level.level_start_x;
+            this.chargeDirectionLeft = false;
+            this.chargeBounceCooldown = this.chargeBounceCooldownDuration;
+        } else if (hitRight || (hitCoin && !this.chargeDirectionLeft)) {
+            if (level) this.x = level.level_end_x - this.width;
+            this.chargeDirectionLeft = true;
+            this.chargeBounceCooldown = this.chargeBounceCooldownDuration;
+        }
+    }
+
+    // Ruhezustand: pendelt zwischen minX und maxX.
+    updatePatrol(deltaTime, level){
         if (this.movingLeft) {
             this.moveLeft(deltaTime);
-            let hitCoin = this.isBlockedByObstacle(level);
-            if (this.x <= this.minX || this.isAtLeftLevelBound(level) || hitCoin) {
-                if (level && this.x < level.level_start_x) this.x = level.level_start_x;
-                this.movingLeft = false;
-                this.otherDirection = true;
-                this.getRealFrame();
-            }
+            this.checkPatrolBoundLeft(level);
         } else {
             this.moveRight(deltaTime);
-            let hitCoin = this.isBlockedByObstacle(level);
-            if (this.x >= this.maxX || this.isAtRightLevelBound(level) || hitCoin) {
-                if (level && this.x + this.width > level.level_end_x) this.x = level.level_end_x - this.width;
-                this.movingLeft = true;
-                this.otherDirection = false;
-                this.getRealFrame();
-            }
+            this.checkPatrolBoundRight(level);
         }
         this.animateImages(this.PUFFERFISH_IMAGES_SWIM, deltaTime, 150);
+    }
+
+    checkPatrolBoundLeft(level){
+        let hitCoin = this.isBlockedByObstacle(level);
+        if (this.x <= this.minX || this.isAtLeftLevelBound(level) || hitCoin) {
+            if (level && this.x < level.level_start_x) this.x = level.level_start_x;
+            this.movingLeft = false;
+            this.otherDirection = true;
+            this.getRealFrame();
+        }
+    }
+
+    checkPatrolBoundRight(level){
+        let hitCoin = this.isBlockedByObstacle(level);
+        if (this.x >= this.maxX || this.isAtRightLevelBound(level) || hitCoin) {
+            if (level && this.x + this.width > level.level_end_x) this.x = level.level_end_x - this.width;
+            this.movingLeft = true;
+            this.otherDirection = false;
+            this.getRealFrame();
+        }
     }
 }

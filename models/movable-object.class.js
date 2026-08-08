@@ -134,6 +134,17 @@ export class MovableObject extends DrawableObject {
             this.rY - range < mo.rY + mo.rH;
     }
 
+    // Kürzester Abstand (Box-Distanz) zwischen den Kollisionsboxen von
+    // diesem Objekt und "other" - 0, wenn sich die Boxen überlappen.
+    // Gemeinsam genutzt von allen Gegnern, um die Nähe zu Sharkie zu prüfen
+    // (vorher in Jellyfish/Pufferfish/Finalboss jeweils einzeln dupliziert).
+    edgeDistanceTo(other){
+        if (!other) return Infinity;
+        let dx = Math.max(other.rX - (this.rX + this.rW), this.rX - (other.rX + other.rW), 0);
+        let dy = Math.max(other.rY - (this.rY + this.rH), this.rY - (other.rY + other.rH), 0);
+        return Math.sqrt(dx * dx + dy * dy);
+    }
+
     hit(damage = 2){
         this.energy -= damage;
         if(this.energy < 0){

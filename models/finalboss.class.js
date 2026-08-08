@@ -144,119 +144,131 @@ export class Finalboss extends MovableObject {
         this.introTimer = 0;
         this.img = this.imageCache[this.FINALBOSS_IMAGES_INTRODUCE[0]];
     }
-
-    edgeDistanceTo(character){
-        let charLeft = character.rX, charRight = character.rX + character.rW;
-        let charTop = character.rY, charBottom = character.rY + character.rH;
-        let bossLeft = this.rX, bossRight = this.rX + this.rW;
-        let bossTop = this.rY, bossBottom = this.rY + this.rH;
-        let dx = Math.max(charLeft - bossRight, bossLeft - charRight, 0);
-        let dy = Math.max(charTop - bossBottom, bossTop - charBottom, 0);
-        return Math.sqrt(dx * dx + dy *dy);
-    }
     // Wird jeden Frame von World.update() aufgerufen.
     update(deltaTime, character){
-        if (this.isIntroducing) {
-            this.introTimer += deltaTime;
-            if (this.introTimer > this.introFrameDuration) {
-                this.introTimer = 0;
-                this.introFrame++;
-                if (this.introFrame >= this.FINALBOSS_IMAGES_INTRODUCE.length) {
-                    this.isIntroducing = false;
-                    this.introduced = true;
-                } else {
-                    this.img = this.imageCache[this.FINALBOSS_IMAGES_INTRODUCE[this.introFrame]];
-                }
-            }
-            return;
-        }
-        if (!this.introduced) {
-            
-            return;
-        }
-
-        if (this.isDying) {this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
-
-        if (this.isPoisoned) {
-            this.poisonTickTimer += deltaTime;
-            if (this.poisonTickTimer > this.poisonTickInterval) {
-                this.poisonTickTimer = 0;
-                this.takeDamage(this.poisonTickDamage);
-                this.justPoisonTicked = true;
-            }
-        }
-        if (this.isDying) {this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
-
-        if (this.isPoisoned) {
-            this.poisonTickTimer += deltaTime;
-            if (this.poisonTickTimer > this.poisonTickInterval) {
-                this.poisonTickTimer = 0;
-                this.takeDamage(this.poisonTickDamage);
-                this.justPoisonTicked = true;
+        if (this.updateIntro(deltaTime)) return;
+        if (!this.introduced) return;
+        if (this.isDying) { this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
+ 
+        this.updatePoisonTick(deltaTime);
+        if (this.isDying) { this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
+ 
+        this.updateHurtTimer(deltaTime);
+        this.updateState(character);
+        this.updateDirection(deltaTime, character);
+        this.applyMovement(deltaTime);
+        this.updateBossAnimation(deltaTime);
+    }
+ 
+    // Spielt die Auftritts-Animation ab. Gibt true zurück, solange sie noch
+    // läuft (der Aufrufer bricht dann für diesen Frame ab).
+    updateIntro(deltaTime){
+        if (!this.isIntroducing) return false;
+        this.introTimer += deltaTime;
+        if (this.introTimer > this.introFrameDuration) {
+            this.introTimer = 0;
+            this.introFrame++;
+            if (this.introFrame >= this.FINALBOSS_IMAGES_INTRODUCE.length) {
+                this.isIntroducing = false;
+                this.introduced = true;
+            } else {
+                this.img = this.imageCache[this.FINALBOSS_IMAGES_INTRODUCE[this.introFrame]];
             }
         }
+        return true;
+    }
 
-        if (this.isDying) {this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
-        if (this.isHurt) {
-            this.hurtTimer += deltaTime;
-            if (this.hurtTimer > this.hurtFrameDuration) {
-                this.hurtTimer = 0;
-                this.hurtFrame++;
-                if (this.hurtFrame >= this.FINALBOSS_IMAGES_HURT.length) {
-                    this.isHurt = false;
-                }
+    // Fügt alle poisonTickInterval-ms Gift-Schaden zu, solange isPoisoned aktiv ist.
+    updatePoisonTick(deltaTime){
+        if (!this.isPoisoned) return;
+        this.poisonTickTimer += deltaTime;
+        if (this.poisonTickTimer > this.poisonTickInterval) {
+            this.poisonTickTimer = 0;
+            this.takeDamage(this.poisonTickDamage);
+            this.justPoisonTicked = true;
+        }
+    }
+
+    // Zählt die Hurt-Animation durch und beendet sie nach dem letzten Bild.
+    updateHurtTimer(deltaTime){
+        if (!this.isHurt) return;
+        this.hurtTimer += deltaTime;
+        if (this.hurtTimer > this.hurtFrameDuration) {
+            this.hurtTimer = 0;
+            this.hurtFrame++;
+            if (this.hurtFrame >= this.FINALBOSS_IMAGES_HURT.length) {
+                this.isHurt = false;
             }
         }
+    }
 
-        if (character) {
-            let inSight = this.isCharacterInSight(character);
-            let distance = this.edgeDistanceTo(character)
-            if (this.state !== 'attacking' && inSight && distance <= this.attackRange) {
-                this.state = 'attacking';
-            }else if (this.state === 'attacking' && (!inSight || distance > this.attackExitRange)) {
-                this.state = inSight && distance <= this.followExitRange ? 'following' : 'wander';
-            } else if (this.state === 'wander' && inSight && distance <= this.followRange) {
-                this.state = 'following';
-            }else if (this.state === 'following' && (!inSight || distance >= this.followExitRange)) {
-                this.state = 'wander';
-            }
-        } else {
+    // Zustandsmaschine wander -> following -> attacking, abhängig von
+    // Sichtkontakt und Abstand zu Sharkie.
+    updateState(character){
+        if (!character) { this.state = 'wander'; return; }
+        let inSight = this.isCharacterInSight(character);
+        let distance = this.edgeDistanceTo(character);
+
+        if (this.state !== 'attacking' && inSight && distance <= this.attackRange) {
+            this.state = 'attacking';
+        } else if (this.state === 'attacking' && (!inSight || distance > this.attackExitRange)) {
+            this.state = inSight && distance <= this.followExitRange ? 'following' : 'wander';
+        } else if (this.state === 'wander' && inSight && distance <= this.followRange) {
+            this.state = 'following';
+        } else if (this.state === 'following' && (!inSight || distance >= this.followExitRange)) {
             this.state = 'wander';
         }
+    }
 
+     // Legt die Bewegungsrichtung (vx/vy) fest: im "wander"-Zustand per Timer
+    // zufällig, sonst direkt auf Sharkie zu.
+    updateDirection(deltaTime, character){
         if (this.state === 'wander') {
             this.directionChangeTimer += deltaTime;
             if (this.directionChangeTimer > this.directionChangeInterval) {
                 this.pickRandomDirection();
             }
-        } else {
-            let dx = (character.x + character.width / 2) - (this.x + this.width / 2);
-            let dy = (character.y + character.height / 2) - ( this.y +this.height / 2);
-            let len = Math.sqrt(dx * dx + dy *dy) || 1;
-            this.vx = dx / len;
-            this.vy = dy / len;
+            return;
         }
-        let speedMultiplier = 1;
-        if (this.state === 'following') speedMultiplier = this.folloSpeedMultiplier;
-        if (this.state === 'attacking') speedMultiplier = this.attackSpeedMultuplier;
+        let dx = (character.x + character.width / 2) - (this.x + this.width / 2);
+        let dy = (character.y + character.height / 2) - (this.y + this.height / 2);
+        let len = Math.sqrt(dx * dx + dy * dy) || 1;
+        this.vx = dx / len;
+        this.vy = dy / len;
+    }
 
+    getSpeedMultiplier(){
+        if (this.state === 'following') return this.folloSpeedMultiplier;
+        if (this.state === 'attacking') return this.attackSpeedMultuplier;
+        return 1;
+    }
+
+    // Bewegt den Boss gemäß vx/vy, hält ihn innerhalb seines Bereichs und
+    // aktualisiert die Blickrichtung.
+    applyMovement(deltaTime){
         let factor = deltaTime / (1000 / 120);
+        let speedMultiplier = this.getSpeedMultiplier();
         this.x += this.vx * this.speed * speedMultiplier * factor;
         this.y += this.vy * this.speed * speedMultiplier * factor;
+        this.clampToBounds();
+        if (this.vx < 0) this.otherDirection = false;
+        else if (this.vx > 0) this.otherDirection = true;
+    }
+
+    clampToBounds(){
         if (this.x <= this.minX) { this.x = this.minX; this.vx = 1; }
         if (this.x >= this.maxX) { this.x = this.maxX; this.vx = -1; }
         if (this.y <= this.minY) { this.y = this.minY; this.vy = 1; }
         if (this.y >= this.maxY) { this.y = this.maxY; this.vy = -1; }
-        if (this.vx < 0) { this.otherDirection = false; }
-        else if (this.vx > 0) { this.otherDirection = true; }
+    }
 
+    updateBossAnimation(deltaTime){
         this.getRealFrame();
-
         if (this.isHurt) {
             this.img = this.imageCache[this.FINALBOSS_IMAGES_HURT[this.hurtFrame]];
-        }else if (this.state === 'attacking') {
+        } else if (this.state === 'attacking') {
             this.animateImages(this.FINALBOSS_IMAGES_ATTACK, deltaTime, 100);
-        }else {
+        } else {
             this.animateImages(this.FINALBOSS_IMAGES_SWIM, deltaTime, 150);
         }
     }

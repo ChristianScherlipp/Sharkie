@@ -68,46 +68,54 @@ export class Jellyfish extends MovableObject {
             return;
         }
 
-        let distance = Infinity;
-        if (character) {
-            let charLeft = character.rX;
-            let charRight = character.rX + character.rW;
-            let charTop = character.rY;
-            let charBottom = character.rY + character.rH;
-            let jellyLeft = this.rX;
-            let jellyRight = this.rX + this.rW;
-            let jellyTop = this.rY;
-            let jellyBottom = this.rY + this.rH;
-            let dx = Math.max(charLeft - jellyRight, jellyLeft - charRight, 0);
-            let dy = Math.max(charTop - jellyBottom, jellyTop - charBottom, 0);
-            distance = Math.sqrt(dx * dx + dy * dy);
-        }
+        let distance = this.edgeDistanceTo(character);
+        this.updateAlertState(distance, character);
+        this.updateVerticalPatrol(deltaTime, level);
+        this.updateSwimAnimation(deltaTime);
+    }
+    // Qualle wird "alarmiert" (macht mehr Schaden), sobald Sharkie nah
+    // genug und nicht unterhalb der Qualle ist, und beruhigt sich wieder,
+    // sobald der Abstand exitRange überschreitet.
+    updateAlertState(distance, character){
 
         let characterBelow = character && (character.y + character.height / 2) > (this.y + this.height / 2);
         let visible = !characterBelow;
 
         if (!this.isAlerted && distance <= this.detectionRange && visible) {
-            this.isAlerted = true;
+        this.isAlerted = true;
         } else if (this.isAlerted && distance > this.exitRange) {
             this.isAlerted = false;
         }
-        this.damage = this.isAlerted ? 5 : 2;
+            this.damage = this.isAlerted ? 5 : 2;
+    }
 
+    // Pendelt senkrecht zwischen minY und maxY (oder bricht früher ab,
+    // wenn eine BigCoin im Weg ist).
+    updateVerticalPatrol(deltaTime, level){
         if (this.movingUp) {
             this.moveUp(deltaTime);
-            if (this.y <= this.minY || this.isBlockedByObstacle(level)) {
-                if (this.y < this.minY) this.y = this.minY;
-                this.movingUp = false;
-                this.getRealFrame();
-            }
+            this.checkPatrolTurn(level, this.minY, true);
         } else {
             this.moveDown(deltaTime);
-            if (this.y >= this.maxY || this.isBlockedByObstacle(level)) {
-                if (this.y > this.maxY) this.y = this.maxY;
-                this.movingUp = true;
-                this.getRealFrame();
-            }
+            this.checkPatrolTurn(level, this.maxY, false);
         }
+    }
+
+    // Prüft, ob die Qualle ihre Patrouillen-Grenze (minY/maxY) oder ein
+    // Hindernis erreicht hat, und dreht in dem Fall die Richtung um.
+    checkPatrolTurn(level, boundaryY, isMovingUp){
+        let reachedBoundary = isMovingUp ? this.y <= boundaryY : this.y >= boundaryY;
+        if (!reachedBoundary && !this.isBlockedByObstacle(level)) return;
+
+        let overshotUp = isMovingUp && this.y < boundaryY;
+        let overshotDown = !isMovingUp && this.y > boundaryY;
+        if (overshotUp || overshotDown) this.y = boundaryY;
+
+        this.movingUp = !isMovingUp;
+        this.getRealFrame();
+    }
+
+    updateSwimAnimation(deltaTime){
         if (this.isAlerted) {
             this.animateImages(this.JELLY_IMAGES_DANGEROUS, deltaTime, 200);
         } else {
