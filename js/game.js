@@ -1,7 +1,6 @@
 import { Keyboard } from '../models/keyboard.class.js';
 import { World } from "../models/world.class.js";
 import { GameOverlay } from "../models/game-overlay.class.js"
-import { getControlTemplate, getCreditsTemplate } from './template.js';
 
 let canvas;
 let world;
@@ -79,25 +78,15 @@ function startGame() {
 }
 
 function openControls() {
-
-    const popup = document.getElementById("popup");
-    const text = document.getElementById("popup-text");
-
-    text.innerHTML = getControlTemplate();
-
-    popup.classList.remove("hidden");
-
+    document.getElementById("popup-credits").classList.add("hidden");
+    document.getElementById("popup-controls").classList.remove("hidden");
+    document.getElementById("popup").classList.remove("hidden");
 }
 
 function openCredits() {
-
-    const popup = document.getElementById("popup");
-    const text = document.getElementById("popup-text");
-
-    text.innerHTML = getCreditsTemplate();
-
-    popup.classList.remove("hidden");
-
+    document.getElementById("popup-controls").classList.add("hidden");
+    document.getElementById("popup-credits").classList.remove("hidden");
+    document.getElementById("popup").classList.remove("hidden");
 }
 
 function closePopup(){
