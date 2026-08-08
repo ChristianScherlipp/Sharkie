@@ -295,16 +295,16 @@ body h1 {
     width: 35%;
     max-width: 190px;
     aspect-ratio: 587 / 136;
-    background-image: url('./assets/img/6.Botones/Try_again/4.png');
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-color: transparent;
-    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #7FFFE0;
+    border: 2px solid whitesmoke;
+    border-radius: 0.6rem;
     cursor: pointer;
     font-family: 'rye', Arial, Helvetica, sans-serif;
-    font-size: 1rem;
-    color: white;
+    font-size: 1.5rem;
+    color: #531A82;
     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.85);
     transition: transform 0.15s ease;
 }
