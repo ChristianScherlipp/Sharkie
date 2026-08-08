@@ -209,10 +209,7 @@ export class Character extends MovableObject {
         // World erkennt "markedForRemoval" und löst darüber den Game-Over-
         // Screen aus.
         if (this.isDead()) {
-            if (!this.isDying) {
-                this.startDying();
-            }
-            this.updateDying(deltaTime, this.IMAGES_DEAD);
+            this.playDeathAnimation(deltaTime);
             return;
         }
 
@@ -376,17 +373,24 @@ export class Character extends MovableObject {
     // startet (playAnimation() teilt sich sonst den Zähler mit Swim/Idle/etc.).
     // Bei der Stromschlag-Variante (Tod durch Qualle) sinkt Sharkie ab Bild 7
     // zusätzlich auf den Boden des Canvas ab.
-    playDeathAnimation(){
+    playDeathAnimation(deltaTime){
         if (!this.deathAnimationStarted) {
             this.deathAnimationStarted = true;
             this.deathFrame = 0;
+            this.dieTimer = 0;
             this.deathStartY = this.y;
         }
 
         let images = this.lastHitByJellyfish ? this.IMAGES_DEAD_ELECTRO : this.IMAGES_DEAD;
 
-        if (this.deathFrame < images.length -1) {
-            this.deathFrame++;
+        this.dieTimer += deltaTime;
+        if (this.dieTimer > this.dieFrameDuration) {
+            this.dieTimer = 0;
+            if (this.deathFrame < images.length - 1) {
+                this.deathFrame++
+            } else {
+                this.markedForRemoval = true;
+            }
         }
         this.img = this.imageCache[images[this.deathFrame]];
 
