@@ -39,7 +39,7 @@ export class Character extends MovableObject {
     bubbleFrameDuration = 100;
     justFiredBubble = false;
 
-    sFormingPoison = false;
+    isFormingPoison = false;
     poisonFrame = 0;
     poisonTimer = 0;
     poisonFrameDuration = 100;
@@ -192,181 +192,246 @@ export class Character extends MovableObject {
     
 
     update(deltaTime) {
-
-        if (this.isFrozen) {
-            if (this.showingConfusion) {
-                this.confusionTimer += deltaTime;
-                if (this.confusionTimer > this.confusionFrameDuration) {
-                    this.confusionTimer = 0;
-                    this.confusionFrame = (this.confusionFrame + 1) % this.confusionFrameCount;
-                }
-            }
-            return;
+        if (this.isFrozen) { this.updateConfusion(deltaTime); return; }
+        if (this.isDead()) { this.playDeathAnimation(deltaTime); return; }
+        if (this.autoSwimRight) { this.updateAutoSwim(deltaTime); return; }
+ 
+        let isMoving = this.updateMovementAndCamera(deltaTime);
+        this.updateIdleTime(deltaTime, isMoving);
+ 
+        if (this.updateAttack(deltaTime)) return;
+        if (this.updateBubbleFormation(deltaTime)) return;
+        if (this.updatePoisonFormation(deltaTime)) return;
+ 
+        this.updateIdleAnimation(deltaTime, isMoving);
+    }
+ 
+    // Tod: eigene Sterbe-Animation (inkl. Boden-Absinken bei der
+    // Stromschlag-Variante) einmal komplett abspielen und danach alles
+    // einfrieren - World erkennt "markedForRemoval" und löst darüber den
+    // Game-Over-Screen aus. Levelsieg (nicht letztes Level): Sharkie
+    // ignoriert die Tastatur und schwimmt eigenständig nach rechts raus.
+    updateConfusion(deltaTime){
+        if (!this.showingConfusion) return;
+        this.confusionTimer += deltaTime;
+        if (this.confusionTimer > this.confusionFrameDuration) {
+            this.confusionTimer = 0;
+            this.confusionFrame = (this.confusionFrame + 1) % this.confusionFrameCount;
         }
-
-         // Tod: Animation einmal komplett bis zum letzten Frame abspielen
-        // (statt wie vorher endlos zu loopen) und danach alles einfrieren -
-        // World erkennt "markedForRemoval" und löst darüber den Game-Over-
-        // Screen aus.
-        if (this.isDead()) {
-            this.playDeathAnimation(deltaTime);
-            return;
-        }
-
+    }
+ 
+    updateAutoSwim(deltaTime){
         let factor = deltaTime / (1000 / 60);
-
-        // Levelsieg (nicht letztes Level): Sharkie ignoriert die Tastatur
-        // und schwimmt eigenständig nach rechts aus dem Canvas.
-        if (this.autoSwimRight) {
-            this.x += this.speed *factor;
-            this.otherDirection = false;
-            this.getRealFrame();
-            this.animationTimer += deltaTime;
-            if (this.animationTimer > 150) {
-                this.playAnimation(this.IMAGES_SWIM);
-                this.animationTimer = 0;
-            }
-            return;
+        this.x += this.speed * factor;
+        this.otherDirection = false;
+        this.getRealFrame();
+        this.animationTimer += deltaTime;
+        if (this.animationTimer > 150) {
+            this.playAnimation(this.IMAGES_SWIM);
+            this.animationTimer = 0;
         }
-
-        let prevX = this.x;
-        let prevY = this.y;
+    }
+ 
+    // Bewegt Sharkie (Knockback oder Tastatur), lässt die Kamera folgen und
+    // blockiert die Bewegung, falls sie durch eine BigCoin/das Netz
+    // kollidiert. Gibt zurück, ob gerade eine Bewegungstaste gedrückt ist.
+    updateMovementAndCamera(deltaTime){
+        let prevX = this.x, prevY = this.y;
         if (this.knockbackActive) {
-            this.knockbackElapsed += deltaTime;
-            let t = Math.min(this.knockbackElapsed / this.knockbackDuration, 1);
-            let eased = 1 - Math.pow(1 - t, 3);
-            this.x = this.knockbackStartX + (this.knockbackTargetX - this.knockbackStartX) * eased;
-            this.y = this.knockbackStartY + (this.knockbackTargetY - this.knockbackStartY) * eased;
-            if (t >= 1) { this.knockbackActive = false; }
-        } else{
-            if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x - this.width) {
-                this.x += this.speed * factor;
-                this.otherDirection = false;
-            } 
-            if (this.world.keyboard.LEFT && this.x > this.world.level.level_start_x) {
-                this.x -= this.speed * factor;
-                this.otherDirection = true;
-            }
-            if (this.world.keyboard.UP && this.y > -130) {
-                this.y -= this.speed * factor;
-                this.acceleration = 0;
-            }
-            if (this.world.keyboard.DOWN && this.isAboveGround()) {
-                this.y += this.speed * factor;
-            }
+            this.updateKnockback(deltaTime);
+        } else {
+            this.updateKeyboardMovement(deltaTime);
         }
-        // Kamera mit Totzone: bleibt stehen, solange der Hintergrund sonst eine
-        // schwarze Lücke zeigen würde (Weltanfang/-ende), folgt Sharkie sonst
-        // ab 40% der Canvas-Breite.
+        this.updateCamera();
+        this.getRealFrame();
+        this.blockMovementIfColliding(prevX, prevY);
+        return this.isMovementKeyPressed();
+    }
+ 
+    updateKnockback(deltaTime){
+        this.knockbackElapsed += deltaTime;
+        let t = Math.min(this.knockbackElapsed / this.knockbackDuration, 1);
+        let eased = 1 - Math.pow(1 - t, 3);
+        this.x = this.knockbackStartX + (this.knockbackTargetX - this.knockbackStartX) * eased;
+        this.y = this.knockbackStartY + (this.knockbackTargetY - this.knockbackStartY) * eased;
+        if (t >= 1) this.knockbackActive = false;
+    }
+ 
+    updateKeyboardMovement(deltaTime){
+        let factor = deltaTime / (1000 / 60);
+        this.handleHorizontalMovement(factor);
+        this.handleVerticalMovement(factor);
+    }
+ 
+    handleHorizontalMovement(factor){
+        if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x - this.width) {
+            this.x += this.speed * factor;
+            this.otherDirection = false;
+            }
+        if (this.world.keyboard.LEFT && this.x > this.world.level.level_start_x) {
+            this.x -= this.speed * factor;
+            this.otherDirection = true;
+        }
+    }
+ 
+    handleVerticalMovement(factor){
+        if (this.world.keyboard.UP && this.y > -130) {
+            this.y -= this.speed * factor;
+            this.acceleration = 0;
+        }
+        if (this.world.keyboard.DOWN && this.isAboveGround()) {
+            this.y += this.speed * factor;
+        }
+    }
+ 
+    // Kamera mit Totzone: bleibt stehen, solange der Hintergrund sonst eine
+    // schwarze Lücke zeigen würde (Weltanfang/-ende), folgt Sharkie sonst
+    // ab 30% der Canvas-Breite.
+    updateCamera(){
         let canvasWidth = this.world.canvas.width;
         let followX = this.world.level.level_start_x + canvasWidth * 0.3;
         let cameraMax = -this.world.level.level_start_x;
         let cameraMin = canvasWidth - this.world.level.level_end_x;
         let desiredCamera = followX - this.x;
         this.world.camera_x = Math.min(cameraMax, Math.max(cameraMin, desiredCamera));
-
-        this.getRealFrame();
-
+    }
+ 
+    blockMovementIfColliding(prevX, prevY){
         let blockedByCoin = this.world.level.coins.some(coin => coin.blocksMovement && this.isColliding(coin));
         let net = this.world.level.net;
         let blockedByNet = net && net.blocksMovement && this.isColliding(net);
-        let blocked = blockedByCoin || blockedByNet;
-
-        if (blocked){
+        if (blockedByCoin || blockedByNet) {
             this.x = prevX;
             this.y = prevY;
             this.getRealFrame();
         }
-        
-        let isMoving = this.world.keyboard.RIGHT || this.world.keyboard.LEFT || this.world.keyboard.UP || this.world.keyboard.DOWN || this.world.keyboard.E || this.world.keyboard.SPACE || this.world.keyboard.Q;
+    }
+ 
+    isMovementKeyPressed(){
+        let k = this.world.keyboard;
+        return k.RIGHT || k.LEFT || k.UP || k.DOWN || k.E || k.SPACE || k.Q;
+    }
+ 
+    updateIdleTime(deltaTime, isMoving){
         if (isMoving) {
             this.idleTime = 0;
         } else {
             this.idleTime += deltaTime;
         }
-
-        if (this.world.keyboard.SPACE && !this.isAttacking && !this.isFormingBubble && !this.FormingPoison) {
-            this.isAttacking = true;
-            this.attackFrame = 0;
-            this.attackTimer = 0;
-            this.img = this.imageCache[this.IMAGES_FIN_SLAP_ATTACK[0]];
-            this.justAttacked = true;
+    }
+ 
+    // Fin-Slap-Angriff (Leertaste). Gibt true zurück, während der Angriff
+    // läuft (der Aufrufer bricht dann für diesen Frame ab).
+    updateAttack(deltaTime){
+        if (this.world.keyboard.SPACE && !this.isAttacking && !this.isFormingBubble && !this.isFormingPoison) {
+            this.startAttack();
         }
-        if (this.isAttacking) {
-            this.attackTimer += deltaTime;
-            if (this.attackTimer > this.attackFrameDuration) {
-                this.attackTimer = 0;
-                this.attackFrame++;
-                if (!this.lastAttackHit && this.attackFrame >= 4 && this.attackFrame <= 6) {
-                    this.attackFrame = 7;
-                }
-                if (this.attackFrame >= this.IMAGES_FIN_SLAP_ATTACK.length) {
-                    this.isAttacking = false;
-                } else {
-                    this.img = this.imageCache[this.IMAGES_FIN_SLAP_ATTACK[this.attackFrame]];
-                }
-            }
-            return;
+        if (!this.isAttacking) return false;
+        this.advanceAttackFrame(deltaTime);
+        return true;
+    }
+ 
+    startAttack(){
+        this.isAttacking = true;
+        this.attackFrame = 0;
+        this.attackTimer = 0;
+        this.img = this.imageCache[this.IMAGES_FIN_SLAP_ATTACK[0]];
+        this.justAttacked = true;
+    }
+ 
+    advanceAttackFrame(deltaTime){
+        this.attackTimer += deltaTime;
+        if (this.attackTimer <= this.attackFrameDuration) return;
+        this.attackTimer = 0;
+        this.attackFrame++;
+        if (!this.lastAttackHit && this.attackFrame >= 4 && this.attackFrame <= 6) {
+            this.attackFrame = 7;
         }
-
-        if (this.world.keyboard.E && !this.isFormingBubble && !this.isAttacking && !this.FormingPoison) {
-            this.isFormingBubble = true;
-            this.bubbleFrame = 0;
-            this.bubbleTimer = 0;
-            this.img = this.imageCache[this.IMAGES_BUBBLE_FORMATION[0]];
-        }
-        if (this.isFormingBubble) {
-            this.bubbleTimer += deltaTime;
-            if (this.bubbleTimer > this.bubbleFrameDuration) {
-                this.bubbleTimer = 0;
-                this.bubbleFrame++;
-                if (this.bubbleFrame >= this.IMAGES_BUBBLE_FORMATION.length) {
-                    this.isFormingBubble = false;
-                    this.justFiredBubble = true;
-                } else {
-                    this.img = this.imageCache[this.IMAGES_BUBBLE_FORMATION[this.bubbleFrame]];
-                }
-            }
-            return;
-        }
-
-        if (this.world.keyboard.Q && !this.isFormingPoison && !this.isAttacking && !this.isFormingBubble && this.world.collectedPoisons > 0) {
-            this.isFormingPoison = true;
-            this.poisonFrame = 0;
-            this.poisonTimer = 0;
-            this.img = this.imageCache[this.IMAGES_POISON_FORMATION[0]];
-        }
-        if (this.isFormingPoison) {
-            this.poisonTimer += deltaTime;
-            if (this.poisonTimer > this.poisonFrameDuration) {
-                this.poisonTimer = 0;
-                this.poisonFrame++;
-                if (this.poisonFrame >= this.IMAGES_POISON_FORMATION.length) {
-                    this.isFormingPoison = false;
-                    this.justFiredPoison = true;
-                } else {
-                    this.img = this.imageCache[this.IMAGES_POISON_FORMATION[this.poisonFrame]];
-                }
-            }
-            return;
-        }
-        
-        this.animationTimer += deltaTime;
-        if(this.animationTimer > 150){
-            if (this.isHurt()) {
-                this.playAnimation(this.IMAGES_HURT);
-            } else if (isMoving) {
-                this.playAnimation(this.IMAGES_SWIM);
-            }else if (this.idleTime > this.longIdleThreshold) {
-                this.playAnimation(this.IMAGES_LONG_IDLE);
-                this.applyGravity(deltaTime);
-            } else {
-                this.playAnimation(this.IMAGES_IDLE);
-            }
-            this.animationTimer = 0;
+        if (this.attackFrame >= this.IMAGES_FIN_SLAP_ATTACK.length) {
+            this.isAttacking = false;
+        } else {
+            this.img = this.imageCache[this.IMAGES_FIN_SLAP_ATTACK[this.attackFrame]];
         }
     }
-
+ 
+    // Blasen-Formation (E-Taste). Gibt true zurück, während sie läuft.
+    updateBubbleFormation(deltaTime){
+        if (this.world.keyboard.E && !this.isFormingBubble && !this.isAttacking && !this.isFormingPoison) {
+            this.startBubbleFormation();
+        }
+        if (!this.isFormingBubble) return false;
+        this.advanceBubbleFrame(deltaTime);
+        return true;
+    }
+ 
+    startBubbleFormation(){
+        this.isFormingBubble = true;
+        this.bubbleFrame = 0;
+        this.bubbleTimer = 0;
+        this.img = this.imageCache[this.IMAGES_BUBBLE_FORMATION[0]];
+    }
+ 
+    advanceBubbleFrame(deltaTime){
+        this.bubbleTimer += deltaTime;
+        if (this.bubbleTimer <= this.bubbleFrameDuration) return;
+        this.bubbleTimer = 0;
+        this.bubbleFrame++;
+        if (this.bubbleFrame >= this.IMAGES_BUBBLE_FORMATION.length) {
+            this.isFormingBubble = false;
+            this.justFiredBubble = true;
+        } else {
+            this.img = this.imageCache[this.IMAGES_BUBBLE_FORMATION[this.bubbleFrame]];
+        }
+    }
+ 
+    // Gift-Formation (Q-Taste, nur mit Munition). Gibt true zurück, während
+    // sie läuft.
+    updatePoisonFormation(deltaTime){
+        let canStart = !this.isFormingPoison && !this.isAttacking && !this.isFormingBubble && this.world.collectedPoisons > 0;
+        if (this.world.keyboard.Q && canStart) {
+            this.startPoisonFormation();
+        }
+        if (!this.isFormingPoison) return false;
+        this.advancePoisonFrame(deltaTime);
+        return true;
+    }
+ 
+    startPoisonFormation(){
+        this.isFormingPoison = true;
+        this.poisonFrame = 0;
+        this.poisonTimer = 0;
+        this.img = this.imageCache[this.IMAGES_POISON_FORMATION[0]];
+    }
+ 
+    advancePoisonFrame(deltaTime){
+        this.poisonTimer += deltaTime;
+        if (this.poisonTimer <= this.poisonFrameDuration) return;
+        this.poisonTimer = 0;
+        this.poisonFrame++;
+        if (this.poisonFrame >= this.IMAGES_POISON_FORMATION.length) {
+            this.isFormingPoison = false;
+            this.justFiredPoison = true;
+        } else {
+            this.img = this.imageCache[this.IMAGES_POISON_FORMATION[this.poisonFrame]];
+        }
+    }
+ 
+    updateIdleAnimation(deltaTime, isMoving){
+        this.animationTimer += deltaTime;
+        if (this.animationTimer <= 150) return;
+        this.animationTimer = 0;
+        if (this.isHurt()) {
+            this.playAnimation(this.IMAGES_HURT);
+        } else if (isMoving) {
+            this.playAnimation(this.IMAGES_SWIM);
+        } else if (this.idleTime > this.longIdleThreshold) {
+            this.playAnimation(this.IMAGES_LONG_IDLE);
+            this.applyGravity(deltaTime);
+        } else {
+            this.playAnimation(this.IMAGES_IDLE);
+        }
+    }
+ 
     // Eigene Sterbe-Steuerung (statt playAnimation()): läuft einmalig bis
     // zum letzten Bild durch und bleibt dort stehen, statt zu loopen - nutzt
     // einen eigenen Frame-Zähler, damit die Animation zuverlässig bei Bild 1
@@ -380,27 +445,35 @@ export class Character extends MovableObject {
             this.dieTimer = 0;
             this.deathStartY = this.y;
         }
-
+ 
         let images = this.lastHitByJellyfish ? this.IMAGES_DEAD_ELECTRO : this.IMAGES_DEAD;
-
-        this.dieTimer += deltaTime;
-        if (this.dieTimer > this.dieFrameDuration) {
-            this.dieTimer = 0;
-            if (this.deathFrame < images.length - 1) {
-                this.deathFrame++
-            } else {
-                this.markedForRemoval = true;
-            }
-        }
+        this.advanceDeathFrame(deltaTime, images);
         this.img = this.imageCache[images[this.deathFrame]];
-
-        // Nur bei der Stromschlag-Variante: ab Bild 7 (Index 6) auf den
-        // Boden des Canvas absinken, verteilt über die restlichen Bilder.
-        if (this.lastHitByJellyfish && this.deathFrame >= 6) {
-            let floorY = 480 -this.height;
-            let progress = (this.deathFrame - 6) / (images.length -1 -6);
-            this.y = this.deathStartY + (floorY - this.deathStartY) * progress;
-            this.getRealFrame();
+        this.sinkToFloorIfElectro(images);
+    }
+ 
+    // Bildwechsel/Ende der Animation zeitgesteuert (dieTimer/dieFrameDuration
+    // von MovableObject geerbt) statt bei jedem Frame-Aufruf sofort
+    // weiterzuspringen - sonst wäre die Animation in ~150ms komplett
+    // durchgelaufen.
+    advanceDeathFrame(deltaTime, images){
+        this.dieTimer += deltaTime;
+        if (this.dieTimer <= this.dieFrameDuration) return;
+        this.dieTimer = 0;
+        if (this.deathFrame < images.length - 1) {
+            this.deathFrame++;
+        } else {
+            this.markedForRemoval = true;
         }
+    }
+ 
+    // Nur bei der Stromschlag-Variante: ab Bild 7 (Index 6) auf den Boden
+    // des Canvas absinken, verteilt über die restlichen Bilder.
+    sinkToFloorIfElectro(images){
+        if (!this.lastHitByJellyfish || this.deathFrame < 6) return;
+        let floorY = 480 - this.height;
+        let progress = (this.deathFrame - 6) / (images.length - 1 - 6);
+        this.y = this.deathStartY + (floorY - this.deathStartY) * progress;
+        this.getRealFrame();
     }
 }
