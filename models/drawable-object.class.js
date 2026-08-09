@@ -34,20 +34,17 @@ export class DrawableObject {
     }
 
     drawFrame(ctx){
-        if (this.showFrame) {
-            ctx.beginPath();
-            ctx.lineWidth = '5';
-            ctx.strokeStyle = "blue";
-            ctx.rect(this.x, this.y, this.width, this.height);
-            ctx.stroke();
-        }
-        if (this.showFrame) {
-            ctx.beginPath();
-            ctx.lineWidth = '1';
-            ctx.strokeStyle = "red";
-            ctx.rect(this.rX, this.rY, this.rW,  this.rH);
-            ctx.stroke();
-        }
+        if (!this.showFrame) return;
+        this.drawDebugRect(ctx, this.x, this.y, this.width, this.height, 'blue', 3);
+        this.drawDebugRect(ctx, this.rX, this.rY, this.rW, this.rH, 'red', 1);
+    }
+ 
+    drawDebugRect(ctx, x, y, w, h, color, lineWidth){
+        ctx.beginPath();
+        ctx.lineWidth = lineWidth;
+        ctx.strokeStyle = color;
+        ctx.rect(x, y, w, h);
+        ctx.stroke();
     }
 
 }

@@ -1,4 +1,5 @@
 import { MovableObject } from "./movable-object.class.js";
+import { CHARACTER_IMAGES } from "./character-images.js";
 
 export class Character extends MovableObject {
     showFrame = false;
@@ -59,121 +60,15 @@ export class Character extends MovableObject {
     deathFrame = 0;
     deathStartY = 0;
     
-    IMAGES_SWIM = [
-            './assets/img/1.Sharkie/3.Swim/1.png',
-            './assets/img/1.Sharkie/3.Swim/2.png',
-            './assets/img/1.Sharkie/3.Swim/3.png',
-            './assets/img/1.Sharkie/3.Swim/4.png',
-            './assets/img/1.Sharkie/3.Swim/5.png',
-            './assets/img/1.Sharkie/3.Swim/6.png',
-        ];
-    
-    IMAGES_DEAD = [
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/1.png',
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/2.png',
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/3.png',
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/4.png',
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/5.png',
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/6.png',
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/7.png',
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/8.png',
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/9.png',
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/10.png',
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/11.png',
-        './assets/img/1.Sharkie/6.dead/1.Poisoned/12.png'
-    ];
-
-    IMAGES_DEAD_ELECTRO = [
-        './assets/img/1.Sharkie/6.dead/2.Electro_shock/1.png',
-        './assets/img/1.Sharkie/6.dead/2.Electro_shock/2.png',
-        './assets/img/1.Sharkie/6.dead/2.Electro_shock/3.png',
-        './assets/img/1.Sharkie/6.dead/2.Electro_shock/4.png',
-        './assets/img/1.Sharkie/6.dead/2.Electro_shock/5.png',
-        './assets/img/1.Sharkie/6.dead/2.Electro_shock/6.png',
-        './assets/img/1.Sharkie/6.dead/2.Electro_shock/7.png',
-        './assets/img/1.Sharkie/6.dead/2.Electro_shock/8.png',
-        './assets/img/1.Sharkie/6.dead/2.Electro_shock/9.png',
-        './assets/img/1.Sharkie/6.dead/2.Electro_shock/10.png',
-    ];
-
-    IMAGES_HURT = [
-        './assets/img/1.Sharkie/5.Hurt/1.Poisoned/1.png',
-        './assets/img/1.Sharkie/5.Hurt/1.Poisoned/2.png',
-        './assets/img/1.Sharkie/5.Hurt/1.Poisoned/3.png',
-        './assets/img/1.Sharkie/5.Hurt/1.Poisoned/4.png',
-        './assets/img/1.Sharkie/5.Hurt/1.Poisoned/5.png'
-    ];
-
-    IMAGES_IDLE = [
-        './assets/img/1.Sharkie/1.IDLE/1.png',
-        './assets/img/1.Sharkie/1.IDLE/2.png',
-        './assets/img/1.Sharkie/1.IDLE/3.png',
-        './assets/img/1.Sharkie/1.IDLE/4.png',
-        './assets/img/1.Sharkie/1.IDLE/5.png',
-        './assets/img/1.Sharkie/1.IDLE/6.png',
-        './assets/img/1.Sharkie/1.IDLE/7.png',
-        './assets/img/1.Sharkie/1.IDLE/8.png',
-        './assets/img/1.Sharkie/1.IDLE/9.png',
-        './assets/img/1.Sharkie/1.IDLE/10.png',
-        './assets/img/1.Sharkie/1.IDLE/11.png',
-        './assets/img/1.Sharkie/1.IDLE/12.png',
-        './assets/img/1.Sharkie/1.IDLE/13.png',
-        './assets/img/1.Sharkie/1.IDLE/14.png',
-        './assets/img/1.Sharkie/1.IDLE/15.png',
-        './assets/img/1.Sharkie/1.IDLE/16.png',
-        './assets/img/1.Sharkie/1.IDLE/17.png',
-        './assets/img/1.Sharkie/1.IDLE/18.png'
-    ];
-
-    IMAGES_LONG_IDLE = [
-        './assets/img/1.Sharkie/2.Long_IDLE/I1.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I2.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I3.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I4.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I5.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I6.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I7.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I8.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I9.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I10.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I11.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I12.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I13.png',
-        './assets/img/1.Sharkie/2.Long_IDLE/I14.png'
-    ];
-
-    IMAGES_FIN_SLAP_ATTACK = [
-        './assets/img/1.Sharkie/4.Attack/Fin_slap/1.png',
-        './assets/img/1.Sharkie/4.Attack/Fin_slap/2.png',
-        './assets/img/1.Sharkie/4.Attack/Fin_slap/3.png',
-        './assets/img/1.Sharkie/4.Attack/Fin_slap/4.png',
-        './assets/img/1.Sharkie/4.Attack/Fin_slap/5.png',
-        './assets/img/1.Sharkie/4.Attack/Fin_slap/6.png',
-        './assets/img/1.Sharkie/4.Attack/Fin_slap/7.png',
-        './assets/img/1.Sharkie/4.Attack/Fin_slap/8.png',
-    ]
-
-    IMAGES_BUBBLE_FORMATION = [
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/1.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/2.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/3.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/4.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/5.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/6.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/7.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/op1_with_bubble_formation/8.png',
-    ]
-
-    IMAGES_POISON_FORMATION = [
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/1.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/2.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/3.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/4.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/5.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/6.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/7.png',
-        './assets/img/1.Sharkie/4.Attack/Bubble_trap/For_Whale/8.png',
-    ]
+    IMAGES_SWIM = CHARACTER_IMAGES.SWIM;
+    IMAGES_DEAD = CHARACTER_IMAGES.DEAD;
+    IMAGES_DEAD_ELECTRO = CHARACTER_IMAGES.DEAD_ELECTRO;
+    IMAGES_HURT = CHARACTER_IMAGES.HURT;
+    IMAGES_IDLE = CHARACTER_IMAGES.IDLE;
+    IMAGES_LONG_IDLE = CHARACTER_IMAGES.LONG_IDLE;
+    IMAGES_FIN_SLAP_ATTACK = CHARACTER_IMAGES.FIN_SLAP_ATTACK;
+    IMAGES_BUBBLE_FORMATION = CHARACTER_IMAGES.BUBBLE_FORMATION;
+    IMAGES_POISON_FORMATION = CHARACTER_IMAGES.POISON_FORMATION;
 
     constructor() {
         super().loadImage('./assets/img/1.Sharkie/3.Swim/1.png');
@@ -195,17 +90,17 @@ export class Character extends MovableObject {
         if (this.isFrozen) { this.updateConfusion(deltaTime); return; }
         if (this.isDead()) { this.playDeathAnimation(deltaTime); return; }
         if (this.autoSwimRight) { this.updateAutoSwim(deltaTime); return; }
- 
+
         let isMoving = this.updateMovementAndCamera(deltaTime);
         this.updateIdleTime(deltaTime, isMoving);
- 
+
         if (this.updateAttack(deltaTime)) return;
         if (this.updateBubbleFormation(deltaTime)) return;
         if (this.updatePoisonFormation(deltaTime)) return;
- 
+
         this.updateIdleAnimation(deltaTime, isMoving);
     }
- 
+
     // Tod: eigene Sterbe-Animation (inkl. Boden-Absinken bei der
     // Stromschlag-Variante) einmal komplett abspielen und danach alles
     // einfrieren - World erkennt "markedForRemoval" und löst darüber den
@@ -219,7 +114,7 @@ export class Character extends MovableObject {
             this.confusionFrame = (this.confusionFrame + 1) % this.confusionFrameCount;
         }
     }
- 
+
     updateAutoSwim(deltaTime){
         let factor = deltaTime / (1000 / 60);
         this.x += this.speed * factor;
@@ -231,7 +126,7 @@ export class Character extends MovableObject {
             this.animationTimer = 0;
         }
     }
- 
+
     // Bewegt Sharkie (Knockback oder Tastatur), lässt die Kamera folgen und
     // blockiert die Bewegung, falls sie durch eine BigCoin/das Netz
     // kollidiert. Gibt zurück, ob gerade eine Bewegungstaste gedrückt ist.
@@ -247,7 +142,7 @@ export class Character extends MovableObject {
         this.blockMovementIfColliding(prevX, prevY);
         return this.isMovementKeyPressed();
     }
- 
+
     updateKnockback(deltaTime){
         this.knockbackElapsed += deltaTime;
         let t = Math.min(this.knockbackElapsed / this.knockbackDuration, 1);
@@ -256,13 +151,13 @@ export class Character extends MovableObject {
         this.y = this.knockbackStartY + (this.knockbackTargetY - this.knockbackStartY) * eased;
         if (t >= 1) this.knockbackActive = false;
     }
- 
+
     updateKeyboardMovement(deltaTime){
         let factor = deltaTime / (1000 / 60);
         this.handleHorizontalMovement(factor);
         this.handleVerticalMovement(factor);
     }
- 
+
     handleHorizontalMovement(factor){
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x - this.width) {
             this.x += this.speed * factor;
@@ -273,7 +168,7 @@ export class Character extends MovableObject {
             this.otherDirection = true;
         }
     }
- 
+
     handleVerticalMovement(factor){
         if (this.world.keyboard.UP && this.y > -130) {
             this.y -= this.speed * factor;
@@ -283,7 +178,7 @@ export class Character extends MovableObject {
             this.y += this.speed * factor;
         }
     }
- 
+
     // Kamera mit Totzone: bleibt stehen, solange der Hintergrund sonst eine
     // schwarze Lücke zeigen würde (Weltanfang/-ende), folgt Sharkie sonst
     // ab 30% der Canvas-Breite.
@@ -295,7 +190,7 @@ export class Character extends MovableObject {
         let desiredCamera = followX - this.x;
         this.world.camera_x = Math.min(cameraMax, Math.max(cameraMin, desiredCamera));
     }
- 
+
     blockMovementIfColliding(prevX, prevY){
         let blockedByCoin = this.world.level.coins.some(coin => coin.blocksMovement && this.isColliding(coin));
         let net = this.world.level.net;
@@ -306,12 +201,12 @@ export class Character extends MovableObject {
             this.getRealFrame();
         }
     }
- 
+
     isMovementKeyPressed(){
         let k = this.world.keyboard;
         return k.RIGHT || k.LEFT || k.UP || k.DOWN || k.E || k.SPACE || k.Q;
     }
- 
+
     updateIdleTime(deltaTime, isMoving){
         if (isMoving) {
             this.idleTime = 0;
@@ -319,7 +214,7 @@ export class Character extends MovableObject {
             this.idleTime += deltaTime;
         }
     }
- 
+
     // Fin-Slap-Angriff (Leertaste). Gibt true zurück, während der Angriff
     // läuft (der Aufrufer bricht dann für diesen Frame ab).
     updateAttack(deltaTime){
@@ -330,7 +225,7 @@ export class Character extends MovableObject {
         this.advanceAttackFrame(deltaTime);
         return true;
     }
- 
+
     startAttack(){
         this.isAttacking = true;
         this.attackFrame = 0;
@@ -338,7 +233,7 @@ export class Character extends MovableObject {
         this.img = this.imageCache[this.IMAGES_FIN_SLAP_ATTACK[0]];
         this.justAttacked = true;
     }
- 
+
     advanceAttackFrame(deltaTime){
         this.attackTimer += deltaTime;
         if (this.attackTimer <= this.attackFrameDuration) return;
@@ -353,7 +248,7 @@ export class Character extends MovableObject {
             this.img = this.imageCache[this.IMAGES_FIN_SLAP_ATTACK[this.attackFrame]];
         }
     }
- 
+
     // Blasen-Formation (E-Taste). Gibt true zurück, während sie läuft.
     updateBubbleFormation(deltaTime){
         if (this.world.keyboard.E && !this.isFormingBubble && !this.isAttacking && !this.isFormingPoison) {
@@ -363,14 +258,14 @@ export class Character extends MovableObject {
         this.advanceBubbleFrame(deltaTime);
         return true;
     }
- 
+
     startBubbleFormation(){
         this.isFormingBubble = true;
         this.bubbleFrame = 0;
         this.bubbleTimer = 0;
         this.img = this.imageCache[this.IMAGES_BUBBLE_FORMATION[0]];
     }
- 
+
     advanceBubbleFrame(deltaTime){
         this.bubbleTimer += deltaTime;
         if (this.bubbleTimer <= this.bubbleFrameDuration) return;
@@ -383,7 +278,7 @@ export class Character extends MovableObject {
             this.img = this.imageCache[this.IMAGES_BUBBLE_FORMATION[this.bubbleFrame]];
         }
     }
- 
+
     // Gift-Formation (Q-Taste, nur mit Munition). Gibt true zurück, während
     // sie läuft.
     updatePoisonFormation(deltaTime){
@@ -395,14 +290,14 @@ export class Character extends MovableObject {
         this.advancePoisonFrame(deltaTime);
         return true;
     }
- 
+
     startPoisonFormation(){
         this.isFormingPoison = true;
         this.poisonFrame = 0;
         this.poisonTimer = 0;
         this.img = this.imageCache[this.IMAGES_POISON_FORMATION[0]];
     }
- 
+
     advancePoisonFrame(deltaTime){
         this.poisonTimer += deltaTime;
         if (this.poisonTimer <= this.poisonFrameDuration) return;
@@ -415,7 +310,7 @@ export class Character extends MovableObject {
             this.img = this.imageCache[this.IMAGES_POISON_FORMATION[this.poisonFrame]];
         }
     }
- 
+
     updateIdleAnimation(deltaTime, isMoving){
         this.animationTimer += deltaTime;
         if (this.animationTimer <= 150) return;
@@ -431,7 +326,7 @@ export class Character extends MovableObject {
             this.playAnimation(this.IMAGES_IDLE);
         }
     }
- 
+
     // Eigene Sterbe-Steuerung (statt playAnimation()): läuft einmalig bis
     // zum letzten Bild durch und bleibt dort stehen, statt zu loopen - nutzt
     // einen eigenen Frame-Zähler, damit die Animation zuverlässig bei Bild 1
@@ -445,13 +340,13 @@ export class Character extends MovableObject {
             this.dieTimer = 0;
             this.deathStartY = this.y;
         }
- 
+
         let images = this.lastHitByJellyfish ? this.IMAGES_DEAD_ELECTRO : this.IMAGES_DEAD;
         this.advanceDeathFrame(deltaTime, images);
         this.img = this.imageCache[images[this.deathFrame]];
         this.sinkToFloorIfElectro(images);
     }
- 
+
     // Bildwechsel/Ende der Animation zeitgesteuert (dieTimer/dieFrameDuration
     // von MovableObject geerbt) statt bei jedem Frame-Aufruf sofort
     // weiterzuspringen - sonst wäre die Animation in ~150ms komplett
@@ -466,7 +361,7 @@ export class Character extends MovableObject {
             this.markedForRemoval = true;
         }
     }
- 
+
     // Nur bei der Stromschlag-Variante: ab Bild 7 (Index 6) auf den Boden
     // des Canvas absinken, verteilt über die restlichen Bilder.
     sinkToFloorIfElectro(images){

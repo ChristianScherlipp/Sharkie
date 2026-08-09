@@ -33,21 +33,31 @@ export class FiringObject extends MovableObject {
     //  Interval und das seoerate x += 3-Interval)
     update(deltaTime) {
         this.age += deltaTime;
-        
         if (!this.antiGravityActive) {
-            let step = this.briskSpeed * (deltaTime / 50);
-            this.x += step * this.direction;
-            this.distanceTraveled += step;
-            if (this.distanceTraveled >= this.briskDistance) {
-                this.antiGravityActive = true;
-                this.antiGravityTimer = 0;
-            }
+            this.updateBriskMovement(deltaTime);
         } else {
-            this.applyAntiGravity(deltaTime);
-            this.x += 3 * (deltaTime / 50) * this.direction;
-            this.antiGravityTimer += deltaTime;
-            let decayProgress = Math.min(this.antiGravityTimer / this.damageDecayDuration, 1);
-            this.currentDamage = Math.max(0, this.baseDamage * (1 - decayProgress));
+            this.updateDriftAndDecay(deltaTime);
         }
-    } 
+    }
+        
+    // Erste Phase: schnelle geradlinige Bewegung, bis briskDistance erreicht ist.
+    updateBriskMovement(deltaTime) {
+        let step = this.briskSpeed * (deltaTime / 50);
+        this.x += step * this.direction;
+        this.distanceTraveled += step;
+        if (this.distanceTraveled >= this.briskDistance) {
+            this.antiGravityActive = true;
+            this.antiGravityTimer = 0;
+        }
+    }
+
+    // Zweite Phase: treibt langsam weiter und verliert dabei an Schaden, bis
+    // currentDamage nach damageDecayDuration bei 0 ankommt.
+    updateDriftAndDecay(deltaTime) {
+        this.applyAntiGravity(deltaTime);
+        this.x += 3 * (deltaTime / 50) * this.direction;
+        this.antiGravityTimer += deltaTime;
+        let decayProgess = Math.min(this.antiGravityTimer / this.damageDecayDuration, 1);
+        this.currentDamage = Math.max(0, this.baseDamage * (1 - decayProgess));
+    }
 }

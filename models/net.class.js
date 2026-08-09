@@ -51,21 +51,24 @@ export class Net extends MovableObject {
 
     update(deltaTime){
         if (this.isUnrolling) {
-            this.unrollTimer += deltaTime;
-            if (this.unrollTimer > this.unrollFrameDuration) {
-                this.unrollTimer = 0;
-                this.unrollFrame++;
-                if (this.unrollFrame >= this.NET_IMAGES_UNROLL.length) {
-                    this.isUnrolling = false;
-                    this.unrollDone = true;
-                } else {
-                    this.img = this.imageCache[this.NET_IMAGES_UNROLL[this.unrollFrame]];
-                }
-            }
+            this.updateUnrolling(deltaTime);
             return;
         }
         if (this.unrollDone) {
             this.animateImages(this.NET_IMAGES_LOOP, deltaTime, 200);
+        }
+    }
+
+    updateUnrolling(deltaTime) {
+        this.unrollTimer += deltaTime;
+        if (this.unrollTimer <= this.unrollFrameDuration) return;
+        this.unrollTimer = 0;
+        this.unrollFrame++;
+        if (this.unrollFrame >= this.NET_IMAGES_UNROLL.length) {
+            this.isUnrolling = false;
+            this.unrollDone = true;
+        } else {
+            this.img = this.imageCache[this.NET_IMAGES_UNROLL[this.unrollFrame]]
         }
     }
 }

@@ -38,28 +38,30 @@ export class Statusbar extends DrawableObject{
     // den aktuellen Wert als "60" mittig über den Balken.
     draw(ctx) {
         super.draw(ctx);
+        this.drawValueText(ctx);
+    }
+
+    drawValueText(ctx) {
         let text = `${Math.round(this.displayValue)}`;
+        let pos = this.getTextPosition();
         ctx.save();
         ctx.font = 'bold 16px Arial';
         ctx.lineWidth = 3;
         ctx.strokeStyle = 'black';
         ctx.fillStyle = 'white';
-
-        let textX, textY;
-        if (this.iconMode) {
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'middle';
-            textX = this.x + this.width + 8;
-            textY = this.y + this.height / 2;
-        } else {
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            textX = this.x + this.width / 2;
-            textY = this.y + this.height / 2;
-        }
-        
-        ctx.strokeText(text, textX, textY);
-        ctx.fillText(text, textX, textY);
+        ctx.textAlign = this.iconMode ? 'left' : 'center';
+        ctx.textBaseline = 'middle';
+        ctx.strokeText(text, pos.x, pos.y);
+        ctx.fillText(text, pos.x, pos.y);
         ctx.restore();
+    }
+
+    // iconMode: Text steht rechts neben dem Icon. Sonst: Text liegt mittig
+    // über dem Balken.
+    getTextPosition() {
+        if (this.iconMode) {
+            return { x: this.x + this.width + 18, y: this.y + this.height / 2 };
+        }
+        return { x: this.x + this.width / 2, y: this.y + this.height / 2 };
     }
 }
