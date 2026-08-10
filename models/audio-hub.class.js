@@ -9,6 +9,8 @@ export class AudioHub {
     static BOSS_ATTACK = new Audio('./assets/audio/assets_sounds_boss-bite.mp3');
     static BOSS_APPEARS = new Audio('./assets/audio/assets_sounds_boss-splash.mp3');
     static JELLYFISH_CONTACT = new Audio('./assets/audio/electric-shock.mp3');
+    static COIN_COLLECTED = new Audio('./assets/audio/coin-collected.mp3');
+    static HURT = new Audio('./assets/audio/electric-hurt.mp3');
 
     // Array, das alle definierten Audio-Dateien enthält
     static allSounds = [
@@ -20,6 +22,8 @@ export class AudioHub {
         AudioHub.BOSS_ATTACK,
         AudioHub.BOSS_APPEARS,
         AudioHub.JELLYFISH_CONTACT,
+        AudioHub.COIN_COLLECTED,
+        AudioHub.HURT,
     ];
 
     // Aktuelle Lautstärken: Gesamtlautstärke wirkt zusätzlich zur jeweiligen

@@ -85,7 +85,13 @@ export class Character extends MovableObject {
         this.getRealFrame();
     }
 
-    
+    // Spielt bei jedem Treffer (unabhängig vom Gegner) den Hurt-Sound ab.
+    // Der zusätzliche Elektroschock-Sound bei direktem Quallen-Kontakt
+    // bleibt davon unberührt - der wird separat in World ausgelöst.
+    hit(damage = 2){
+        super.hit(damage);
+        AudioHub.playOne(AudioHub.HURT);
+    }
 
     update(deltaTime) {
         if (this.isFrozen) { this.updateConfusion(deltaTime); return; }

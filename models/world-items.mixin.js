@@ -1,5 +1,6 @@
 import { FiringObject } from "./firing-object.class.js";
 import { PoisonBubble } from "./poison-bubble.class.js";
+import { AudioHub } from "./audio-hub.class.js";
 
 // Sammel-/Schuss-Methoden für World, ausgelagert damit world.class.js unter
 // der 400-LOC-Grenze bleibt. Wird per Object.assign(World.prototype, ...) in
@@ -43,6 +44,7 @@ export const WorldItemsMixin = {
                 this.collectedCoins += coin.value;
                 let percentage = (this.collectedCoins / this.totalCoins) * 100;
                 this.coinBar.setPercentage(percentage, this.coinBar.IMAGES_COINBAR, this.collectedCoins);
+                AudioHub.playOne(AudioHub.COIN_COLLECTED);
             }
         }
     },
@@ -59,6 +61,8 @@ export const WorldItemsMixin = {
         return hitSomething;
     },
 
+    // Statt des Fin-Slap-Schlagsounds (der schon beim Angriffsstart läuft)
+    // hört man bei einer BicCoin den Münz-Sound.
     hitBlockingCoin(coin, index){
         if (coin.collectOnTouch || !this.character.isNear(coin)) return false;
         coin.value--;
@@ -66,6 +70,8 @@ export const WorldItemsMixin = {
         let percentage = (this.collectedCoins / this.totalCoins) * 100;
         this.coinBar.setPercentage(percentage, this.coinBar.IMAGES_COINBAR, this.collectedCoins);
         if (coin.value <= 0) this.level.coins.splice(index, 1);
+        AudioHub.stopOne(AudioHub.FIN_SLAP);
+        AudioHub.playOne(AudioHub.COIN_COLLECTED);
         return true;
     },
 
