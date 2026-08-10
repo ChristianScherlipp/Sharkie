@@ -28,8 +28,9 @@ export class AudioHub {
     static musicVolume = 0.4;
     static sfxVolume = 0.4;
 
-    // Hintergrundmusik läuft in Dauerschleife, alle anderen Sounds nicht.
-    static { AudioHub.MUSIC.loop = true; }
+     // Hintergrundmusik und Quallen-Elektro-Sound laufen in Dauerschleife,
+    // solange sie aktiv sind - alle anderen Sounds nicht.
+    static { AudioHub.MUSIC.loop = true; AudioHub.JELLYFISH_ELECTRO.loop = true; }
 
     // Spielt eine einzelne Audiodatei ab
     static playOne(sound) {

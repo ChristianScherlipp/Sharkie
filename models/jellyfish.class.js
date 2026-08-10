@@ -47,6 +47,13 @@ export class Jellyfish extends MovableObject {
     maxY;
     movingUp = true;
 
+    // Zählt, wie viele Quallen im Level gerade alarmiert sind. Der geteilte
+    // Elektro-Sound (ein Audio-Element für alle Quallen) läuft, solange
+    // dieser Zähler > 0 ist, und stoppt erst, wenn die letzte alarmierte
+    // Qualle sich wieder beruhigt (oder stirbt) - so schneidet eine Qualle
+    // nicht mehr versehentlich den Sound einer anderen ab.
+    static alertedCount = 0;
+
     constructor(x, y) {
         super().loadImage('./assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png');
         this.loadImages(this.JELLY_IMAGES_SWIM);
@@ -83,12 +90,35 @@ export class Jellyfish extends MovableObject {
         let visible = !characterBelow;
 
         if (!this.isAlerted && distance <= this.detectionRange && visible) {
-        this.isAlerted = true;
-        AudioHub.playOne(AudioHub.JELLYFISH_ELECTRO);
-        } else if (this.isAlerted && distance > this.exitRange) {
-            this.isAlerted = false;
+            this.markAlerted();
+        }else if (this.isAlerted && distance > this.exitRange) {
+            this.markCalm();
         }
-            this.damage = this.isAlerted ? 5 : 2;
+        this.damage = this.isAlerted ? 5 : 2;
+    }
+
+    markAlerted(){
+        this.isAlerted = true;
+        Jellyfish.alertedCount++;
+        if (Jellyfish.alertedCount === 1){
+        AudioHub.playOne(AudioHub.JELLYFISH_ELECTRO);
+        }
+    }
+
+    markCalm() {
+        this.isAlerted = false;
+        Jellyfish.alertedCount = Math.max(0, Jellyfish.alertedCount - 1);
+        if (Jellyfish.alertedCount === 0){
+            AudioHub.stopOne(AudioHub.JELLYFISH_ELECTRO);
+        }
+    }
+
+    // Stirbt eine noch alarmierte Qualle (z.B. durch eine Blase getroffen),
+    // muss sie sich genauso "beruhigen" wie beim normalen Entfernen -
+    // sonst bliebe der Zähler für immer zu hoch stehen.
+    startDying(){
+        if (this.isAlerted) this.markCalm();
+        super.startDying();
     }
 
     // Pendelt senkrecht zwischen minY und maxY (oder bricht früher ab,
