@@ -22,6 +22,12 @@ export class AudioHub {
         AudioHub.JELLYFISH_CONTACT,
     ];
 
+    // Aktuelle Lautstärken: Gesamtlautstärke wirkt zusätzlich zur jeweiligen
+    // Kategorie (effektive Lautstärke = master * music bzw. master * sfx).
+    static masterVolume = 0.4;
+    static musicVolume = 0.4;
+    static sfxVolume = 0.4;
+
     // Hintergrundmusik läuft in Dauerschleife, alle anderen Sounds nicht.
     static { AudioHub.MUSIC.loop = true; }
 
@@ -53,10 +59,48 @@ export class AudioHub {
         });
     }
 
+    // Musik an/aus (pausiert/setzt fort, ohne die Abspielposition zu verlieren).
+    // Gibt zurück, ob die Musik danach läuft.
+    static toggleMusic() {
+        if (AudioHub.MUSIC.paused) {
+            AudioHub.MUSIC.play();
+        } else {
+            AudioHub.MUSIC.pause();
+        }
+        return !AudioHub.MUSIC.paused;
+    }
+
     // Setzt die Lautstärke für alle Audiodateien
     static setVolume(volume) {
         AudioHub.allSounds.forEach((sound) => {
             sound.volume = volume;
+        });
+    }
+
+    // Gesamtlautstärke: wirkt zusätzlich zur Musik-/Effekt-Lautstärke.
+    static setMasterVolume(value) {
+        AudioHub.masterVolume = Number(value);
+        AudioHub.applyVolumes();
+    }
+
+    // Lautstärke nur für die Hintergrundmusik.
+    static setMusicVolume(value) {
+        AudioHub.musicVolume = Number(value);
+        AudioHub.applyVolumes();
+    }
+
+    // Lautstärke nur für die Soundeffekte (alles außer Musik).
+    static setSfxVolume(value) {
+        AudioHub.sfxVolume = Number(value);
+        AudioHub.applyVolumes();
+    }
+
+    // Wendet Master-/Musik-/Effekt-Lautstärke auf alle Audiodateien an.
+    static applyVolumes() {
+        AudioHub.MUSIC.volume = AudioHub.masterVolume * AudioHub.musicVolume;
+        AudioHub.allSounds.forEach((sound) => {
+            if (sound === AudioHub.MUSIC) return;
+            sound.volume = AudioHub.masterVolume * AudioHub.sfxVolume;
         });
     }
 }

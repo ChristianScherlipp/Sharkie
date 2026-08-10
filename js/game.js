@@ -80,16 +80,31 @@ function startGame() {
 
 }
 
-function openControls() {
-    document.getElementById("popup-credits").classList.add("hidden");
-    document.getElementById("popup-controls").classList.remove("hidden");
+// Blendet genau einen der drei Popup-Inhalte ein und die anderen beiden
+// aus - openControls/openCredits/openMusicSettings nutzen das gemeinsam,
+// statt jeweils eine eigene, fast identische Funktion zu haben.
+function showPopupSection(sectionId) {
+    ["popup-controls", "popup-credits", "popup-music"].forEach((id) => {
+        document.getElementById(id).classList.toggle("hidden", id !== sectionId);
+    });
     document.getElementById("popup").classList.remove("hidden");
 }
 
+function openControls() {
+    showPopupSection("popup-controls")
+}
+
 function openCredits() {
-    document.getElementById("popup-controls").classList.add("hidden");
-    document.getElementById("popup-credits").classList.remove("hidden");
-    document.getElementById("popup").classList.remove("hidden");
+    showPopupSection("popup-credits")
+}
+
+function openMusicSettings() {
+    showPopupSection("popup-music");
+}
+
+function handleMusicToggle() {
+    let isPlaying = AudioHub.toggleMusic();
+    document.getElementById('music-toggle-btn').textContent = isPlaying ? '🔇 Musik AUS' : '🔊 Musik AN';
 }
 
 function closePopup(){
@@ -162,6 +177,28 @@ document.addEventListener("DOMContentLoaded", () => {
     document
         .getElementById("credits-btn")
         .addEventListener("click", openCredits);
+
+        document
+        .getElementById("music-btn")
+        .addEventListener("click", openMusicSettings);
+
+    document
+        .getElementById("music-toggle-btn")
+        .addEventListener("click", handleMusicToggle);
+
+    document
+        .getElementById("volume-master")
+        .addEventListener("input", (e) => AudioHub.setMasterVolume(e.target.value));
+
+    document
+        .getElementById("volume-music")
+        .addEventListener("input", (e) => AudioHub.setMusicVolume(e.target.value));
+
+    document
+        .getElementById("volume-sfx")
+        .addEventListener("input", (e) => AudioHub.setSfxVolume(e.target.value));
+
+    AudioHub.applyVolumes();
 
     document
         .getElementById("close-popup")

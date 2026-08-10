@@ -41,7 +41,7 @@
             </button>
 
             <button id="music-btn">
-                🔊 Musik AN
+                🎵 Musik
             </button>
 
             <button id="credits-btn">
@@ -62,19 +62,19 @@
 
             <div id="popup-controls" class="hidden">
                 <h2>Steuerung</h2>
- 
+
                 <br>
- 
+
                 ⬅️ ➡️ ⬆️ ⬇️ Pfeiltasten oder WASD = Bewegen<br><br>
- 
+
                 Leertaste = Schwanzflossen-Schlag (Nahkampf)<br><br>
- 
+
                 E = Blase abschießen (Fernkampf)<br><br>
- 
+
                 Q = Gift-Schuss (nur mit Munition)
- 
+
                 <br><br>
- 
+
                 <small>
                 Kugelfisch nur von hinten mit dem Schlag treffbar,
                 von vorne wehrt er sich mit Stacheln.
@@ -82,25 +82,50 @@
                 Der Gift-Schuss wirkt ausschließlich gegen den Endgegner.
                 </small>
             </div>
- 
+
             <div id="popup-credits" class="hidden">
                 <h2>Sharkie</h2>
- 
+
                 <br>
- 
+
                 Entwickelt von
- 
+
                 <br><br>
- 
+
                 Christian Scherlipp
- 
+
                 <br><br>
- 
+
                 in Zusammenarbeit mit der
- 
+
                 <br><br>
- 
+
                 Developer Akademie
+            </div>
+
+            <div id="popup-music" class="hidden">
+                <h2>Musik-Einstellungen</h2>
+
+                <br>
+
+                <button id="music-toggle-btn">🔊 Musik AN</button>
+
+                <br><br>
+
+                <div class="volume-row">
+                    <label for="volume-master">Gesamtlautstärke</label>
+                    <input type="range" id="volume-master" min="0" max="1" step="0.01" value="0.4">
+                </div>
+
+                <div class="volume-row">
+                    <label for="volume-music">Musik</label>
+                    <input type="range" id="volume-music" min="0" max="1" step="0.01" value="0.4">
+                </div>
+
+                <div class="volume-row">
+                    <label for="volume-sfx">Soundeffekte</label>
+                    <input type="range" id="volume-sfx" min="0" max="1" step="0.01" value="0.4">
+                </div>
             </div>
 
             <button id="close-popup">
