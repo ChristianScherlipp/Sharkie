@@ -40,7 +40,7 @@ export class AudioHub {
     static playOne(sound) {
         if (sound.readyState < 2) return;
         sound.currentTime = 0; // Startet immer von vorne
-        sound.play();
+        sound.play().catch(() => {});
     }
 
     // Spielt eine Audiodatei nur ab, wenn sie gerade nicht schon läuft -
@@ -68,7 +68,7 @@ export class AudioHub {
     // Gibt zurück, ob die Musik danach läuft.
     static toggleMusic() {
         if (AudioHub.MUSIC.paused) {
-            AudioHub.MUSIC.play();
+            AudioHub.MUSIC.play().catch(() => {});
         } else {
             AudioHub.MUSIC.pause();
         }
