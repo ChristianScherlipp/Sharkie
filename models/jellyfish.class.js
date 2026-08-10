@@ -1,4 +1,5 @@
 import { MovableObject } from "./movable-object.class.js";
+import { AudioHub } from "./audio-hub.class.js";
 
 export class Jellyfish extends MovableObject {
     showFrame = false;
@@ -83,6 +84,7 @@ export class Jellyfish extends MovableObject {
 
         if (!this.isAlerted && distance <= this.detectionRange && visible) {
         this.isAlerted = true;
+        AudioHub.playOne(AudioHub.JELLYFISH_ELECTRO);
         } else if (this.isAlerted && distance > this.exitRange) {
             this.isAlerted = false;
         }

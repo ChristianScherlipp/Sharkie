@@ -1,6 +1,7 @@
 import { Keyboard } from '../models/keyboard.class.js';
 import { World } from "../models/world.class.js";
 import { GameOverlay } from "../models/game-overlay.class.js"
+import { AudioHub } from '../models/audio-hub.class.js';
 
 let canvas;
 let world;
@@ -70,6 +71,8 @@ function startGame() {
         startScreen.style.display = "none";
 
         document.getElementById("canvas").style.display = "block";
+
+        AudioHub.playIfNotRunning(AudioHub.MUSIC);
 
         init();
 

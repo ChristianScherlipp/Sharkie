@@ -1,6 +1,7 @@
 import { Finalboss } from "./finalboss.class.js";
 import { Jellyfish } from "./jellyfish.class.js";
 import { PoisonBubble } from "./poison-bubble.class.js";
+import { AudioHub } from "./audio-hub.class.js";
 
 // Kampf-Methoden für World, ausgelagert damit world.class.js unter der
 // 400-LOC-Grenze bleibt. Wird per Object.assign(World.prototype, ...) in
@@ -13,15 +14,23 @@ export const WorldCombatMixin = {
                 if (enemy.isDying) return;
                 if (enemy instanceof Finalboss && !enemy.introduced) return;
                 if(this.character.isColliding(enemy)) {
-                    this.character.hit(enemy.damage);
-                    this.character.lastHitByJellyfish = enemy instanceof Jellyfish;
-                    this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR)
-
-                    if (enemy.knocksBack) {
-                        this.applyKnockback(enemy);
-                    }
+                    this.applyEnemyContact(enemy);
                 }
             })
+    },
+
+    // Direkter Körperkontakt mit einem Gegner: Schaden anwenden, bei einer
+    // Qualle zusätzlich den Elektroschock-Sound abspielen, und ggf. zurückstoßen.
+    applyEnemyContact(enemy){
+        this.character.hit(enemy.damage);
+        this.character.lastHitByJellyfish = enemy instanceof Jellyfish;
+        this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR)
+        if (enemy instanceof Jellyfish) {
+            AudioHub.playOne(AudioHub.JELLYFISH_CONTACT);
+        }
+        if (enemy.knocksBack) {
+            this.applyKnockback(enemy);
+        }
     },
 
     // Fin Slap gegen Gegner: nur Pufferfish/Finalboss reagieren, und nur von

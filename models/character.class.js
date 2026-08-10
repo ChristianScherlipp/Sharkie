@@ -1,5 +1,6 @@
 import { MovableObject } from "./movable-object.class.js";
 import { CHARACTER_IMAGES } from "./character-images.js";
+import { AudioHub } from "./audio-hub.class.js";
 
 export class Character extends MovableObject {
     showFrame = false;
@@ -92,6 +93,7 @@ export class Character extends MovableObject {
         if (this.autoSwimRight) { this.updateAutoSwim(deltaTime); return; }
 
         let isMoving = this.updateMovementAndCamera(deltaTime);
+        this.updateMoveSound(isMoving);
         this.updateIdleTime(deltaTime, isMoving);
 
         if (this.updateAttack(deltaTime)) return;
@@ -112,6 +114,16 @@ export class Character extends MovableObject {
         if (this.confusionTimer > this.confusionFrameDuration) {
             this.confusionTimer = 0;
             this.confusionFrame = (this.confusionFrame + 1) % this.confusionFrameCount;
+        }
+    }
+
+    // Bewegungs-Geräusch läuft, solange eine Bewegungstaste gedückt ist,
+    // und stoppt sofort wieder, sobald Losgelassen wird
+    updateMoveSound(isMoving){
+        if (isMoving) {
+            AudioHub.playIfNotRunning(AudioHub.MOVE);
+        } else {
+            AudioHub.stopOne(AudioHub.MOVE);
         }
     }
 
@@ -232,6 +244,7 @@ export class Character extends MovableObject {
         this.attackTimer = 0;
         this.img = this.imageCache[this.IMAGES_FIN_SLAP_ATTACK[0]];
         this.justAttacked = true;
+        AudioHub.playOne(AudioHub.FIN_SLAP);
     }
 
     advanceAttackFrame(deltaTime){
@@ -264,6 +277,7 @@ export class Character extends MovableObject {
         this.bubbleFrame = 0;
         this.bubbleTimer = 0;
         this.img = this.imageCache[this.IMAGES_BUBBLE_FORMATION[0]];
+        AudioHub.playOne(AudioHub.BUBBLE_ATTACK);
     }
 
     advanceBubbleFrame(deltaTime){

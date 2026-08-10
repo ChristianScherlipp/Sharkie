@@ -1,4 +1,5 @@
 import { MovableObject } from "./movable-object.class.js";
+import { AudioHub } from "./audio-hub.class.js";
 
 export class Finalboss extends MovableObject {
     showFrame = false;
@@ -143,6 +144,7 @@ export class Finalboss extends MovableObject {
         this.introFrame = 0;
         this.introTimer = 0;
         this.img = this.imageCache[this.FINALBOSS_IMAGES_INTRODUCE[0]];
+        AudioHub.playOne(AudioHub.BOSS_APPEARS);
     }
     // Wird jeden Frame von World.update() aufgerufen.
     update(deltaTime, character){
@@ -210,7 +212,7 @@ export class Finalboss extends MovableObject {
         let distance = this.edgeDistanceTo(character);
 
         if (this.state !== 'attacking' && inSight && distance <= this.attackRange) {
-            this.state = 'attacking';
+            this.startAttacking();
         } else if (this.state === 'attacking' && (!inSight || distance > this.attackExitRange)) {
             this.state = inSight && distance <= this.followExitRange ? 'following' : 'wander';
         } else if (this.state === 'wander' && inSight && distance <= this.followRange) {
@@ -218,6 +220,11 @@ export class Finalboss extends MovableObject {
         } else if (this.state === 'following' && (!inSight || distance >= this.followExitRange)) {
             this.state = 'wander';
         }
+    }
+
+    startAttacking(){
+        this.state = 'attacking';
+        AudioHub.playOne(AudioHub.BOSS_ATTACK);
     }
 
      // Legt die Bewegungsrichtung (vx/vy) fest: im "wander"-Zustand per Timer
