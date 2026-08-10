@@ -26,20 +26,47 @@ function init() {
     overlay.reset();
     resetKeyboard();
     
-    world = new World(canvas, keyboard, {
-        onGameOver: () => overlay.showGameOver(),
-        onWinBanner: () => overlay.showWinBanner(),
-        onWinFinal: () => overlay.showWinFinal(),
-    });
+    world = new World(canvas, keyboard, buildWorldCallbacks());
 
     console.log('My Character is', world.character);
     
+}
+
+function buildWorldCallbacks() {
+    return{
+        onGameOver: handleGameOver,
+        onWinBanner: handleWinBanner,
+        onWinFinal: handleWinFinal,
+    };
+}
+
+// Sharkie ist gestorben: Game- Over-Screen zeigen, alle laufenden Sounds
+// (Musik, Bewegung, etc) stoppen und den Game-Over-Sound abspielen.
+function handleGameOver() {
+    overlay.showGameOver();
+    AudioHub.stopAll();
+    AudioHub.playOne(AudioHub.GAME_OVER);
+}
+
+// Level gewonnen (nicht das letzte Level).
+function handleWinBanner() {
+    overlay.showWinBanner();
+    AudioHub.playOne(AudioHub.LEVEL_SUCCESS);
+}
+
+// Komplettes Spiel gewonnen (Letztes Level).
+function handleWinFinal() {
+    overlay.showWinFinal();
+    AudioHub.stopAll();
+    AudioHub.playOne(AudioHub.GAME_WIN);
 }
 
 // Startet das Spiel neu, ohne die komplette Seite neu zu laden - erzeugt
 // einfach eine frische World (inkl. frischem Level dank createLevel1()).
 function restartGame() {
     init();
+    AudioHub.stopAll();
+    AudioHub.playOne(AudioHub.MUSIC);
 }
 
 // Für "Back to Menu" gibt es aktuell noch keine eigene Menü-Ansicht im

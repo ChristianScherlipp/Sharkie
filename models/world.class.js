@@ -3,6 +3,8 @@ import { Coinbar } from "./coinbar.class.js";
 import { Healthbar } from "./healthbar.class.js";
 import { Posionbar } from "./posionbar-object.class.js";
 import { Finalboss } from "./finalboss.class.js";
+import { PoisonBubble } from "./poison-bubble.class.js";
+import { AudioHub } from "./audio-hub.class.js";
 import { createLevl1 } from "../levels/level1.js"
 import { WorldRenderMixin } from "./world-render.mixin.js";
 import { WorldCombatMixin } from "./world-combat.mixin.js";
@@ -29,36 +31,36 @@ export class World {
     firingObjects = [];
     lastTime = 0;
     collisionTimer = 0;
- 
+
     // Gesamtwert aller Coins im Level (vor dem Einsammeln), für die Prozent-Berechnung.
     // Summe der einzelnen coin.value, nicht einfach die Anzahl - so zählen
     // BigCoins mit ihrem höheren Wert korrekt mit.
     totalCoins = this.level.coins.reduce((sum, coin) => sum + coin.value, 0);
     collectedCoins = 0;
- 
+
     // Gesamtwert aller Poisons im Level (vor dem Einsammeln), für die Prozent-Berechnung.
     totalPoisons = this.level.poisons.reduce((sum, poison) => sum + poison.value, 0);
     collectedPoisons = 0;
- 
+
     // Erfahrungspunkte: +100 für einen Bubble-Kill (egal welcher Gegner),
     // +200 für einen Fin-Slap-Kill (aktuell nur beim Pufferfish möglich).
     experience = 0;
- 
+
     // Kleine "+100"/"+200"-Texte, die kurz über dem getöteten Gegner
     // hochsteigen und dabei ausblenden (siehe awardExperience()).
     xpPopups = [];
- 
+
     netTriggered = false;
- 
+
     // feste Referenz auf den Boss, damit World ihn nicht jeden Frame neu
     // suchen muss (checkNetTrigger blendet ab hier auch seine Healthbar ein)
     finalboss = this.level.enemies.find(e => e instanceof Finalboss);
     showFinalbossHealthbar = false;
- 
+
     // rote "-2"/"-5"-Texte für Gegner-Treffer (z.B. Gift-Tick), gleiches
     // Prinzip wie xpPopups, nur andere Farbe.
     damagePopups = [];
- 
+
     // Boss-Erschein-Sequenz: 'pending' -> 'panning' (Kamera schwenkt zum
     // letzten Abschnitt) -> introducing (Erschein-Animation-läuft) -> 'done'
     bossIntroPhase = 'pending';
@@ -66,7 +68,7 @@ export class World {
     cameraPanTargetX = 0;
     cameraPanElapsed = 0;
     cameraPanDuration = 1500;
- 
+
     constructor(canvas, keyboard, callbacks = {}) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -76,7 +78,7 @@ export class World {
         this.lastTime = performance.now();
         this.run();
     }
- 
+
     // Zentraler Game-Loop läuft über requestAnimationFrame,
     // ersetzt alle vorherigen setIntervals im Projekt.
     // Sobald gameEnded true ist (Game Over oder letztes Level gewonnen),
@@ -91,7 +93,7 @@ export class World {
             requestAnimationFrame((t) => this.run(t));
         }
     }
- 
+
     update(deltaTime){
         if (this.gameEnded) return;
         this.updateEntities(deltaTime);
@@ -105,7 +107,7 @@ export class World {
         this.checkGameOver();
         this.checkGameWin();
     }
- 
+
     // Bewegt/animiert alle Level-Objekte (Sharkie, Gegner, Coins, Poisons,
     // Lichter, Netz).
     updateEntities(deltaTime){
@@ -116,15 +118,23 @@ export class World {
         this.level.lights.forEach(light => light.update(deltaTime));
         this.level.net.update(deltaTime);
     }
- 
+
     // Bewegt alle Blasen und entfernt welche, die 5 Sekunden lang nichts
     // getroffen haben (z.B. ins Leere geschossen) - sonst würden sie für
     // immer weiter aktualisiert und gezeichnet.
     updateFiringObjects(deltaTime){
         this.firingObjects.forEach(fo => fo.update(deltaTime));
+        this.removeExpiredBubbles();
+    }
+
+    // Normale Blasen (keine Gift-Blasen), die verfallen, platzen genauso
+    // hörbar wie bei einem Treffer
+    removeExpiredBubbles(){
+        let expired = this.firingObjects.filter(fo => fo.age >= 5000 && !(fo instanceof PoisonBubble));
+        expired.forEach(() => AudioHub.playOne(AudioHub.BUBBLE_BURST));
         this.firingObjects = this.firingObjects.filter(fo => fo.age < 5000);
         }
- 
+
     // Kollision lief früher alle 200ms per eigenem Interval, das wird hier
     // über einen Zähler nachgebildet.
     updateCollisionTimer(deltaTime){
@@ -134,7 +144,7 @@ export class World {
             this.collisionTimer = 0;
         }
     }
- 
+
     // Einsammeln (Coins/Poisons) läuft jeden Frame, Angriffstreffer nur genau
     // einmal pro Angriff und neue Schüsse nur, wenn gerade abgefeuert wurde.
     updateCollectionAndAttacks(){
@@ -146,7 +156,7 @@ export class World {
         this.checkBubbleHitOnEnemies();
         this.checkPoisonBubbleHitOnEnemies();
     }
- 
+
     checkAttackHits(){
         if (!this.character.justAttacked) return;
         let hitCoin = this.checkCoinHit();
@@ -154,7 +164,7 @@ export class World {
         this.character.lastAttackHit = hitCoin || hitEnemy;
         this.character.justAttacked = false;
     }
- 
+
     // Boss-Sonderfälle: Healthbar-Sichtbarkeit, einmalige Todes-XP (egal
     // wodurch er gestorben ist), Gift-Tick-Popup.
     updateBossState(){
@@ -169,7 +179,7 @@ export class World {
             this.showDamagePopup(this.finalboss.poisonTickDamage, this.finalboss);
         }
     }
- 
+
     // Entfernt zu Ende gestorbene Gegner sowie abgelaufene XP-/Schadens-Popups.
     cleanupEntities(deltaTime){
         this.level.enemies = this.level.enemies.filter(enemy => !enemy.markedForRemoval);
@@ -178,7 +188,7 @@ export class World {
         this.damagePopups.forEach(popup => popup.elapsed += deltaTime);
         this.damagePopups = this.damagePopups.filter(popup => popup.elapsed < popup.duration);
     }
- 
+
     // Sobald Sharkies Todes-Animation komplett durchgelaufen ist
     // (Character setzt dann markedForRemoval via updateDying()), wird
     // einmalig alles angehalten und der Game-Over-Screen ausgelöst.
@@ -189,7 +199,7 @@ export class World {
             if (this.callbacks.onGameOver) this.callbacks.onGameOver();
         }
     }
- 
+
     // Sobald der Finalboss' Todes-Animation komplett durchgelaufen ist,
     // entscheidet isLastLevel, welche der beiden Sieg-Varianten greift:
     // - letztes Level: Bild deckt das komplette Canvas ab, gleiche Buttons

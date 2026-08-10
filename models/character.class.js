@@ -283,7 +283,7 @@ export class Character extends MovableObject {
         this.bubbleFrame = 0;
         this.bubbleTimer = 0;
         this.img = this.imageCache[this.IMAGES_BUBBLE_FORMATION[0]];
-        AudioHub.playOne(AudioHub.BUBBLE_ATTACK);
+        AudioHub.playOne(AudioHub.BUBBLE_LOAD);
     }
 
     advanceBubbleFrame(deltaTime){

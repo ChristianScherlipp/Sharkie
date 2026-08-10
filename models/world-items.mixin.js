@@ -105,6 +105,7 @@ export const WorldItemsMixin = {
         this.character.justFiredBubble = false;
         let spawn = this.getShotSpawnPosition();
         this.firingObjects.push(new FiringObject(spawn.x, spawn.y, spawn.direction));
+        AudioHub.playOne(AudioHub.BUBBLE_FINISH_LOAD);
     },
 
     // Gift-Schuss ('q'): gleicher Ablauf wie die Bubble, nur mit eigener

@@ -109,6 +109,7 @@ export const WorldCombatMixin = {
             if (enemy instanceof Finalboss && !enemy.introduced) continue;
             if (bubble.isColliding(enemy)) {
                 this.firingObjects.splice(bubbleIndex, 1);
+                AudioHub.playOne(AudioHub.BUBBLE_BURST);
                 this.applyBubbleDamage(enemy, Math.round(bubble.currentDamage));
                 break;
             }
