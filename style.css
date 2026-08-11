@@ -1,3 +1,8 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+}
+
 @font-face {
     font-family: 'rye';
     src: url('./assets/img/5.Font/rye-regular.ttf');
@@ -31,8 +36,11 @@ body h1 {
 
 #start-screen {
     position: absolute;
-    width: 720px;
-    height: 480px;
+    width: min(720px, 92vw, calc(96vh * 3 / 2));
+    max-height: 92vh;
+    overflow-y: auto;
+ 
+    padding: clamp(12px, 3vw, 20px);
 
     border-radius: 1rem;
 
@@ -50,16 +58,16 @@ body h1 {
 #logo{
     text-align:center;
     color:white;
-    margin-bottom:40px;
+    margin-bottom:clamp(16px, 4vw, 40px);
 }
 
 #logo h1{
-    font-size:4rem;
+    font-size:clamp(1.8rem, 8vw, 4rem);
     margin:0;
 }
 
 #logo p{
-    font-size:1.2rem;
+    font-size:clamp(1rem, 2.5vw, 1.2rem);
     margin-top:10px;
 }
 
@@ -70,19 +78,21 @@ body h1 {
 #menu{
     display:flex;
     flex-direction:column;
-    gap:18px;
+    gap:clamp(10px, 2.5vw, 18px);
+    width:100%;
+    align-items:center;
 }
 
 .menu-btn{
 
-    width:260px;
-    padding:14px;
+    width:min(260px, 100%);
+    padding:clamp(10px, 2.5vw, 14px);
 
     border:none;
     border-radius:50px;
 
     font-family:'rye', Arial;
-    font-size:1.2rem;
+    font-size:clamp(1rem, 3vw, 1.2rem);
 
     cursor:pointer;
 
@@ -192,13 +202,15 @@ body h1 {
 
 .popup-content{
 
-    width:450px;
+    width:min(450px, 90vw);
+    max-height:88vh;
+    overflow-y:auto;
 
     background:rgb(124 124 211);
 
     border-radius:20px;
 
-    padding:30px;
+    padding:clamp(16px, 4vw, 30px);
 
     text-align:center;
 
@@ -236,11 +248,19 @@ body h1 {
 /* Game-Over- / Sieg-Overlay          */
 /* ================================= */
 
-/* Wrapper um Canvas + Overlay, damit das Overlay passgenau über dem
-   Canvas positioniert werden kann */
+/*  Wrapper um Canvas + Overlay, damit das Overlay passgenau über dem
+    Canvas positioniert werden kann.
+    Eigene fließende Breite (statt sich am Canvas-Inhalt zu orientieren).
+    Obergrenze bewusst bei 720px (= native Zeichenauflösung des Canvas,
+    siehe width="720" height="480" im HTML) statt bei den ursprünglich
+    angefragten 1440px - darüber hinaus würde der Browser die 720x480-Bitmap
+    nur hochskalieren und sichtbar unscharf werden. Nach unten skaliert es
+    weiterhin fließend bis ca. 320px. Das Hintergrundbild auf body bleibt
+    davon unberührt und deckt weiterhin den ganzen Bildschirm ab. */
 .game-wrapper {
     position: relative;
-    display: inline-block;
+    width: min(720px, 92vw, calc(96vh * 3 / 2));
+    margin: 0 auto;
     line-height: 0;
 }
 
@@ -322,7 +342,7 @@ body h1 {
     border-radius: 0.6rem;
     cursor: pointer;
     font-family: 'rye', Arial, Helvetica, sans-serif;
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 4vw, 1.5rem);
     color: #531A82;
     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.85);
     transition: transform 0.15s ease;
@@ -340,21 +360,23 @@ body h1 {
 /* Game-Controls (Mute/Pause) & Pausenmenü */
 /* ================================= */
 
-/* Sitzt oberhalb des Canvas, also sichtbar außerhalb davon - nicht auf
-   dem Canvas selbst gezeichnet. */
+/*  Sitzt oberhalb des Canvas, also sichtbar außerhalb davon - nicht auf
+    dem Canvas selbst gezeichnet. War bei -200px/-550px weit außerhalb des
+    sichtbaren Bereichs positioniert - auf eine sinnvolle, mit dem Canvas
+    mitskalierende Position zurückgesetzt. */
 #game-controls {
     position: absolute;
-    top: -200px;
-    right: -550px;
+    top: clamp(-56px, -8vw, -40px);
+    right: 0;
     display: flex;
-    gap: 10px;
+    gap: clamp(6px, 2vw, 10px);
     line-height: normal;
 }
 
 .icon-btn {
-    width: 60px;
-    height: 60px;
-    padding: 8px;
+    width: clamp(36px, 8vw, 60px);
+    height: clamp(36px, 8vw, 60px);
+    padding: clamp(4px, 1.5vw, 8px);
     border: none;
     border-radius: 50%;
     background: transparent;
@@ -372,11 +394,11 @@ body h1 {
     transform: scale(1.08);
 }
 
-/* Pausenmenü liegt direkt über dem Canvas (wie das Game-Over-Overlay),
-   nutzt aber die gleichen Buttons (.menu-btn) wie der Startbildschirm.
-   pointer-events:none auf dem Container selbst, damit ausschließlich die
-   Buttons (pointer-events:auto) auf Maus-Interaktion/Hover reagieren -
-   nicht die Hintergrundfläche/das ganze Menü. */
+/*  Pausenmenü liegt direkt über dem Canvas (wie das Game-Over-Overlay),
+    nutzt aber die gleichen Buttons (.menu-btn) wie der Startbildschirm.
+    pointer-events:none auf dem Container selbst, damit ausschließlich die
+    Buttons (pointer-events:auto) auf Maus-Interaktion/Hover reagieren -
+    nicht die Hintergrundfläche/das ganze Menü. */
 #pause-menu {
     position: absolute;
     inset: 0;
@@ -385,7 +407,8 @@ body h1 {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 18px;
+    gap: clamp(10px, 2.5vw, 18px);
+    padding: 5%;
     background: rgba(0, 0, 0, 0.75);
     border-radius: 1rem;
     pointer-events: none;
@@ -395,35 +418,15 @@ body h1 {
     pointer-events: auto;
 }
 
-canvas{
-
-    display:none;
-
-}
-
 canvas {
+    display: none; /* JS setzt dies beim Spielstart per inline style auf "block" */
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+
     background-color: black;
     border: 2px solid black;
     border-radius: 1rem;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.80),
                 0 20px 40px rgba(0, 0, 0, 0.40);
-}
-
-/* Smartphone------------ */
-@media only screen and (max-width: 720px) {
-    canvas {
-        width: 100%;
-    }
-}
-
-
-/* Smartphone------------ */
-@media only screen and (max-height: 480px) {
-    canvas {
-        height: 100vh;
-    }
-
-    h1 {
-        display: none;
-    }
 }
