@@ -16,6 +16,15 @@ export class AudioHub {
     static LEVEL_SUCCESS = new Audio('./assets/audio/lvl-succes.mp3');
     static GAME_WIN = new Audio('./assets/audio/game-win.mp3');
     static GAME_OVER = new Audio('./assets/audio/game-over1.mp3');
+    
+    // Aktuelle Lautstärken: Gesamtlautstärke wirkt zusätzlich zur jeweiligen
+    // Kategorie (effektive Lautstärke = master * music bzw. master * sfx).
+    static masterVolume = 0.4;
+    static musicVolume = 0.4;
+    static sfxVolume = 0.4;
+
+    // true = komplett stummgeschaltet(Musik UND alle Soundeffekte).
+    static isMuted = false;
 
     // Array, das alle definierten Audio-Dateien enthält
     static allSounds = [
@@ -36,18 +45,14 @@ export class AudioHub {
         AudioHub.GAME_OVER,
     ];
 
-    // Aktuelle Lautstärken: Gesamtlautstärke wirkt zusätzlich zur jeweiligen
-    // Kategorie (effektive Lautstärke = master * music bzw. master * sfx).
-    static masterVolume = 0.4;
-    static musicVolume = 0.4;
-    static sfxVolume = 0.4;
 
      // Hintergrundmusik und Quallen-Elektro-Sound laufen in Dauerschleife,
     // solange sie aktiv sind - alle anderen Sounds nicht.
     static { AudioHub.MUSIC.loop = true; AudioHub.JELLYFISH_ELECTRO.loop = true; }
 
-    // Spielt eine einzelne Audiodatei ab
+    // Spielt eine einzelne Audiodatei ab - während isMuted nichts
     static playOne(sound) {
+        if (AudioHub.isMuted) return;
         if (sound.readyState < 2) return;
         sound.currentTime = 0; // Startet immer von vorne
         sound.play().catch(() => {});
@@ -57,8 +62,8 @@ export class AudioHub {
     // wichtig für Dauer-Sounds wie das Schwimm-Geräusch, das sonst bei
     // jedem einzelnen Frame neu von vorne starten würde.
     static playIfNotRunning(sound) {
-        if (!sound.paused) return;
-        this.playOne(sound);
+        if (AudioHub.isMuted || !sound.paused) return;
+        AudioHub.playOne(sound);
     }
 
     // Stoppt das Abspielen einer einzelnen Audiodatei
@@ -74,15 +79,19 @@ export class AudioHub {
         });
     }
 
-    // Musik an/aus (pausiert/setzt fort, ohne die Abspielposition zu verlieren).
-    // Gibt zurück, ob die Musik danach läuft.
+    // Musik UND Soundeffekte komplett an/aus. Stummschalten stoppt sofort
+    // alles, was gerade läuft (Musik + Dauer-Sounds wie Bewegung/Quallen-
+    // Elektro) und blockiert playOne()/playIfNotRunning() so lange komplett -
+    // keine neuen Soundeffekte können während der Stummschaltung starten.
+    // Gibt zurück, ob danach Ton läuft (Musik + Soundeffekte).
     static toggleMusic() {
-        if (AudioHub.MUSIC.paused) {
-            AudioHub.MUSIC.play().catch(() => {});
+        AudioHub.isMuted = !AudioHub.isMuted;
+        if (AudioHub.isMuted){
+            AudioHub.stopAll();
         } else {
-            AudioHub.MUSIC.pause();
+            AudioHub.MUSIC.play().catch(() => {});
         }
-        return !AudioHub.MUSIC.paused;
+        return !AudioHub.isMuted;
     }
 
     // Setzt die Lautstärke für alle Audiodateien

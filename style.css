@@ -73,7 +73,7 @@ body h1 {
     gap:18px;
 }
 
-#menu button{
+.menu-btn{
 
     width:260px;
     padding:14px;
@@ -92,7 +92,7 @@ body h1 {
     transition:.25s;
 }
 
-#menu button:hover{
+.menu-btn:hover{
 
     transform:scale(1.05);
 
@@ -179,6 +179,7 @@ body h1 {
 
     position:fixed;
     inset:0;
+    z-index: 20;
 
     display:flex;
 
@@ -333,6 +334,65 @@ body h1 {
 
 .overlay-btn:active {
     transform: scale(0.95);
+}
+
+/* ================================= */
+/* Game-Controls (Mute/Pause) & Pausenmenü */
+/* ================================= */
+
+/* Sitzt oberhalb des Canvas, also sichtbar außerhalb davon - nicht auf
+   dem Canvas selbst gezeichnet. */
+#game-controls {
+    position: absolute;
+    top: -200px;
+    right: -550px;
+    display: flex;
+    gap: 10px;
+    line-height: normal;
+}
+
+.icon-btn {
+    width: 60px;
+    height: 60px;
+    padding: 8px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+.icon-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.icon-btn:hover {
+    transform: scale(1.08);
+}
+
+/* Pausenmenü liegt direkt über dem Canvas (wie das Game-Over-Overlay),
+   nutzt aber die gleichen Buttons (.menu-btn) wie der Startbildschirm.
+   pointer-events:none auf dem Container selbst, damit ausschließlich die
+   Buttons (pointer-events:auto) auf Maus-Interaktion/Hover reagieren -
+   nicht die Hintergrundfläche/das ganze Menü. */
+#pause-menu {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+    background: rgba(0, 0, 0, 0.75);
+    border-radius: 1rem;
+    pointer-events: none;
+}
+
+#pause-menu .menu-btn{
+    pointer-events: auto;
 }
 
 canvas{

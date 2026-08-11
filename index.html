@@ -32,19 +32,19 @@
 
         <div id="menu">
 
-            <button id="start-btn">
+            <button id="start-btn" class="menu-btn">
                 ▶ Spiel starten
             </button>
 
-            <button id="controls-btn">
+            <button id="controls-btn" class="menu-btn">
                 🎮 Steuerung
             </button>
 
-            <button id="music-btn">
+            <button id="music-btn" class="menu-btn">
                 🎵 Musik
             </button>
 
-            <button id="credits-btn">
+            <button id="credits-btn" class="menu-btn">
                 ℹ Impressum
             </button>
 
@@ -141,7 +141,35 @@
     <!-- ========================= -->
 
     <div class="game-wrapper">
-        <canvas id="canvas" width="720" height="480"></canvas>  
+        <div id="game-controls" class="hidden">
+            <button id="mute-btn" class="icon-btn">
+                <img id="mute-icon" src="./assets/icons/Volume-Level-High--Streamline-Core.svg" alt="Musik an/aus">
+            </button>
+            <button id="pause-btn" class="icon-btn">
+                <img src="./assets/icons/Button-Pause-2--Streamline-Core.svg" alt="Pause">
+            </button>
+        </div>
+
+        <canvas id="canvas" width="720" height="480"></canvas>
+
+        <div id="pause-menu">
+            <button id="resume-btn" class="menu-btn">
+                ▶ Spiel fortsetzen
+            </button>
+
+            <button id="pause-controls-btn" class="menu-btn">
+                🎮 Steuerung
+            </button>
+
+            <button id="pause-music-btn" class="menu-btn">
+                🎵 Musik
+            </button>
+
+            <button id="pause-credits-btn" class="menu-btn">
+                ℹ Impressum
+            </button>
+        </div>
+
         <div id="overlay" class="overlay hidden">
             <img id="overlay-banner" class="overlay-banner" src="" alt="">
             <div id="overlay-buttons" class="overlay-buttons">

@@ -22,6 +22,9 @@ export class World {
     callbacks = {};
     gameEnded = false; // true = Game-Loop stoppt komplett (Game Over oder letztes Level gewonnen)
     gameWinning = false;  // true, sobald der Finalboss besiegt ist (verhindert Mehrfachauslösung)
+    // true, während das Pausemenü offen ist - Loop läuft weiter (damit ein
+    // Resume nicht springt), Update/Draw werden aber übersprungen
+    paused = false;
     // Wird in loadLevel() anhand der Levelnummer gesetzt.
     isLastLevel = true;
     coinBar = new Coinbar();
@@ -95,7 +98,15 @@ export class World {
     // Sobald gameEnded true ist (Game Over oder letztes Level gewonnen),
     // wird kein weiterer Frame mehr angefordert - der letzte gezeichnete
     // Frame (z.B. Sharkies letztes Todes-Bild) bleibt so sichtbar stehen.
+    // Solange paused true ist, läuft die Schleife zwar weiter (damit lastTime
+    // aktuell bleibt), überspringt aber Update/Draw komplett - so springt die
+    // Zeit beim Fortsetzen nicht.
     run(time = performance.now()){
+        if (this.paused) {
+            this.lastTime = time;
+            requestAnimationFrame((t) => this.run(t));
+            return;
+        }
         let deltaTime = time - this.lastTime;
         this.lastTime = time;
         this.update(deltaTime);
@@ -103,6 +114,14 @@ export class World {
         if (!this.gameEnded) {
             requestAnimationFrame((t) => this.run(t));
         }
+    }
+
+    pause(){
+        this.paused = true;
+    }
+
+    resume(){
+        this.paused = false;
     }
 
     update(deltaTime){
