@@ -1,0 +1,96 @@
+/* ================================= */
+/* Mobile: Querformat-Zwang & Touch-Steuerung */
+/* ================================= */
+
+/* Nur auf Touch-Geräten (hover:none) relevant - Desktop mit Maus bleibt
+   davon komplett unberührt, unabhängig vom Fenster-Seitenverhältnis. */
+
+#rotate-device {
+    display: none;
+}
+
+@media (hover: none) and (orientation: portrait) {
+    #rotate-device {
+        display: flex;
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 10%;
+        background: rgba(0, 0, 0, 0.92);
+        color: white;
+        font-size: clamp(1.1rem, 5vw, 1.8rem);
+        line-height: 1.6;
+    }
+
+    /*  Rest der Seite komplett ausblenden, solange das Gerät im
+        Hochformat gehalten wird - egal ob Startbildschirm, Popup oder
+        laufendes Spiel gerade aktiv wäre. */
+    body > *:not(#rotate-device) {
+        display: none !important;
+    }
+}
+
+/*  Touch-Steuerung (Joystick + Angriffs-Buttons): nur auf Touch-Geräten im
+    Querformat sichtbar. Auf dem Desktop bleibt die Tastatur die einzige
+    Steuerung, im Hochformat ist ohnehin alles ausgeblendet (siehe oben). */
+#touch-controls {
+    display: none;
+}
+
+@media (hover: none) and (orientation: landscape) {
+    #touch-controls {
+        display: flex;
+        position: absolute;
+        inset: 0;
+        justify-content: space-between;
+        align-items: flex-end;
+        padding: 4%;
+        pointer-events: none;
+        z-index: 6;
+    }
+
+    #joystick-base, .touch-btn {
+        pointer-events: auto;
+    }
+}
+
+#joystick-base {
+    width: clamp(90px, 22vw, 130px);
+    height: clamp(90px, 22vw, 130px);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    position: relative;
+    touch-action: none;
+}
+
+#joystick-knob {
+    width: 45%;
+    height: 45%;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.75);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#touch-actions {
+    display: flex;
+    align-items: flex-end;
+    gap: clamp(8px, 2.5vw, 14px);
+}
+
+.touch-btn {
+    width: clamp(50px, 13vw, 70px);
+    height: clamp(50px, 13vw, 70px);
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    background: rgba(13, 157, 216, 0.55);
+    color: white;
+    font-size: clamp(1.2rem, 5vw, 1.6rem);
+    touch-action: none;
+}

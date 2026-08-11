@@ -8,6 +8,10 @@ let world;
 let keyboard = new Keyboard();
 let currentLevel = 1;
 
+let joystickCenterX = 0;
+let joystickCenterY = 0;
+let joystickRadius = 0;
+
 let overlay = new GameOverlay(
     {
         overlay: document.getElementById('overlay'),
@@ -117,6 +121,7 @@ function showGameAfterFadeOut() {
     document.getElementById('start-screen').style.display = "none";
     document.getElementById('canvas').style.display = "block";
     document.getElementById('game-controls').classList.remove("hidden");
+    document.getElementById('touch-controls').classList.remove("hidden");
     AudioHub.playIfNotRunning(AudioHub.MUSIC);
     init();
 }
@@ -223,6 +228,8 @@ function initEventListeners(){
     document.getElementById("close-popup").addEventListener("click", closePopup);
     AudioHub.applyVolumes();
     resetPauseMenu();
+    initJoystick();
+    wireTouchActionButtons();
 }
 
 function wireStartMenuButtons() {
@@ -251,4 +258,79 @@ function wireMusicPopupControls() {
     document.getElementById("volume-master").addEventListener("input", (e) => AudioHub.setMasterVolume(e.target.value));
     document.getElementById("volume-music").addEventListener("input", (e) => AudioHub.setMusicVolume(e.target.value));
     document.getElementById("volume-sfx").addEventListener("input", (e) => AudioHub.setSfxVolume(e.target.value));
+}
+
+// ========================= //
+// Touch-Steuerung (Joystick + Angriffs-Buttons) //
+// ========================= //
+// Setzen dieselben keyboard.*-Felder wie die echte Tastatur - Character
+// und World merken so gar nicht, ob die Eingabe von Tastatur oder Touch kam.
+
+// Merkt sich Mittelpunkt/Radius des Joystick-Kreises für die Dauer einer
+// Berührung, damit touchmove nicht bei jedem Aufruf neu messen muss.
+function initJoystick() {
+    let base = document.getElementById('joystick-base');
+    base.addEventListener('touchstart', startJoystickTouch);
+    base.addEventListener('touchmove', moveJoystickTouch);
+    base.addEventListener('touchend', endJoystickTouch);
+}
+
+function startJoystickTouch(e) {
+    let rect = e.currentTarget.getBoundingClientRect();
+    joystickCenterX = rect.left + rect.width / 2;
+    joystickCenterY = rect.top + rect.height / 2;
+    joystickRadius = rect.width / 2;
+    moveJoystickTouch(e);
+}
+
+// Bewegt den sichtbaren Knopf mit dem Finger mit (auf den Radius begrenzt)
+// und setzt daraus die Bewegungsrichtung
+function moveJoystickTouch(e) {
+    e.preventDefault();
+    let touch = e.touches[0];
+    let dx = touch.clientX - joystickCenterX;
+    let dy = touch.clientY -joystickCenterY;
+    let distance = Math.min(Math.hypot(dx, dy), joystickRadius);
+    let angle = Math.atan2(dy, dx);
+    let knobX = Math.cos(angle) * distance;
+    let knobY = Math.sin(angle) * distance;
+    let knob = document.getElementById('joystick-knob');
+    knob.style.transform = `translate(calc(-50% + ${knobX}px), calc(-50% + ${knobY}px))`;
+    updateJoystickKeys(dx, dy);
+}
+
+// Totzone: erst ab 25% Auslenkung zählt eine Richtung als "gedrückt" -
+// sonst würde schon ein leichtes Zittern des Fingers ständig hin- und
+// herschalten.
+function updateJoystickKeys(dx, dy) {
+    let deadzone = joystickRadius * 0.25;
+    keyboard.RIGHT = dx > deadzone;
+    keyboard.LEFT = dx < -deadzone;
+    keyboard.DOWN = dy > deadzone;
+    keyboard.UP = dy < -deadzone;
+}
+
+function endJoystickTouch() {
+    document.getElementById('joystick-knob').style.transform = 'translate(-50%, -50%)';
+    keyboard.RIGHT = keyboard.LEFT = keyboard.UP = keyboard.DOWN = false;
+}
+
+function wireTouchActionButtons() {
+    bindTouchButton('touch-fin-slap', 'SPACE');
+    bindTouchButton('touch-bubble', 'E');
+    bindTouchButton('touch-poison', 'Q');
+}
+
+// Simuliert Tasten-Drücken/Loslassen: gleiches keyboard-Feld wie die
+// echte Taste, nur per Touch statt per Tastendruck ausgelöst.
+function bindTouchButton(elementId, keyboardField) {
+    let btn = document.getElementById(elementId);
+    btn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        keyboard[keyboardField] = true;
+    });
+    btn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        keyboard[keyboardField] = false;
+    });
 }

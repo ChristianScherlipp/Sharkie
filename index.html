@@ -3,13 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/style-game.css">
+    <link rel="stylesheet" href="./styles/style-mobile.css">
     <link rel="shortcut icon" href="./assets/img/1.Sharkie/1.IDLE/1.png" type="image/x-icon">
     <title>Sharkie</title>
     <script type="module" src="./js/game.js"></script>
     <script type="module" src="./models/world.class.js"></script>
 </head>
 <body>
+    <!-- ========================= -->
+    <!-- Querformat-Hinweis        -->
+    <!-- ========================= -->
+    <!--    Nur sichtbar auf Touch-Geräten im Hochformat (siehe style.css) -
+            blendet dann per CSS auch den Rest der Seite komplett aus. -->
+    <div id="rotate-device">
+        <p>
+            🔄<br>
+            Bitte drehe dein Gerät ins Querformat.<br>
+            Turn your device to landscape mode to play.
+        </p>
+    </div>
+
     <!-- ========================= -->
     <!-- Startbildschirm           -->
     <!-- ========================= -->
@@ -175,6 +190,22 @@
             <div id="overlay-buttons" class="overlay-buttons">
                 <button id="btn-try-again" class="overlay-btn">Try Again</button>
                 <button id="btn-back-menu" class="overlay-btn">Back to Menu</button>
+            </div>
+        </div>
+
+        <!--    Touch-Steuerung: nur auf Touch-Geräten im Querformat sichtbar
+                (siehe style.css), erst ab Spielstart eingeblendet. Joystick
+                steuert die Bewegung, die drei Buttons lösen Fin Slap/Blase/
+                Gift aus - beide setzen dieselben keyboard.*-Felder wie die
+                echte Tastatur, Character/World merken den Unterschied nicht. -->
+        <div id="touch-controls" class="hidden">
+            <div id="joystick-base">
+                <div id="joystick-knob"></div>
+            </div>
+            <div id="touch-actions">
+                <button id="touch-fin-slap" class="touch-btn">👊</button>
+                <button id="touch-bubble" class="touch-btn">🫧</button>
+                <button id="touch-poison" class="touch-btn">☠️</button>
             </div>
         </div>
     </div>
