@@ -9,6 +9,7 @@ export class Jellyfish extends MovableObject {
     height = 120;
     damage = 2;
     health = 1;
+    strengthBonus = 0;
     detectionRange = 100;
     exitRange = 130;
     isAlerted = false;
@@ -54,7 +55,7 @@ export class Jellyfish extends MovableObject {
     // nicht mehr versehentlich den Sound einer anderen ab.
     static alertedCount = 0;
 
-    constructor(x, y) {
+    constructor(x, y, strengthBonus = 0) {
         super().loadImage('./assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png');
         this.loadImages(this.JELLY_IMAGES_SWIM);
         this.loadImages(this.JELLY_IMAGES_DANGEROUS);
@@ -62,6 +63,8 @@ export class Jellyfish extends MovableObject {
         this.speed = 0.15 +Math.random() * 0.5;
         this.x = x;
         this.y =y;
+        this.strengthBonus = strengthBonus;
+        this.health += strengthBonus;
         let canvasHeight = 480;
         let range = 50 + Math.random() * 5
         this.minY = Math.max(0, this.y - range);
@@ -94,7 +97,7 @@ export class Jellyfish extends MovableObject {
         }else if (this.isAlerted && distance > this.exitRange) {
             this.markCalm();
         }
-        this.damage = this.isAlerted ? 5 : 2;
+        this.damage = (this.isAlerted ? 5 : 2) + this.strengthBonus;
     }
 
     markAlerted(){

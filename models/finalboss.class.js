@@ -26,8 +26,8 @@ export class Finalboss extends MovableObject {
     folloSpeedMultiplier = 2;
     attackSpeedMultuplier = 3.5;
 
-    health = 50;
-    maxHealth = 50;
+    health = 30;
+    maxHealth = 30;
     xpAwarded = false;
 
     isHurt = false;
@@ -112,7 +112,7 @@ export class Finalboss extends MovableObject {
     ];
 
 
-    constructor (x, y){
+    constructor (x, y, strengthBonus = 0){
         super().loadImage('./assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png');
         this.loadImages(this.FINALBOSS_IMAGES_SWIM);
         this.loadImages(this.FINALBOSS_IMAGES_ATTACK);
@@ -122,6 +122,9 @@ export class Finalboss extends MovableObject {
         this.x = x;
         this.y = y;
         this.speed = 1;
+        this.health += strengthBonus;
+        this.maxHealth += strengthBonus;
+        this.damage += strengthBonus;
         this.pickRandomDirection();
         this.getRealFrame();
     }

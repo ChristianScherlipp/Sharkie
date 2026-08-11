@@ -6,6 +6,7 @@ import { AudioHub } from '../models/audio-hub.class.js';
 let canvas;
 let world;
 let keyboard = new Keyboard();
+let currentLevel = 1;
 
 let overlay = new GameOverlay(
     {
@@ -26,7 +27,7 @@ function init() {
     overlay.reset();
     resetKeyboard();
     
-    world = new World(canvas, keyboard, buildWorldCallbacks());
+    world = new World(canvas, keyboard, buildWorldCallbacks(), currentLevel);
 
     console.log('My Character is', world.character);
     
@@ -37,6 +38,7 @@ function buildWorldCallbacks() {
         onGameOver: handleGameOver,
         onWinBanner: handleWinBanner,
         onWinFinal: handleWinFinal,
+        onLevelComplete: handleLevelComplete,
     };
 }
 
@@ -59,6 +61,14 @@ function handleWinFinal() {
     overlay.showWinFinal();
     AudioHub.stopAll();
     AudioHub.playOne(AudioHub.GAME_WIN);
+}
+
+// Sharkie ist nach dem Levelsieg komplett aus dem Bild rausgeschwommen -
+// jetzt wird tatsächlich das nächste Level gestartet (kein Game-Over/Sieg-
+// Overlay nötig, der Banner hat den Sieg schon gezeigt).
+function handleLevelComplete() {
+    currentLevel++;
+    init();
 }
 
 // Startet das Spiel neu, ohne die komplette Seite neu zu laden - erzeugt

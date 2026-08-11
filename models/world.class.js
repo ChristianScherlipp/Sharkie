@@ -6,6 +6,7 @@ import { Finalboss } from "./finalboss.class.js";
 import { PoisonBubble } from "./poison-bubble.class.js";
 import { AudioHub } from "./audio-hub.class.js";
 import { createLevl1 } from "../levels/level1.js"
+import { createLevl2 } from "../levels/level2.js";
 import { WorldRenderMixin } from "./world-render.mixin.js";
 import { WorldCombatMixin } from "./world-combat.mixin.js";
 import { WorldItemsMixin } from "./world-items.mixin.js";
@@ -13,7 +14,7 @@ import { WorldBossIntroMixin } from "./world-boss-intro.mixin.js";
 
 export class World {
     character = new Character();
-    level = createLevl1();
+    level;
     canvas;
     ctx;
     keyboard;
@@ -21,9 +22,7 @@ export class World {
     callbacks = {};
     gameEnded = false; // true = Game-Loop stoppt komplett (Game Over oder letztes Level gewonnen)
     gameWinning = false;  // true, sobald der Finalboss besiegt ist (verhindert Mehrfachauslösung)
-    // Es existiert aktuell nur level1 - sobald es weitere Level gibt, muss
-    // diese Prüfung durch eine echte "gibt es ein nächstes Level"-Logik
-    // ersetzt werden.
+    // Wird in loadLevel() anhand der Levelnummer gesetzt.
     isLastLevel = true;
     coinBar = new Coinbar();
     healthBar = new Healthbar();
@@ -32,14 +31,13 @@ export class World {
     lastTime = 0;
     collisionTimer = 0;
 
-    // Gesamtwert aller Coins im Level (vor dem Einsammeln), für die Prozent-Berechnung.
-    // Summe der einzelnen coin.value, nicht einfach die Anzahl - so zählen
-    // BigCoins mit ihrem höheren Wert korrekt mit.
-    totalCoins = this.level.coins.reduce((sum, coin) => sum + coin.value, 0);
+    // Gesamtwert aller Coins/Poisons im Level (vor dem Einsammeln), für die
+    // Prozent-Berechnung - Summe der einzelnen Werte, nicht die Anzahl, damit
+    // BigCoins mit ihrem höheren Wert korrekt mitzählen. Wird in loadLevel() gesetzt.
+    totalCoins = 0;
     collectedCoins = 0;
 
-    // Gesamtwert aller Poisons im Level (vor dem Einsammeln), für die Prozent-Berechnung.
-    totalPoisons = this.level.poisons.reduce((sum, poison) => sum + poison.value, 0);
+    totalPoisons = 0;
     collectedPoisons = 0;
 
     // Erfahrungspunkte: +100 für einen Bubble-Kill (egal welcher Gegner),
@@ -52,9 +50,10 @@ export class World {
 
     netTriggered = false;
 
-    // feste Referenz auf den Boss, damit World ihn nicht jeden Frame neu
-    // suchen muss (checkNetTrigger blendet ab hier auch seine Healthbar ein)
-    finalboss = this.level.enemies.find(e => e instanceof Finalboss);
+    // Feste Referenz auf den Boss, damit World ihn nicht jeden Frame neu
+    // suchen muss (checkNetTrigger blendet ab hier auch seine Healthbar ein).
+    // Wird in loadLevel() gesetzt.
+    finalboss;
     showFinalbossHealthbar = false;
 
     // rote "-2"/"-5"-Texte für Gegner-Treffer (z.B. Gift-Tick), gleiches
@@ -69,14 +68,26 @@ export class World {
     cameraPanElapsed = 0;
     cameraPanDuration = 1500;
 
-    constructor(canvas, keyboard, callbacks = {}) {
+    constructor(canvas, keyboard, callbacks = {}, levelNumber = 1) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.callbacks = callbacks;
+        this.loadLevel(levelNumber);
         this.setWorld();
         this.lastTime = performance.now();
         this.run();
+    }
+
+    // Lädt das gewünschte Level (aktuell 1 oder 2) und berechnet die davon
+    // abhängigen Werte: Gesamt-Coins/-Poisons für die Prozent-Anzeigen, die
+    // feste Boss-Referenz, und ob es das letzte Level ist.
+    loadLevel(levelNumber){
+        this.level = levelNumber === 2 ? createLevl2() : createLevl1();
+        this.totalCoins = this.level.coins.reduce((sum, coin) => sum + coin.value, 0);
+        this.totalPoisons = this.level.poisons.reduce((sum, poison) => sum + poison.value, 0);
+        this.finalboss = this.level.enemies.find(e => e instanceof Finalboss);
+        this.isLastLevel = levelNumber >= 2;
     }
 
     // Zentraler Game-Loop läuft über requestAnimationFrame,
@@ -106,6 +117,7 @@ export class World {
         this.cleanupEntities(deltaTime);
         this.checkGameOver();
         this.checkGameWin();
+        this.checkLevelTransition();
     }
 
     // Bewegt/animiert alle Level-Objekte (Sharkie, Gegner, Coins, Poisons,
@@ -205,8 +217,8 @@ export class World {
     // - letztes Level: Bild deckt das komplette Canvas ab, gleiche Buttons
     //   wie bei Game Over (alles wird angehalten).
     // - nicht letztes Level: nur ein Banner fährt von oben rein, Sharkie
-    //   schwimmt automatisch nach rechts aus dem Canvas (Spiel läuft weiter,
-    //   bis es ein echtes Folge-Level gibt).
+    //   schwimmt automatisch nach rechts aus dem Canvas - das eigentliche
+    //   Levelende folgt dann in checkLevelTransition().
     checkGameWin() {
         if (this.gameEnded || this.gameWinning) return;
         if (this.finalboss && this.finalboss.markedForRemoval) {
@@ -218,6 +230,19 @@ export class World {
                 this.character.autoSwimRight = true;
                 if (this.callbacks.onWinBanner) this.callbacks.onWinBanner();
             }
+        }
+    }
+
+    // Sobald Sharkie nach einem Levelsieg (nicht letztes Level) komplett aus
+    // dem sichtbaren Bereich rausgeschwommen ist, wird das eigentliche
+    // Levelende ausgelöst - der Game-Loop stoppt, game.js lädt darüber
+    // (onLevelComplete-Callback) das nächste Level.
+    checkLevelTransition(){
+        if (!this.gameWinning || this.isLastLevel || this.gameEnded) return;
+        let viewportRight = -this.camera_x + this.canvas.width;
+        if (this.character.x > viewportRight) {
+            this.gameEnded = true;
+            if (this.callbacks.onLevelComplete) this.callbacks.onLevelComplete();
         }
     }
 

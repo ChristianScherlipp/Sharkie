@@ -8,6 +8,7 @@ export class Pufferfish extends MovableObject {
     height = 110;
     health = 2;
     damage = 2;
+    strengthBonus = 0;
     detectionRange = 100;
     exitRange = 130;  // Hysterese gegen Flackern an der Grenze
     alertState = 'idle';  // 'idle' | 'entering' | 'charging' | 'exiting'
@@ -65,7 +66,7 @@ export class Pufferfish extends MovableObject {
     ];
 
 
-    constructor(x, y){
+    constructor(x, y, strengthBonus = 0){
         super().loadImage('./assets/img/2.Enemy/1.Puffer_fish_3_color_options/1.Swim/1.swim1.png');
         this.loadImages(this.PUFFERFISH_IMAGES_SWIM);
         this.loadImages(this.PUFFERFISH_IMAGES_TRANSITION);
@@ -76,6 +77,8 @@ export class Pufferfish extends MovableObject {
         this.y = y;
         this.minX = this.x - (200 + Math.random() * 200);
         this.maxX = this.x + (200 + Math.random() * 200);
+        this.strengthBonus = strengthBonus;
+        this.health += strengthBonus;
         this.getRealFrame();
     }
 
@@ -109,7 +112,7 @@ export class Pufferfish extends MovableObject {
         if ((this.alertState === 'entering' || this.alertState === 'charging') && distance > this.exitRange) {
             this.alertState = 'exiting';
         }
-        this.damage = (this.alertState === 'idle') ? 2 : 4;
+        this.damage = (this.alertState === 'idle' ? 2 : 4) + this.strengthBonus;
     }
 
     isCharacterInFront(character){
