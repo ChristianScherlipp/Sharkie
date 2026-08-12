@@ -84,6 +84,10 @@ body h1 {
 }
 
 .menu-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
 
     width:min(260px, 100%);
     padding:clamp(10px, 2.5vw, 14px);
@@ -110,6 +114,14 @@ body h1 {
 
     box-shadow:0 0 15px rgba(255,255,255,.5);
 
+}
+
+.btn-icon{
+    width:1.3rem;
+    height:1.3rem;
+    vertical-align:middle;
+    margin-right:8px;
+    object-fit:contain;
 }
 
 /* ========================= */
@@ -224,6 +236,13 @@ body h1 {
     padding:10px 25px;
 
     cursor:pointer;
+}
+
+.popup-icon{
+    width:1.4rem;
+    height:1.4rem;
+    vertical-align:middle;
+    object-fit:contain;
 }
 
 .volume-row{

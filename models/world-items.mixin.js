@@ -34,6 +34,19 @@ export const WorldItemsMixin = {
         });
     },
 
+    // Erzeugt ein kleines Coin-Icon, das über der getroffenen BigCoin
+    // hochsteigt und dabei ausblendet - gleiches Prinzip wie
+    // awardExperience()/showDamagePopup(), nur mit Bild statt Text.
+    showCoinPopup(coin){
+        this.coinPopups.push({
+            x: coin.x + coin.width / 2,
+            y: coin.y,
+            elapsed: 0,
+            duration: 800,
+            riseDistance: 75
+        });
+    },
+
     // Läuft jeden Frame: normale Coins (collectOnTouch = true) werden einfach
     // durch Berühren eingesammelt.
     checkCoinCollision(){
@@ -69,6 +82,7 @@ export const WorldItemsMixin = {
         this.collectedCoins++;
         let percentage = (this.collectedCoins / this.totalCoins) * 100;
         this.coinBar.setPercentage(percentage, this.coinBar.IMAGES_COINBAR, this.collectedCoins);
+        this.showCoinPopup(coin);
         if (coin.value <= 0) this.level.coins.splice(index, 1);
         AudioHub.stopOne(AudioHub.FIN_SLAP);
         AudioHub.playOne(AudioHub.COIN_COLLECTED);
@@ -85,6 +99,7 @@ export const WorldItemsMixin = {
                 this.collectedPoisons += poison.value;
                 let percentage = (this.collectedPoisons / this.totalPoisons) * 100;
                 this.posionBar.setPercentage(percentage, [], this.collectedPoisons);
+                AudioHub.playOne(AudioHub.POTIN_COLLECTED);
             }
         }
     },
@@ -117,6 +132,7 @@ export const WorldItemsMixin = {
         this.consumePoisonAmmo();
         let spawn = this.getShotSpawnPosition();
         this.firingObjects.push(new PoisonBubble(spawn.x, spawn.y, spawn.direction));
+        AudioHub.playOne(AudioHub.BUBBLE_FINISH_LOAD);
     },
 
     consumePoisonAmmo(){

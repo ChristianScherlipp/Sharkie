@@ -12,6 +12,7 @@ export class AudioHub {
     static BOSS_APPEARS = new Audio('./assets/audio/assets_sounds_boss-splash.mp3');
     static JELLYFISH_CONTACT = new Audio('./assets/audio/electric-shock.mp3');
     static COIN_COLLECTED = new Audio('./assets/audio/coin-collected.mp3');
+    static POTIN_COLLECTED = new Audio('./assets/audio/bottle-open.mp3');
     static HURT = new Audio('./assets/audio/electric-hurt.mp3');
     static LEVEL_SUCCESS = new Audio('./assets/audio/lvl-succes.mp3');
     static GAME_WIN = new Audio('./assets/audio/game-win.mp3');
@@ -39,6 +40,7 @@ export class AudioHub {
         AudioHub.BOSS_APPEARS,
         AudioHub.JELLYFISH_CONTACT,
         AudioHub.COIN_COLLECTED,
+        AudioHub.POTIN_COLLECTED,
         AudioHub.HURT,
         AudioHub.LEVEL_SUCCESS,
         AudioHub.GAME_WIN,

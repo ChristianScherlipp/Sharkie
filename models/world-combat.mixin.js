@@ -149,6 +149,7 @@ export const WorldCombatMixin = {
             if (bubble.isColliding(enemy)) {
                 let dmg = Math.round(bubble.currentDamage);
                 this.firingObjects.splice(bubbleIndex, 1);
+                AudioHub.playOne(AudioHub.BUBBLE_BURST);
                 if (dmg > 0) enemy.takeDamage(dmg);
                 enemy.registerPoisonHit();
                 break;

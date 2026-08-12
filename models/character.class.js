@@ -316,6 +316,7 @@ export class Character extends MovableObject {
         this.poisonFrame = 0;
         this.poisonTimer = 0;
         this.img = this.imageCache[this.IMAGES_POISON_FORMATION[0]];
+        AudioHub.playOne(AudioHub.BUBBLE_LOAD);
     }
 
     advancePoisonFrame(deltaTime){

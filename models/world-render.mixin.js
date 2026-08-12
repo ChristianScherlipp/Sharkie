@@ -1,3 +1,5 @@
+import { getSharedImage } from "./image-cache.js";
+
 // Zeichen-Methoden für World, ausgelagert damit world.class.js unter der
 // 400-LOC-Grenze bleibt. Wird per Object.assign(World.prototype, ...) in
 // world.class.js eingebunden - die Methoden greifen weiterhin ganz normal
@@ -27,6 +29,7 @@ export const WorldRenderMixin = {
         this.addObjectsToMap(this.level.poisons);
         this.drawPopups(this.xpPopups, 'yellow');
         this.drawPopups(this.damagePopups, 'red');
+        this.drawCoinPopups();
     },
 
     // HUD: fest auf dem Bildschirm, bewegt sich nicht mit der Kamera.
@@ -104,6 +107,22 @@ export const WorldRenderMixin = {
         this.ctx.textBaseline = 'middle';
         this.ctx.lineWidth = 3;
         this.ctx.strokeStyle = 'black';
+    },
+
+    // Kleines Coin-Icon, das über einer getroffenen BigCoin hochsteigt und
+    // dabei ausblendet - gleiche Steig-/Ausblend-Physik wie drawPopups(),
+    // nur wird statt Text ein Bild gezeichnet.
+    drawCoinPopups(){
+        let icon = getSharedImage('./assets/img/4.Marcadores/1.Coins/1.png');
+        let size = 30;
+        this.coinPopups.forEach(popup => {
+            let t = Math.min(popup.elapsed / popup.duration, 1);
+            let y = popup.y - popup.riseDistance * t;
+            this.ctx.save();
+            this.ctx.globalAlpha = 1 - t;
+            this.ctx.drawImage(icon, popup.x - size / 2, y - size / 2, size, size);
+            this.ctx.restore();
+        });
     },
 
     // Boss-Healthbar: nur sichtbar, sobald Sharkie hinter dem Netz ist.

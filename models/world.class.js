@@ -3,7 +3,6 @@ import { Coinbar } from "./coinbar.class.js";
 import { Healthbar } from "./healthbar.class.js";
 import { Posionbar } from "./posionbar-object.class.js";
 import { Finalboss } from "./finalboss.class.js";
-import { PoisonBubble } from "./poison-bubble.class.js";
 import { AudioHub } from "./audio-hub.class.js";
 import { createLevl1 } from "../levels/level1.js"
 import { createLevl2 } from "../levels/level2.js";
@@ -62,6 +61,11 @@ export class World {
     // rote "-2"/"-5"-Texte für Gegner-Treffer (z.B. Gift-Tick), gleiches
     // Prinzip wie xpPopups, nur andere Farbe.
     damagePopups = [];
+
+    // Kleine Coin-Icons, die kurz über einer getroffenen BigCoin hochsteigen
+    // und dabei ausblenden - gleiches Prinzip wie xpPopups/damagePopups,
+    // nur wird statt Text ein Bild gezeichnet (siehe showCoinPopup()).
+    coinPopups = [];
 
     // Boss-Erschein-Sequenz: 'pending' -> 'panning' (Kamera schwenkt zum
     // letzten Abschnitt) -> introducing (Erschein-Animation-läuft) -> 'done'
@@ -158,13 +162,13 @@ export class World {
         this.removeExpiredBubbles();
     }
 
-    // Normale Blasen (keine Gift-Blasen), die verfallen, platzen genauso
-    // hörbar wie bei einem Treffer
+    // Blasen (normale UND Gift-Blasen), die verfallen, platzen genauso
+    // hörbar wie bei einem Treffer.
     removeExpiredBubbles(){
-        let expired = this.firingObjects.filter(fo => fo.age >= 5000 && !(fo instanceof PoisonBubble));
+        let expired = this.firingObjects.filter(fo => fo.age >= 5000);
         expired.forEach(() => AudioHub.playOne(AudioHub.BUBBLE_BURST));
         this.firingObjects = this.firingObjects.filter(fo => fo.age < 5000);
-        }
+    }
 
     // Kollision lief früher alle 200ms per eigenem Interval, das wird hier
     // über einen Zähler nachgebildet.
@@ -211,13 +215,19 @@ export class World {
         }
     }
 
-    // Entfernt zu Ende gestorbene Gegner sowie abgelaufene XP-/Schadens-Popups.
+    // Entfernt zu Ende gestorbene Gegner sowie abgelaufene Popups.
     cleanupEntities(deltaTime){
         this.level.enemies = this.level.enemies.filter(enemy => !enemy.markedForRemoval);
-        this.xpPopups.forEach(popup => popup.elapsed += deltaTime);
-        this.xpPopups = this.xpPopups.filter(popup => popup.elapsed < popup.duration);
-        this.damagePopups.forEach(popup => popup.elapsed += deltaTime);
-        this.damagePopups = this.damagePopups.filter(popup => popup.elapsed < popup.duration);
+        this.xpPopups = this.ageAndFilterPopups(this.xpPopups, deltaTime);
+        this.damagePopups = this.ageAndFilterPopups(this.damagePopups, deltaTime);
+        this.coinPopups = this.ageAndFilterPopups(this.coinPopups, deltaTime);
+    }
+
+    // Lässt eine Liste von Popups (XP/Schaden/Coin) altern und entfernt
+    // abgelaufene - gemeinsame Hilfsfunktion für alle drei Popup-Arten.
+    ageAndFilterPopups(popups, deltaTime){
+        popups.forEach(popup => popup.elapsed += deltaTime);
+        return popups.filter(popup => popup.elapsed < popup.duration);
     }
 
     // Sobald Sharkies Todes-Animation komplett durchgelaufen ist
