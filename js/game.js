@@ -270,9 +270,10 @@ function wireMusicPopupControls() {
 // Berührung, damit touchmove nicht bei jedem Aufruf neu messen muss.
 function initJoystick() {
     let base = document.getElementById('joystick-base');
-    base.addEventListener('touchstart', startJoystickTouch);
-    base.addEventListener('touchmove', moveJoystickTouch);
-    base.addEventListener('touchend', endJoystickTouch);
+    base.style.touchAction = 'none';
+    base.addEventListener('touchstart', startJoystickTouch, { passive: false });
+    base.addEventListener('touchmove', moveJoystickTouch, { passive: false });
+    base.addEventListener('touchend', endJoystickTouch, { passive: false });
 }
 
 function startJoystickTouch(e) {
@@ -325,12 +326,13 @@ function wireTouchActionButtons() {
 // echte Taste, nur per Touch statt per Tastendruck ausgelöst.
 function bindTouchButton(elementId, keyboardField) {
     let btn = document.getElementById(elementId);
+    btn.style.touchAction = 'none';
     btn.addEventListener('touchstart', (e) => {
         e.preventDefault();
         keyboard[keyboardField] = true;
-    });
+    }, { passive: false });
     btn.addEventListener('touchend', (e) => {
         e.preventDefault();
         keyboard[keyboardField] = false;
-    });
+    }, { passive: false });
 }
