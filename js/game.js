@@ -11,7 +11,6 @@ let currentLevel = 1;
 let joystickCenterX = 0;
 let joystickCenterY = 0;
 let joystickRadius = 0;
-let joystickPointerId = null;
 
 let overlay = new GameOverlay(
     {
@@ -271,18 +270,13 @@ function wireMusicPopupControls() {
 // Berührung, damit touchmove nicht bei jedem Aufruf neu messen muss.
 function initJoystick() {
     let base = document.getElementById('joystick-base');
-    base.style.touchAction = 'none';
-    base.addEventListener('pointerdown', startJoystickTouch);
-    base.addEventListener('pointermove', moveJoystickTouch);
-    base.addEventListener('pointerup', endJoystickTouch);
-    base.addEventListener('pointercancel', endJoystickTouch);
+    base.addEventListener('touchstart', startJoystickTouch);
+    base.addEventListener('touchmove', moveJoystickTouch);
+    base.addEventListener('touchend', endJoystickTouch);
 }
 
 function startJoystickTouch(e) {
-    let base = e.currentTarget;
-    joystickPointerId = e.pointerId;
-    base.setPointerCapture(e.pointerId);
-    let rect = base.getBoundingClientRect();
+    let rect = e.currentTarget.getBoundingClientRect();
     joystickCenterX = rect.left + rect.width / 2;
     joystickCenterY = rect.top + rect.height / 2;
     joystickRadius = rect.width / 2;
@@ -292,11 +286,10 @@ function startJoystickTouch(e) {
 // Bewegt den sichtbaren Knopf mit dem Finger mit (auf den Radius begrenzt)
 // und setzt daraus die Bewegungsrichtung
 function moveJoystickTouch(e) {
-    if (e.pointerId !== joystickPointerId) return;
     e.preventDefault();
     let touch = e.touches[0];
-    let dx = e.clientX - joystickCenterX;
-    let dy = e.clientY - joystickCenterY;
+    let dx = touch.clientX - joystickCenterX;
+    let dy = touch.clientY -joystickCenterY;
     let distance = Math.min(Math.hypot(dx, dy), joystickRadius);
     let angle = Math.atan2(dy, dx);
     let knobX = Math.cos(angle) * distance;
@@ -317,9 +310,7 @@ function updateJoystickKeys(dx, dy) {
     keyboard.UP = dy < -deadzone;
 }
 
-function endJoystickTouch(e) {
-    if (e.pointerId !== joystickPointerId) return;
-    joystickPointerId = null;
+function endJoystickTouch() {
     document.getElementById('joystick-knob').style.transform = 'translate(-50%, -50%)';
     keyboard.RIGHT = keyboard.LEFT = keyboard.UP = keyboard.DOWN = false;
 }
@@ -334,18 +325,12 @@ function wireTouchActionButtons() {
 // echte Taste, nur per Touch statt per Tastendruck ausgelöst.
 function bindTouchButton(elementId, keyboardField) {
     let btn = document.getElementById(elementId);
-    btn.style.touchAction = 'none';
-    btn.addEventListener('pointerdown', (e) => {
+    btn.addEventListener('touchstart', (e) => {
         e.preventDefault();
         keyboard[keyboardField] = true;
     });
-    let release = (e) => releaseTouchButton(e, keyboardField);
-    btn.addEventListener('pointerup', release);
-    btn.addEventListener('pointerleave', release);
-    btn.addEventListener('pointercancel', release);
-}
-
-function releaseTouchButton(e, keyboardField) {
-    e.preventDefault();
-    keyboard[keyboardField] = false;
+    btn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        keyboard[keyboardField] = false;
+    });
 }
