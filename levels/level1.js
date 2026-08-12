@@ -123,47 +123,47 @@ export function createLevl1() {
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 0),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 0),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 0),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D2.png', 719),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D2.png', 719),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D2.png', 719),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D2.png', 719),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D1.png', 719 * 2),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 719 * 2),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 719 * 2),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 719 * 2),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D2.png', 719 * 3),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D2.png', 719 * 3),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D2.png', 719 * 3),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D2.png', 719 * 3),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D1.png', 719 * 4),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 719 * 4),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 719 * 4),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 719 * 4),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D2.png', 719 * 5),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D2.png', 719 * 5),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D2.png', 719 * 5),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D2.png', 719 * 5),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D1.png', 719 * 6),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 719 * 6),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 719 * 6),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 719 * 6),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D2.png', 719 * 7),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D2.png', 719 * 7),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D2.png', 719 * 7),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D2.png', 719 * 7),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D1.png', 719 * 8),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 719 * 8),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 719 * 8),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 719 * 8),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D2.png', 719 * 9),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D2.png', 719 * 9),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D2.png', 719 * 9),
