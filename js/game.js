@@ -213,6 +213,7 @@ function initEventListeners(){
     resetPauseMenu();
     initJoystick();
     wireTouchActionButtons();
+    disableTouchControlsContextMenu();
 }
 
 function wireStartMenuButtons() {
@@ -298,5 +299,11 @@ function bindTouchButton(elementId, keyboardField) {
     btn.addEventListener('touchend', (e) => {
         e.preventDefault();
         keyboard[keyboardField] = false;
+    });
+}
+
+function disableTouchControlsContextMenu() {
+    document.getElementById('touch-controls').addEventListener('contextmenu', (e) => {
+        e.preventDefault();
     });
 }
