@@ -5,10 +5,19 @@ export class Statusbar extends DrawableObject{
     displayValue;
     iconMode;
 
+    /**
+     * Creates a new Statusbar instance
+     */
     constructor() {
         super();
     }
 
+    /**
+     * Sets percentage.
+     * @param {number} percentage - Percentage value frome 0 to 100.
+     * @param {Array<HTMLImageElement|string>} images - Ordered list of animation frame images.
+     * @param {number} displayValue - The value to display as text.
+     */
     setPercentage(percentage, images, displayValue = percentage){
         this.percentage = percentage;
         this.displayValue = displayValue;
@@ -18,6 +27,10 @@ export class Statusbar extends DrawableObject{
         }
     }
 
+    /**
+     * Resolve image index.
+     * @returns {number} - The computedt reesult.
+     */
     resolveImageIndex(){
             if (this.percentage == 100) {
                 return 5;
@@ -34,11 +47,19 @@ export class Statusbar extends DrawableObject{
             }
     }
 
+    /**
+     * Draws the object onto the canvas.
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context to draw with.
+     */
     draw(ctx) {
         super.draw(ctx);
         this.drawValueText(ctx);
     }
 
+    /**
+     * Draws value text.
+     * @param {CanvasRenderingContext2D} ctx - The canvas rendering context to draw with.
+     */
     drawValueText(ctx) {
         let text = `${Math.round(this.displayValue)}`;
         let pos = this.getTextPosition();
@@ -54,6 +75,10 @@ export class Statusbar extends DrawableObject{
         ctx.restore();
     }
 
+    /**
+     * Gets text posiotion.
+     * @returns {number} - The request value.
+     */
     getTextPosition() {
         if (this.iconMode) {
             return { x: this.x + this.width + 18, y: this.y + this.height / 2 };

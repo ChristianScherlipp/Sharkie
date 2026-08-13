@@ -2,9 +2,13 @@ import { Finalboss } from "./finalboss.class.js";
 import { Jellyfish } from "./jellyfish.class.js";
 import { PoisonBubble } from "./poison-bubble.class.js";
 import { AudioHub } from "./audio-hub.class.js";
+import { MovableObject } from "./movable-object.class.js";
 
 export const WorldCombatMixin = {
 
+    /**
+     * Checks collision.
+     */
     checkCollision(){
         this.level.enemies.forEach((enemy) =>{
                 if (enemy.isDying) return;
@@ -15,6 +19,10 @@ export const WorldCombatMixin = {
             })
     },
 
+    /**
+     * Applies enemy contact.
+     * @param {MovableObject} enemy - The enemy to check/affect.
+     */
     applyEnemyContact(enemy){
         this.character.hit(enemy.damage);
         this.character.lastHitByJellyfish = enemy instanceof Jellyfish;
@@ -27,6 +35,11 @@ export const WorldCombatMixin = {
         }
     },
 
+    /**
+     * Checks every enemy within fin-slap range and applies damage or a
+     * frontal-hit punishment, depending on which way the enemy is facing.
+     * @returns {boolean} True if at least one enemy was successfully hit.
+     */
     checkFinSlapOnEnemies(){
         let hitSomething = false;
         this.level.enemies.forEach((enemy) => {
@@ -49,6 +62,12 @@ export const WorldCombatMixin = {
         return this.character.isNear(enemy);
     },
 
+    /**
+     * Checks whether the character is close enough and the enemy is a valid
+     * fin-slap target (Pufferfish or an already-introduced Finalboss).
+     * @param {MovableObject} enemy - The enemy to check/affect.
+     * @returns {boolean} True if the enemy is in fin-slap range.
+     */
     isEnemyFacingCharacter(enemy){
         let facingLeft = !enemy.otherDirection;
         let charCenterX = this.character.x + this.character.width / 2;
@@ -56,12 +75,22 @@ export const WorldCombatMixin = {
         return facingLeft ? charCenterX <= enemyCenterX : charCenterX >= enemyCenterX;
     },
 
+    /**
+     * Punishes frontal fin slap.
+     * @param {MovableObject} enemy - The enemy to check/affect.
+     */
     punishFrontalFinSlap(enemy){
         this.character.hit(enemy.damage);
         this.character.lastHitByJellyfish = false;
         this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR);
     },
 
+    /**
+     * Applies fin-slap damage to an enemy (or boss damage for the Finalboss)
+     * and starts its death animation once its health drops to 0.
+     * @param {MovableObject} enemy - The enemy to check/affect.
+     * @returns {boolean} True; always considered a successful hit once reached.
+     */
     applyFinSlapDamage(enemy){
         if (enemy instanceof Finalboss) {
             enemy.takeDamage(2);
@@ -75,6 +104,9 @@ export const WorldCombatMixin = {
         return true;
     },
 
+    /**
+     * Checks bubble hit on enemies.
+     */
     checkBubbleHitOnEnemies(){
         for (let i = this.firingObjects.length - 1; i >= 0; i--) {
             let bubble = this.firingObjects[i];
@@ -83,6 +115,11 @@ export const WorldCombatMixin = {
         }
     },
 
+    /**
+     * Checks bubble against enemies.
+     * @param {FiringObject} bubble - The fired bubble/poison-bubble object.
+     * @param {number} bubbleIndex - Index of the bubble within the firing objects array.
+     */
     checkBubbleAgainstEnemies(bubble, bubbleIndex){
         for (let j = this.level.enemies.length - 1; j >= 0; j--) {
             let enemy = this.level.enemies[j];
@@ -97,6 +134,13 @@ export const WorldCombatMixin = {
         }
     },
 
+    
+    /**
+     * Applies bubble damage to an enemy (or boss damage for the Finalboss)
+     * and starts its death animation once its health drops to 0.
+     * @param {MovableObject} enemy - The enemy to check/affect.
+     * @param {number} dmg - Amount of damage to apply.
+     */
     applyBubbleDamage(enemy, dmg){
         if (enemy instanceof Finalboss) {
             if (dmg > 0) enemy.takeDamage(dmg);
@@ -110,6 +154,9 @@ export const WorldCombatMixin = {
         }
     },
 
+    /**
+     * Checks poison bubble hit on enemies.
+     */
     checkPoisonBubbleHitOnEnemies(){
         for (let i = this.firingObjects.length - 1; i >= 0; i--) {
             let bubble = this.firingObjects[i];
@@ -118,6 +165,11 @@ export const WorldCombatMixin = {
         }
     },
 
+    /**
+     * Checks poison bubble against boss.
+     * @param {FiringObject} bubble - The fired bubble/poison-bubble object.
+     * @param {number} bubbleIndex - Index of the bubble within the firing objects array.
+     */
     checkPoisonBubbleAgainstBoss(bubble, bubbleIndex){
         for (let j = this.level.enemies.length - 1; j >= 0; j--) {
             let enemy = this.level.enemies[j];
@@ -134,6 +186,10 @@ export const WorldCombatMixin = {
         }
     },
 
+    /**
+     * Applies knockback.
+     * @param {MovableObject} enemy - The enemy to check/affect.
+     */
     applyKnockback(enemy){
         let target = this.getKnockbackTarget(enemy);
         this.character.knockbackActive = true;
@@ -144,6 +200,12 @@ export const WorldCombatMixin = {
         this.character.knockbackElapsed = 0;
     },
 
+    /**
+     * Computes the position to knock the character back to, pushed away from
+     * the enemy along whichever axis (X or Y) overlaps least, clamped to the level bounds.
+     * @param {MovableObject} enemy - The enemy causing the knockback.
+     * @returns {{x: number, y: number}} Target position for the knockback movement.
+     */
     getKnockbackTarget(enemy){
         let overlapX = Math.min(this.character.rX + this.character.rW, enemy.rX + enemy.rW) - Math.max(this.character.rX, enemy.rX);
         let overlapY = Math.min(this.character.rY + this.character.rH, enemy.rY + enemy.rH) - Math.max(this.character.rY, enemy.rY);

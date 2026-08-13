@@ -1,5 +1,8 @@
 export const WorldBossIntroMixin = {
 
+    /**
+     * Checks net trigger.
+     */
     checkNetTrigger(){
         if (!this.netTriggered) {
             this.tryTriggerNet();
@@ -8,6 +11,9 @@ export const WorldBossIntroMixin = {
         this.tryStartCameraPan();
     },
 
+    /**
+     * Try trigger net.
+     */
     tryTriggerNet(){
         if (this.character.x < this.level.net.x + this.level.net.width) return;
 
@@ -20,6 +26,9 @@ export const WorldBossIntroMixin = {
         this.level.net.startUnrolling();
     },
 
+    /**
+     * Try start camera pan.
+     */
     tryStartCameraPan(){
         if (!this.character.isFrozen || !this.level.net.unrollDone) return;
         if (this.bossIntroPhase !== 'pending') return;
@@ -31,6 +40,10 @@ export const WorldBossIntroMixin = {
         this.cameraPanElapsed = 0;
     },
 
+    /**
+     * Updates boss intro.
+     * @param {number} deltaTime -Time elapsed since the last frame, in milliseconds.
+     */
     updateBossIntro(deltaTime) {
         if (this.bossIntroPhase === 'panning') {
             this.updateCameraPan(deltaTime);
@@ -39,6 +52,10 @@ export const WorldBossIntroMixin = {
         }
     },
 
+    /**
+     * Updates camera pan.
+     * @param {number} deltaTime -Time elapsed since the last frame, in milliseconds.
+     */
     updateCameraPan(deltaTime){
         this.cameraPanElapsed += deltaTime;
         let t = Math.min(this.cameraPanElapsed / this.cameraPanDuration, 1);
@@ -51,6 +68,9 @@ export const WorldBossIntroMixin = {
         }
     },
 
+    /**
+     * Checks intro complete.
+     */
     checkIntroComplete(){
         if (this.finalboss && this.finalboss.introduced) {
             this.bossIntroPhase = 'done';

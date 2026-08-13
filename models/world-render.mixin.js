@@ -2,6 +2,9 @@ import { getSharedImage } from "./image-cache.js";
 
 export const WorldRenderMixin = {
 
+    /**
+     * Draws the object onto the canvas.
+     */
     draw(){
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
@@ -13,6 +16,9 @@ export const WorldRenderMixin = {
         this.ctx.translate(-this.camera_x, 0);
     },
 
+    /**
+     * Draws world layer.
+     */
     drawWorldLayer(){
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.lights);
@@ -24,6 +30,9 @@ export const WorldRenderMixin = {
         this.drawCoinPopups();
     },
 
+    /**
+     * Draws hud.
+     */
     drawHud(){
         this.addToMap(this.coinBar);
         this.addToMap(this.posionBar);
@@ -32,6 +41,9 @@ export const WorldRenderMixin = {
         this.drawFinalbossHealthbar();
     },
 
+    /**
+     * Draws foreground layer.
+     */
     drawForegroundLayer(){
         this.addObjectsToMap(this.firingObjects);
         this.addToMap(this.level.net);
@@ -39,6 +51,9 @@ export const WorldRenderMixin = {
         this.drawConfusion();
     },
 
+    /**
+     * Draws confusion.
+     */
     drawConfusion(){
         if (!this.character.showingConfusion) return;
         let baseX = this.character.x + this.character.width / 2;
@@ -50,6 +65,9 @@ export const WorldRenderMixin = {
         this.ctx.restore();
     },
 
+    /**
+     * Sets confusion text style.
+     */
     setConfusionTextStyle(){
         this.ctx.font = 'bold 22px Arial';
         this.ctx.textAlign = 'center';
@@ -59,6 +77,11 @@ export const WorldRenderMixin = {
         this.ctx.fillStyle = 'white';
     },
 
+    /**
+     * Draws confusion marks.
+     * @param {number} baseX - Base X position in pixels.
+     * @param {number} baseY - Base Y position in pixels.
+     */
     drawConfusionMarks(baseX, baseY){
         let bounceOffsets = [0, -6, -10, -6];
         let marks = [-24, 0, 24];
@@ -70,6 +93,11 @@ export const WorldRenderMixin = {
         });
     },
 
+    /**
+     * Draws popups.
+     * @param {Array<Object>} popups - List of popup objects to update/draw.
+     * @param {string} color - CSS color used to draw the text.
+     */
     drawPopups(popups, color){
         popups.forEach(popup => {
             let t = Math.min(popup.elapsed / popup.duration, 1);
@@ -84,6 +112,9 @@ export const WorldRenderMixin = {
         });
     },
 
+    /**
+     * Sets popup text style.
+     */
     setPopupTextStyle(){
         this.ctx.font = 'bold 20px Arial';
         this.ctx.textAlign = 'center';
@@ -92,6 +123,9 @@ export const WorldRenderMixin = {
         this.ctx.strokeStyle = 'black';
     },
 
+    /**
+     * Draws coin popups.
+     */
     drawCoinPopups(){
         let icon = getSharedImage('./assets/img/4.Marcadores/1.Coins/1.png');
         let size = 30;
@@ -105,6 +139,9 @@ export const WorldRenderMixin = {
         });
     },
 
+    /**
+     * Draws finalboss healthbar.
+     */
     drawFinalbossHealthbar(){
         if (!this.showFinalbossHealthbar || !this.finalboss) return;
         let bar = { x: this.canvas.width - 170, y: 20, width: 150, height: 18, radius: 8 };
@@ -118,6 +155,10 @@ export const WorldRenderMixin = {
         this.ctx.restore();
     },
 
+    /**
+     * Draws healthbar background.
+     * @param {Object} bar - Healthbar layout data (position and size).
+     */
     drawHealthbarBackground(bar){
         this.ctx.beginPath();
         this.ctx.roundRect(bar.x, bar.y, bar.width, bar.height, bar.radius);
@@ -125,6 +166,11 @@ export const WorldRenderMixin = {
         this.ctx.fill();
     },
 
+    /**
+     * Draws healthbar fill.
+     * @param {Object} bar - Healthbar layout data (position and size).
+     * @param {number} pct - Fill percentage from 0 to 1.
+     */
     drawHealthbarFill(bar, pct){
         let fillWidth = bar.width * pct;
         this.ctx.beginPath();
@@ -133,6 +179,10 @@ export const WorldRenderMixin = {
         this.ctx.fill();
     },
 
+    /**
+     * Draws healthbar border.
+     * @param {Object} bar - Healthbar layout data (position and size).
+     */
     drawHealthbarBorder(bar){
         this.ctx.beginPath();
         this.ctx.roundRect(bar.x, bar.y, bar.width, bar.height, bar.radius);
@@ -141,6 +191,10 @@ export const WorldRenderMixin = {
         this.ctx.stroke();
     },
 
+    /**
+     * Draws healthbar text.
+     * @param {Object} bar - Healthbar layout data (position and size).
+     */
     drawHealthbarText(bar){
         this.ctx.font = 'bold 12px Arial';
         this.ctx.textAlign = 'center';
@@ -150,6 +204,9 @@ export const WorldRenderMixin = {
         this.ctx.fillText(`Boss: ${healthText}/${this.finalboss.maxHealth}`, bar.x + bar.width / 2, bar.y + bar.height / 2);
     },
 
+    /**
+     * Draws experience.
+     */
     drawExperience(){
         let text = String(this.experience).padStart(6, '0');
         let x = this.canvas.width / 2;
@@ -166,12 +223,20 @@ export const WorldRenderMixin = {
         this.ctx.restore();
     },
 
+    /**
+     * Adds objects to map.
+     * @param {Array<DrawableObject>} objects - Objects to add to the canvas map.
+     */
     addObjectsToMap (objects) {
         objects.forEach(object => {
             this.addToMap(object);
         });
     },
 
+    /**
+     * Adds to map.
+     * @param {MovableObject} mo - The other movable object to compare against.
+     */
     addToMap (mo){
         if (mo.hasAppeared === false) return;
 
@@ -186,7 +251,10 @@ export const WorldRenderMixin = {
         mo.drawFrame(this.ctx);
     },
 
-
+    /**
+     * Flips image.
+     * @param {MovableObject} mo - The other movable object to compare against.
+     */
     flipImage (mo){
         this.ctx.save();
         this.ctx.translate(mo.width, 0);
@@ -194,6 +262,10 @@ export const WorldRenderMixin = {
         mo.x = mo.x * -1;
     },
 
+    /**
+     * Flips image back.
+     * @param {MovableObject} mo - The other movable object to compare against.
+     */
     flipImageBack(mo){
         mo.x = mo.x * -1;
         this.ctx.restore();

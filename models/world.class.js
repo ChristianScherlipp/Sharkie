@@ -57,6 +57,13 @@ export class World {
     cameraPanElapsed = 0;
     cameraPanDuration = 1500;
 
+    /**
+     * Creates a new instance.
+     * @param {HTMLCanvasElement} canvas - The canvas element the game is rendered on.
+     * @param {Keyboard} keyboard - The keyboard state object.
+     * @param {Object} [callbacks={}] - Callback functions the World triggers on game events.
+     * @param {number} [levelNumber=1] - Number of the level to load (1-based).
+     */
     constructor(canvas, keyboard, callbacks = {}, levelNumber = 1) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
@@ -68,6 +75,10 @@ export class World {
         this.run();
     }
 
+    /**
+     * Loads level.
+     * @param {number} levelNumber - Number of the level to load (1-based).
+     */
     loadLevel(levelNumber){
         this.level = levelNumber === 2 ? createLevl2() : createLevl1();
         this.totalCoins = this.level.coins.reduce((sum, coin) => sum + coin.value, 0);
@@ -76,6 +87,12 @@ export class World {
         this.isLastLevel = levelNumber >= 2;
     }
 
+    /**
+     * Main game loop, driven by requestAnimationFrame. Computes the delta
+     * time since the last frame, updates and redraws the world, and keeps
+     * scheduling itself unless the game has ended or is paused.
+     * @param {number} [time=performance.now()] - Current timestamp in milliseconds, provided by requestAnimationFrame.
+     */
     run(time = performance.now()){
         if (this.paused) {
             this.lastTime = time;
@@ -91,14 +108,24 @@ export class World {
         }
     }
 
+    /**
+     * Pause.
+     */
     pause(){
         this.paused = true;
     }
 
+    /**
+     * Resume.
+     */
     resume(){
         this.paused = false;
     }
 
+    /**
+     * Updates the object's state for the current frame.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     update(deltaTime){
         if (this.gameEnded) return;
         this.updateEntities(deltaTime);
@@ -114,6 +141,10 @@ export class World {
         this.checkLevelTransition();
     }
 
+    /**
+     * Updates entities.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateEntities(deltaTime){
         this.character.update(deltaTime);
         this.level.enemies.forEach(enemy => enemy.update(deltaTime, this.character, this.level));
@@ -123,17 +154,28 @@ export class World {
         this.level.net.update(deltaTime);
     }
 
+    /**
+     * Updates firing objects.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateFiringObjects(deltaTime){
         this.firingObjects.forEach(fo => fo.update(deltaTime));
         this.removeExpiredBubbles();
     }
 
+    /**
+     * Removes expired bubbles.
+     */
     removeExpiredBubbles(){
         let expired = this.firingObjects.filter(fo => fo.age >= 5000);
         expired.forEach(() => AudioHub.playOne(AudioHub.BUBBLE_BURST));
         this.firingObjects = this.firingObjects.filter(fo => fo.age < 5000);
     }
 
+    /**
+     * Updates collision timer.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateCollisionTimer(deltaTime){
         this.collisionTimer += deltaTime;
         if (this.collisionTimer > 200) {
@@ -142,6 +184,9 @@ export class World {
         }
     }
 
+    /**
+     * Updates collection and attacks.
+     */
     updateCollectionAndAttacks(){
         this.checkCoinCollision();
         this.checkPoisonCollision();
@@ -152,6 +197,9 @@ export class World {
         this.checkPoisonBubbleHitOnEnemies();
     }
 
+    /**
+     * Checks attack hits.
+     */
     checkAttackHits(){
         if (!this.character.justAttacked) return;
         let hitCoin = this.checkCoinHit();
@@ -160,6 +208,9 @@ export class World {
         this.character.justAttacked = false;
     }
 
+    /**
+     * Updates boss state.
+     */
     updateBossState(){
         this.showFinalbossHealthbar = !!(this.finalboss && this.finalboss.introduced);
         if (!this.finalboss) return;
@@ -173,6 +224,10 @@ export class World {
         }
     }
 
+    /**
+     * Cleans up entities.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     cleanupEntities(deltaTime){
         this.level.enemies = this.level.enemies.filter(enemy => !enemy.markedForRemoval);
         this.xpPopups = this.ageAndFilterPopups(this.xpPopups, deltaTime);
@@ -180,11 +235,21 @@ export class World {
         this.coinPopups = this.ageAndFilterPopups(this.coinPopups, deltaTime);
     }
 
+    /**
+     * Advances each popup's elapsed time and drops the ones that have
+     * outlived their display duration (used for XP/damage/coin popups).
+     * @param {Array<Object>} popups - List of popup objects to update/draw.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @returns {Array<Object>} The popups that are still within their display duration.
+     */
     ageAndFilterPopups(popups, deltaTime){
         popups.forEach(popup => popup.elapsed += deltaTime);
         return popups.filter(popup => popup.elapsed < popup.duration);
     }
 
+    /**
+     * Checks game over.
+     */
     checkGameOver() {
         if (this.gameEnded || this.gameWinning) return;
         if (this.character.markedForRemoval) {
@@ -193,6 +258,9 @@ export class World {
         }
     }
 
+    /**
+     * Checks game win.
+     */
     checkGameWin() {
         if (this.gameEnded || this.gameWinning) return;
         if (this.finalboss && this.finalboss.markedForRemoval) {
@@ -207,6 +275,9 @@ export class World {
         }
     }
 
+    /**
+     * Checks level transition.
+     */
     checkLevelTransition(){
         if (!this.gameWinning || this.isLastLevel || this.gameEnded) return;
         let viewportRight = -this.camera_x + this.canvas.width;
@@ -216,6 +287,9 @@ export class World {
         }
     }
 
+    /**
+     * Sets world.
+     */
     setWorld(){
         this.character.world = this;
     }
