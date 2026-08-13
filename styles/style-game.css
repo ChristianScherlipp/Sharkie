@@ -92,8 +92,9 @@
 
 #game-controls {
     position: absolute;
-    top: clamp(-56px, -8vw, -40px);
-    right: 0;
+    top: clamp(8px, 2.5vw, 16px);
+    right: clamp(8px, 2.5vw, 16px);
+    z-index: 4;
     display: flex;
     gap: clamp(6px, 2vw, 10px);
     line-height: normal;
@@ -103,9 +104,9 @@
     width: clamp(36px, 8vw, 60px);
     height: clamp(36px, 8vw, 60px);
     padding: clamp(4px, 1.5vw, 8px);
-    border: none;
+    border: 2px solid rgba(255, 255, 255, 0.5);
     border-radius: 50%;
-    background: transparent;
+    background: rgba(13, 157, 216, 0.55);
     cursor: pointer;
     transition: transform 0.15s ease;
 }

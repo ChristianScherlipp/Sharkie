@@ -21,13 +21,10 @@
             Bitte drehe dein Gerät ins Querformat.
         </p>
     </div>
-
     <!-- ========================= -->
     <!-- Startbildschirm           -->
     <!-- ========================= -->
-
     <div id="start-screen">
-
         <div id="logo">
             <h1>🦈 Sharkie</h1>
             <p>Das Unterwasser-Abenteuer</p>
@@ -43,63 +40,42 @@
         </div>
 
         <div id="menu">
-
             <button id="start-btn" class="menu-btn">
                 <img class="btn-icon" src="./assets/icons/Button-Play--Streamline-Core.svg" alt="Play Icon"> Spiel starten
             </button>
-
             <button id="controls-btn" class="menu-btn">
                 <img class="btn-icon" src="./assets/icons/Controller.png" alt="Controller-Icon"> Steuerung
             </button>
-
             <button id="music-btn" class="menu-btn">
                 <img class="btn-icon" src="./assets/icons/Music.png" alt="Musik-Icon"> Musik
             </button>
-
             <button id="credits-btn" class="menu-btn">
                 <img class="btn-icon" src="./assets/icons/imprint.png" alt="Imprint Icon"> Impressum
             </button>
-
         </div>
-
     </div>
-
     <!-- ========================= -->
     <!-- Popup                     -->
     <!-- ========================= -->
-
     <div id="popup" class="hidden">
-
         <div class="popup-content">
-
             <div id="popup-controls" class="hidden">
                 <h2>Steuerung</h2>
-
                 <br>
+                <div id="controls-keyboard">
+                    <p><img class="popup-icon" src="./assets/icons/Keyboard.png" alt="Arrow keys-Icon">  Pfeiltasten oder WASD = Bewegen</p> <br>
+                    <p>Leertaste = Schwanzflossen-Schlag (Nahkampf)</p> <br>
+                    <p>E = Blase abschießen (Fernkampf)</p> <br>
+                    <p>Q = Gift-Schuss (nur mit Munition)</p>
+                </div>
 
-            <div id="controls-keyboard">
-                <p><img class="popup-icon" src="./assets/icons/Keyboard.png" alt="Arrow keys-Icon">  Pfeiltasten oder WASD = Bewegen</p> <br>
-
-                <p>Leertaste = Schwanzflossen-Schlag (Nahkampf)</p> <br>
-
-                <p>E = Blase abschießen (Fernkampf)</p> <br>
-
-                <p>Q = Gift-Schuss (nur mit Munition)</p>
-            </div>
-
-            <div id="controls-touch" class="hidden">
-                <p>Joystick (links) = Bewegen</p> <br>
-
-                <p>Flossen-Button = Schwanzflossen-Schlag (Nahkampf)</p> <br>
-
-                <p>Blasen-Button = Blase abschießen (Fernkampf)</p> <br>
-
-                <p>Gift-Button = Gift-Schuss (nur mit Munition)</p>
-
-            </div>
-
+                <div id="controls-touch" class="hidden">
+                    <p>Joystick (links) = Bewegen</p> <br>
+                    <p>Flossen-Button = Schwanzflossen-Schlag (Nahkampf)</p> <br>
+                    <p>Blasen-Button = Blase abschießen (Fernkampf)</p> <br>
+                    <p>Gift-Button = Gift-Schuss (nur mit Munition)</p>
+                </div>
                 <br>
-
                 <small>
                 Kugelfisch nur von hinten mit dem Schlag treffbar,
                 von vorne wehrt er sich mit Stacheln.
@@ -109,42 +85,45 @@
             </div>
 
             <div id="popup-credits" class="hidden">
-                <h2>Sharkie</h2>
-
+                <h2>Impressum</h2>
                 <br>
-
+                <p>
+                    Angaben gemäß § 5 TMG
+                    <br><br>
+                    Christian Scherlipp
+                    <br>
+                    Albert-Buchmann-Straße 28
+                    <br>
+                    16515 Oranienburg
+                    <br><br>
+                    Kontakt:
+                    <br>
+                    E-Mail: c.scherlipp@web.de
+                    <br><br>
+                    Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:
+                    <br>
+                    Christian Scherlipp (Anschrift wie oben)
+                </p>
+                <br>
                 <p>
                     Entwickelt von
-
                     <br><br>
-
                     Christian Scherlipp
-
                     <br><br>
-
                     im Zuge der Umschulung zum 
-
                     <br><br>
-
                     Fachinformatiker für Anwendungsentwicklung
-
                     <br><br>
-
                     mit der
-
                     <br><br>
-
                     Developer Akademie
                 </p>
             </div>
 
             <div id="popup-music" class="hidden">
                 <h2>Musik-Einstellungen</h2>
-
                 <br>
-
                 <button id="music-toggle-btn"><img class="btn-icon" src="./assets/icons/Volume-Off--Streamline-Core.svg" alt="Volume Icon"> Musik AUS</button>
-
                 <div class="volume-row">
                     <label for="volume-master">Gesamtlautstärke</label>
                     <input type="range" id="volume-master" min="0" max="1" step="0.01" value="0.4">
@@ -160,19 +139,14 @@
                     <input type="range" id="volume-sfx" min="0" max="1" step="0.01" value="0.4">
                 </div>
             </div>
-
             <button id="close-popup">
                 Schließen
             </button>
-
         </div>
-
     </div>
-
     <!-- ========================= -->
     <!-- Spiel                     -->
     <!-- ========================= -->
-
     <div class="game-wrapper">
         <div id="game-controls" class="hidden">
             <button id="mute-btn" class="icon-btn">
@@ -189,15 +163,12 @@
             <button id="resume-btn" class="menu-btn">
                 <img class="btn-icon" src="./assets/icons/Button-Play--Streamline-Core.svg" alt="Play icon"> Spiel fortsetzen
             </button>
-
             <button id="pause-controls-btn" class="menu-btn">
                 <img class="btn-icon" src="./assets/icons/Controller.png" alt="Controller Icon"> Steuerung
             </button>
-
             <button id="pause-music-btn" class="menu-btn">
                 <img class="btn-icon" src="./assets/icons/Music.png" alt="Music Icon"> Musik
             </button>
-
             <button id="pause-credits-btn" class="menu-btn">
                 <img class="btn-icon" src="./assets/icons/imprint.png" alt="Imprint Icon"> Impressum
             </button>
