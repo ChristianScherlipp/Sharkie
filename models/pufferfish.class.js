@@ -63,7 +63,12 @@ export class Pufferfish extends MovableObject {
         './assets/img/2.Enemy/1.Puffer_fish_3_color_options/4.DIE/1.Dead.3.png',
     ];
 
-
+    /**
+     * Creates a new Pufferfish instance.
+     * @param {number} x - X position in pixels.
+     * @param {number} y - Y position in pixels.
+     * @param {number} [strengthBonus=0] - Extra strength/health added on top of the base value.
+     */
     constructor(x, y, strengthBonus = 0){
         super().loadImage('./assets/img/2.Enemy/1.Puffer_fish_3_color_options/1.Swim/1.swim1.png');
         this.loadImages(this.PUFFERFISH_IMAGES_SWIM);
@@ -80,6 +85,13 @@ export class Pufferfish extends MovableObject {
         this.getRealFrame();
     }
 
+    /**
+     * Updates the object#s state for the current frame.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {Character} character - The player character.
+     * @param {Level} level - The current level, containing enemies, coins and bounds.
+     * @returns 
+     */
     update(deltaTime, character, level) {
 
         if (this.isDying) {
@@ -96,6 +108,11 @@ export class Pufferfish extends MovableObject {
         this.updatePatrol(deltaTime, level);
     }
 
+    /**
+     * Updates alert state.
+     * @param {number} distance - Distance in pixels.
+     * @param {Character} character - The player character.
+     */
     updateAlertState(distance, character){
         if (this.alertState === 'idle' && distance <= this.detectionRange && character) {
             if (this.isCharacterInFront(character)) {
@@ -110,6 +127,11 @@ export class Pufferfish extends MovableObject {
         this.damage = (this.alertState === 'idle' ? 2 : 4) + this.strengthBonus;
     }
 
+    /**
+     * Checks whether character in front
+     * @param {Character} character - The player character.
+     * @returns {boolean} True if the condition holds, false otherwise.
+     */
     isCharacterInFront(character){
         let facingLeft = !this.otherDirection;
         let charCenterX = character.x + character.width / 2;
@@ -117,6 +139,10 @@ export class Pufferfish extends MovableObject {
         return facingLeft ? charCenterX <= myCenterX : charCenterX >= myCenterX;
     }
 
+    /**
+     * Updates entering.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateEntering(deltaTime){
         this.transitionTimer += deltaTime;
         if (this.transitionTimer > this.transitionFrameDuration) {
@@ -132,6 +158,10 @@ export class Pufferfish extends MovableObject {
         }
     }
 
+    /**
+     * Updates exiting.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateExiting(deltaTime){
         this.transitionTimer += deltaTime;
         if (this.transitionTimer > this.transitionFrameDuration) {
@@ -148,6 +178,12 @@ export class Pufferfish extends MovableObject {
         }
     }
 
+    /**
+     * Updates charging.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {Character} character - The player character.
+     * @param {Level} level - The current level, containing enemies, coins and bounds.
+     */
     updateCharging(deltaTime, character, level){
         this.updateChargeDirection(deltaTime, character);
         if (this.chargeDirectionLeft) this.moveLeft(deltaTime); else this.moveRight(deltaTime);
@@ -157,6 +193,11 @@ export class Pufferfish extends MovableObject {
         this.animateImages(this.PUFFERFISH_IMAGES_BUBBLESWIM, deltaTime, 150);
     }
 
+    /**
+     * Updates charge direction.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {Character} character - The player character.
+     */
     updateChargeDirection(deltaTime, character){
         if (this.chargeBounceCooldown > 0) {
             this.chargeBounceCooldown -= deltaTime;
@@ -169,6 +210,10 @@ export class Pufferfish extends MovableObject {
         }
     }
 
+    /**
+     * Checks charge bounce.
+     * @param {Level} level - The current level, containing enemies, coins and bounds.
+     */
     checkChargeBounce(level){
         let hitLeft = this.isAtLeftLevelBound(level);
         let hitRight = this.isAtRightLevelBound(level);
@@ -185,6 +230,11 @@ export class Pufferfish extends MovableObject {
         }
     }
 
+    /**
+     * Updates patrol.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {Level} level - The current level, containing enemies, coins and bounds.
+     */
     updatePatrol(deltaTime, level){
         if (this.movingLeft) {
             this.moveLeft(deltaTime);
@@ -196,6 +246,10 @@ export class Pufferfish extends MovableObject {
         this.animateImages(this.PUFFERFISH_IMAGES_SWIM, deltaTime, 150);
     }
 
+    /**
+     * Checks patrol bound left.
+     * @param {Level} level - The current level, containing enemies, coins and bounds.
+     */
     checkPatrolBoundLeft(level){
         let hitCoin = this.isBlockedByObstacle(level);
         if (this.x <= this.minX || this.isAtLeftLevelBound(level) || hitCoin) {
@@ -206,6 +260,10 @@ export class Pufferfish extends MovableObject {
         }
     }
 
+    /**
+     * Checks patrol bound right.
+     * @param {Level} level - The current level, containing enemies, coins and bounds.
+     */
     checkPatrolBoundRight(level){
         let hitCoin = this.isBlockedByObstacle(level);
         if (this.x >= this.maxX || this.isAtRightLevelBound(level) || hitCoin) {

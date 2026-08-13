@@ -29,10 +29,16 @@ export class MovableObject extends DrawableObject {
     dieFrameDuration = 150;
     markedForRemoval = false;
 
+    /**
+     * Creates a new MovableObject instance.
+     */
     constructor() {
         super();
     }
 
+    /**
+     * Gets real frame
+     */
     getRealFrame(){
             this.rX = this.x + this.offset.left;
             this.rY = this.y + this.offset.top;
@@ -40,30 +46,50 @@ export class MovableObject extends DrawableObject {
             this.rH = this.height - this.offset.top - this.offset.bottom;
     }
 
+    /**
+     * Moves right.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     moveRight(deltaTime){
         let factor = deltaTime / (1000 / 120);
         this.x += this.speed * factor;  
         this.getRealFrame();
     }
 
+    /**
+     * Moves left.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     moveLeft(deltaTime){
         let factor = deltaTime / (1000 / 120);
         this.x -= this.speed *factor;
         this.getRealFrame();
     }
 
+    /**
+     * Moves up.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     moveUp(deltaTime){
         let factor = deltaTime / (1000 / 120);
         this.y -= this.speed * factor;
         this.getRealFrame();
     }
 
+    /**
+     * Moves down.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     moveDown(deltaTime){
         let factor = deltaTime / (1000 / 120);
         this.y += this.speed * factor;
         this.getRealFrame();
     }
 
+    /**
+     * Plays animation.
+     * @param {Array<HTMLImageElement|string>} images - Ordered list of animation frame images.
+     */
     playAnimation(images){
         let i = this.currentImage % images.length;
         let path = images[i];
@@ -71,6 +97,12 @@ export class MovableObject extends DrawableObject {
         this.currentImage++;
     }
 
+    /**
+     * Animates images.
+     * @param {Array<HTMLImageElement|string>} images - Ordered list of animation frame images.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {number} interval - Time between animation frames, in milliseconds.
+     */
     animateImages(images, deltaTime, interval){
         this.animationTimer += deltaTime;
         if (this.animationTimer > interval) {
@@ -79,6 +111,10 @@ export class MovableObject extends DrawableObject {
         }
     }
 
+    /**
+     * Applies gravity.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     applyGravity(deltaTime){
         if (this.isAboveGround()) {
             let factor = deltaTime / (1000 / 120);
@@ -88,6 +124,10 @@ export class MovableObject extends DrawableObject {
         }
     }
 
+    /**
+     * Applies anti gravity.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     applyAntiGravity(deltaTime){
         let factor = deltaTime / (1000 / 120);
         this.y -= this.speedY * factor;
@@ -95,10 +135,19 @@ export class MovableObject extends DrawableObject {
         this.getRealFrame();
     }
 
+    /**
+     * Checks whether above ground.
+     * @returns {boolean} - True if the condition holds, false therwise.
+     */
     isAboveGround(){
         return this.y < 240;
     }
 
+    /**
+     * Checks whether colliding.
+     * @param {MovableObject} mo - The other moable object to compare against.
+     * @returns {boolean} - True if the condition holds, false therwise.
+     */
     isColliding(mo){
         return this.rX + this.rW > mo.rX &&
             this.rY + this.rH > mo.rY &&
@@ -106,18 +155,39 @@ export class MovableObject extends DrawableObject {
             this.rY < mo.rY + mo.rH;
     }
 
+    /**
+     * Checks whether blocked by obstacle.
+     * @param {Level} level - the current level, containing enemies, coins and bounds.
+     * @returns {boolean} - true if the contition holds, false otherwise.
+     */
     isBlockedByObstacle(level){
         return !!(level && level.coins && level.coins.some(obj => obj.blocksMovement && this.isColliding(obj)));
     }
 
+    /**
+     * Checks whether at left level bound.
+     * @param {Level} level - the current level, containing enemies, coins and bounds.
+     * @returns {boolean} - true if the contition holds, false otherwise.
+     */
     isAtLeftLevelBound(level){
         return !!(level && this.x <= level.level_start_x);
     }
 
+    /**
+     * Checks whether at right level bound.
+     * @param {Level} level - the current level, containing enemies, coins and bounds.
+     * @returns {boolean} - true if the contition holds, false otherwise.
+     */
     isAtRightLevelBound(level){
         return !!(level && this.x + this.width >= level.level_end_x);
     }
 
+    /**
+     * Checks whether near.
+     * @param {MovableObject} mo - the other movable object to compare against.
+     * @param {number} range - Maximum distance counted as "near", in pixels.
+     * @returns {boolean} - True if the condition holds, false otherwise.
+     */
     isNear(mo, range = 30){
         return this.rX + this.rW + range > mo.rX &&
             this.rY + this.rH + range > mo.rY &&
@@ -125,6 +195,11 @@ export class MovableObject extends DrawableObject {
             this.rY - range < mo.rY + mo.rH;
     }
 
+    /**
+     * Edge distance to.
+     * @param {MovableObject} other - The other movable object to measure the distance to.
+     * @returns {boolean} The computed result.
+     */
     edgeDistanceTo(other){
         if (!other) return Infinity;
         let dx = Math.max(other.rX - (this.rX + this.rW), this.rX - (other.rX + other.rW), 0);
@@ -132,6 +207,10 @@ export class MovableObject extends DrawableObject {
         return Math.sqrt(dx * dx + dy * dy);
     }
 
+    /**
+     * Applies a hit to hit.
+     * @param {number} [damage=2] - Amount of damage to apply.
+     */
     hit(damage = 2){
         this.energy -= damage;
         if(this.energy < 0){
@@ -141,22 +220,38 @@ export class MovableObject extends DrawableObject {
         }
     }
 
+    /**
+     * Checks whether hurt.
+     * @returns {boolean} - True if the condition holds, false otherwise.
+     */
     isHurt(){
         let timepassed = new Date().getTime() - this.lastHit;
         timepassed = timepassed / 1000;
         return timepassed < 1;
     }
 
+    /**
+     * Checks whether dead.
+     * @returns {boolean}. - True if the condition holds, false otherwise
+     */
     isDead() {
         return this.energy == 0;
     }
 
+    /**
+     * Starts dying.
+     */
     startDying() {
         this.isDying = true;
         this.dieFrame = 0;
         this.dieTimer = 0;
     }
 
+    /**
+     * Udates dying.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {Array<HTMLImageElement|string>} images - Ordered list of animation frame images.
+     */
     updateDying(deltaTime, images) {
         this.dieTimer += deltaTime;
         if (this.dieTimer > this.dieFrameDuration) {
@@ -170,6 +265,10 @@ export class MovableObject extends DrawableObject {
         }
     }
 
+    /**
+     * Updates the object#s state for the current frame.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     update(deltaTime){
         // absichtlich leer(default no+op)
     }

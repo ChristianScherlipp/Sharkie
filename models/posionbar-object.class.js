@@ -11,6 +11,9 @@ export class Posionbar extends Statusbar {
         './assets/img/4.Marcadores/green/100_copia_5.png'
     ];
 
+    /**
+     * Creates a new PoisonbarObject instance.
+     */
     constructor (){
         super();
 

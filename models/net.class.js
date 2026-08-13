@@ -33,6 +33,10 @@ export class Net extends MovableObject {
     unrollTimer = 0;
     unrollFrameDuration = 100;
 
+    /**
+     * Creates a new Net instance.
+     * @param {number} x - X position in pixels.
+     */
     constructor(x) {
         super().loadImage('./assets/img/3.Background/Barrier/Net_unroll/net_unroll_01.png');
         this.loadImages(this.NET_IMAGES_UNROLL);
@@ -41,6 +45,9 @@ export class Net extends MovableObject {
         this.getRealFrame();
     }
 
+    /**
+     * Start unrolling.
+     */
     startUnrolling() {
         this.blocksMovement = true;
         this.isUnrolling = true;
@@ -49,6 +56,10 @@ export class Net extends MovableObject {
         this.img = this.imageCache[this.NET_IMAGES_UNROLL[this.unrollFrame]];
     }
 
+    /**
+     * Updates the object#s state for the current frame.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     update(deltaTime){
         if (this.isUnrolling) {
             this.updateUnrolling(deltaTime);
@@ -59,6 +70,10 @@ export class Net extends MovableObject {
         }
     }
 
+    /**
+     * Updates unrolling.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateUnrolling(deltaTime) {
         this.unrollTimer += deltaTime;
         if (this.unrollTimer <= this.unrollFrameDuration) return;
