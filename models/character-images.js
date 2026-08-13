@@ -1,6 +1,3 @@
-// Alle Animations-Bildpfade von Sharkie, ausgelagert aus character.class.js
-// (Daten statt Verhalten - hilft außerdem, character.class.js unter der
-// 400-LOC-Grenze zu halten).
 export const CHARACTER_IMAGES = {
     SWIM: [
         './assets/img/1.Sharkie/3.Swim/1.png',

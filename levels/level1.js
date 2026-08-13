@@ -27,10 +27,6 @@ export function createLevl1() {
         new Finalboss(6900, 5),
     ],
 
-    // Hinweis: Alle Coins bleiben vor x=5752 - die letzten beiden
-    // Hintergrund-Bereiche (Start bei 5752 und 6471) sind bewusst coin-frei,
-    // damit dort der Endkampf gegen den Finalboss ohne Ablenkung stattfindet.
-    // Gesamtwert (Coin.value Summe) liegt bei ca. 140.
     [
         new Coin(150, 60),
         new Coin(258, 105),

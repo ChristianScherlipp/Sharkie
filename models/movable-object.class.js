@@ -21,7 +21,6 @@ export class MovableObject extends DrawableObject {
         bottom : 0
     };
 
-    // Zähler für Sprite-Animationen, wird von animateImages() genutzt
     animationTimer = 0;
 
     isDying = false;
@@ -41,8 +40,6 @@ export class MovableObject extends DrawableObject {
             this.rH = this.height - this.offset.top - this.offset.bottom;
     }
 
-    // Referenz-Tick war früher 1000/120 ms -> alle Werte bleiben wie voher kalibriert,
-    // "factor" gleicht unterschiedliche Bildwiederholraten aus 
     moveRight(deltaTime){
         let factor = deltaTime / (1000 / 120);
         this.x += this.speed * factor;  
@@ -74,8 +71,6 @@ export class MovableObject extends DrawableObject {
         this.currentImage++;
     }
 
-    //Ersetzt die früheren einzelnen setINterval-Animationsschleifen.
-    // interval = wie viele ms zwischen zwei Bildwechseln liegen soll (z.B. 150)
     animateImages(images, deltaTime, interval){
         this.animationTimer += deltaTime;
         if (this.animationTimer > interval) {
@@ -111,14 +106,10 @@ export class MovableObject extends DrawableObject {
             this.rY < mo.rY + mo.rH;
     }
 
-    // Prüft, ob dieses Objekt gerade ein Objekt berührt, das die Bewegung
-    // blockiert (z.B. BigCoin, blocksMovement = true). Wird von Gegnern
-    // genutzt, damit sie nicht durch BigCoins hindurchschwimmen.
     isBlockedByObstacle(level){
         return !!(level && level.coins && level.coins.some(obj => obj.blocksMovement && this.isColliding(obj)));
     }
 
-    // Level-Rand links/rechts erreicht (statt Canvas, da das Level scrollt).
     isAtLeftLevelBound(level){
         return !!(level && this.x <= level.level_start_x);
     }
@@ -134,10 +125,6 @@ export class MovableObject extends DrawableObject {
             this.rY - range < mo.rY + mo.rH;
     }
 
-    // Kürzester Abstand (Box-Distanz) zwischen den Kollisionsboxen von
-    // diesem Objekt und "other" - 0, wenn sich die Boxen überlappen.
-    // Gemeinsam genutzt von allen Gegnern, um die Nähe zu Sharkie zu prüfen
-    // (vorher in Jellyfish/Pufferfish/Finalboss jeweils einzeln dupliziert).
     edgeDistanceTo(other){
         if (!other) return Infinity;
         let dx = Math.max(other.rX - (this.rX + this.rW), this.rX - (other.rX + other.rW), 0);
@@ -155,8 +142,8 @@ export class MovableObject extends DrawableObject {
     }
 
     isHurt(){
-        let timepassed = new Date().getTime() - this.lastHit; //Difference in ms
-        timepassed = timepassed / 1000; // Difference in s
+        let timepassed = new Date().getTime() - this.lastHit;
+        timepassed = timepassed / 1000;
         return timepassed < 1;
     }
 
@@ -183,8 +170,6 @@ export class MovableObject extends DrawableObject {
         }
     }
 
-    //  Wird von der zentralen Game-Loop in World jeden Frame aufgerufen.
-    // Unterklassen überschreiben das mit ihrer eigenen Bewegungs- / Animationslogik
     update(deltaTime){
         // absichtlich leer(default no+op)
     }

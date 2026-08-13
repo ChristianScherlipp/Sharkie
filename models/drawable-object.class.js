@@ -14,11 +14,9 @@ export class DrawableObject {
 
     }
     
-    // loadImage
     loadImage(path){
         this.img = getSharedImage(path);
     }
-    
     /**
      * 
      * @param {Array} arr - ['img/image1', 'img/image2', ...] 
@@ -38,7 +36,7 @@ export class DrawableObject {
         this.drawDebugRect(ctx, this.x, this.y, this.width, this.height, 'blue', 3);
         this.drawDebugRect(ctx, this.rX, this.rY, this.rW, this.rH, 'red', 1);
     }
- 
+
     drawDebugRect(ctx, x, y, w, h, color, lineWidth){
         ctx.beginPath();
         ctx.lineWidth = lineWidth;
@@ -46,7 +44,6 @@ export class DrawableObject {
         ctx.rect(x, y, w, h);
         ctx.stroke();
     }
-
 }
 
 

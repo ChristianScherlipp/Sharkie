@@ -38,9 +38,6 @@ function init() {
     
 }
 
-// Erzwingt den geschlossenen Zustand des Pausenmenüs - unabhängig davon,
-// ob/wie es vorher offen war. Wird sowohl beim allerersten Laden der Seite
-// als auch bei jedem Spielstart/-neustart aufgerufen.
 function resetPauseMenu() {
     document.getElementById("pause-menu").classList.add("hidden");
 }
@@ -54,47 +51,34 @@ function buildWorldCallbacks() {
     };
 }
 
-// Sharkie ist gestorben: Game- Over-Screen zeigen, alle laufenden Sounds
-// (Musik, Bewegung, etc) stoppen und den Game-Over-Sound abspielen.
 function handleGameOver() {
     overlay.showGameOver();
     AudioHub.stopAll();
     AudioHub.playOne(AudioHub.GAME_OVER);
 }
 
-// Level gewonnen (nicht das letzte Level).
 function handleWinBanner() {
     overlay.showWinBanner();
     AudioHub.playOne(AudioHub.LEVEL_SUCCESS);
 }
 
-// Komplettes Spiel gewonnen (Letztes Level).
 function handleWinFinal() {
     overlay.showWinFinal();
     AudioHub.stopAll();
     AudioHub.playOne(AudioHub.GAME_WIN);
 }
 
-// Sharkie ist nach dem Levelsieg komplett aus dem Bild rausgeschwommen -
-// jetzt wird tatsächlich das nächste Level gestartet (kein Game-Over/Sieg-
-// Overlay nötig, der Banner hat den Sieg schon gezeigt).
 function handleLevelComplete() {
     currentLevel++;
     init();
 }
 
-// Startet das Spiel neu, ohne die komplette Seite neu zu laden - erzeugt
-// einfach eine frische World (inkl. frischem Level dank createLevel1()).
 function restartGame() {
     init();
     AudioHub.stopAll();
     AudioHub.playOne(AudioHub.MUSIC);
 }
 
-// Für "Back to Menu" gibt es aktuell noch keine eigene Menü-Ansicht im
-// Projekt - die Seite selbst ist momentan der Einstiegspunkt, deshalb landet
-// man hier vorerst wieder ganz am Anfang. Sobald es eine echte Menü-Seite
-// gibt, kann hier stattdessen z.B. dorthin navigiert werden.
 function backToMenu() {
     location.reload();
 }
@@ -115,8 +99,6 @@ function startGame() {
     setTimeout(showGameAfterFadeOut, 800);
 }
 
-// Läuft, nachdem die Fade-Out-Animation des Startbildschirms fertig ist:
-// Startbildschirm weg, Canvas + Game-Controls sichtbar, Musik an, level laden.
 function showGameAfterFadeOut() {
     document.getElementById('start-screen').style.display = "none";
     document.getElementById('canvas').style.display = "block";
@@ -126,9 +108,6 @@ function showGameAfterFadeOut() {
     init();
 }
 
-// Blendet genau einen der drei Popup-Inhalte ein und die anderen beiden
-// aus - openControls/openCredits/openMusicSettings nutzen das gemeinsam,
-// statt jeweils eine eigene, fast identische Funktion zu haben.
 function showPopupSection(sectionId) {
     ["popup-controls", "popup-credits", "popup-music"].forEach((id) => {
         document.getElementById(id).classList.toggle("hidden", id !== sectionId);
@@ -136,14 +115,10 @@ function showPopupSection(sectionId) {
     document.getElementById("popup").classList.remove("hidden");
 }
 
-// Erkennt Touch-Geräte genauso wie das CSS in style-mobile.css
-// (@media (hover: none)).
 function isTouchDevice() {
     return window.matchMedia("(hover: none)").matches;
 }
 
-// Zeigt je nach Gerät die Tastatur- oder die Touch-Belegung im
-// Steuerung-Popup an, die jeweils andere bleibt versteckt.
 function updateControlsPopupForDevice() {
     let touch = isTouchDevice();
     document.getElementById("controls-keyboard").classList.toggle("hidden", touch);
@@ -163,8 +138,6 @@ function openMusicSettings() {
     showPopupSection("popup-music");
 }
 
-// Schaltet die Hintergrundmusik um und hält Popup-Button-Text und
-// Mute-Icon synchron (beide Buttons rufen diese Funktion auf).
 function handleMusicToggle() {
     let isPlaying = AudioHub.toggleMusic();
     updateMusicUI(isPlaying);
@@ -183,8 +156,6 @@ function closePopup(){
     document.getElementById("popup").classList.add("hidden");
 }
 
-// Öffnet/schließt das Pausenmenü - nur relevant, solange eine Runde läuft
-// (kein Sinn vor dem Start oder nach Game Over/Sieg).
 function togglePauseMenu() {
     if (!world || world.gameEnded) return;
     let isOpen = !document.getElementById('pause-menu').classList.contains("hidden");
@@ -202,8 +173,6 @@ function closePauseMenu() {
     world.resume();
 }
 
-// Taste (klein geschrieben) -> zugehöriges Keyboard-Feld. Pfeiltasten
-// separat, da sie sich nicht klein/groß schreiben lassen wie Buchstaben.
 const MOVEMENT_KEY_MAP = {
     'd': 'RIGHT', 'arrowright': 'RIGHT',
     'a': 'LEFT', 'arrowleft': 'LEFT',
@@ -219,7 +188,6 @@ function setMovementKey(e, isPressed) {
     if (field) keyboard[field] = isPressed;
 }
 
-// Tasten, die unabhängig von der Bewegung etwas auslösen.
 function handleGlobalKeydown(e) {
     if (e.key.toLowerCase() === 'p' || e.key === 'Escape') {
         togglePauseMenu();
@@ -256,13 +224,11 @@ function wireStartMenuButtons() {
     document.getElementById("music-btn").addEventListener("click", openMusicSettings);
 }
 
-// Buttons außerhalb des Canvas (Mute, Pause).
 function wireGameControlButtons() {
     document.getElementById("mute-btn").addEventListener("click", handleMusicToggle);
     document.getElementById("pause-btn").addEventListener("click", togglePauseMenu);
 }
 
-// Buttons innerhalb des Pausenmenüs.
 function wirePauseMenuButtons() {
     document.getElementById("resume-btn").addEventListener("click", closePauseMenu);
     document.getElementById("pause-controls-btn").addEventListener("click", openControls);
@@ -277,14 +243,6 @@ function wireMusicPopupControls() {
     document.getElementById("volume-sfx").addEventListener("input", (e) => AudioHub.setSfxVolume(e.target.value));
 }
 
-// ========================= //
-// Touch-Steuerung (Joystick + Angriffs-Buttons) //
-// ========================= //
-// Setzen dieselben keyboard.*-Felder wie die echte Tastatur - Character
-// und World merken so gar nicht, ob die Eingabe von Tastatur oder Touch kam.
-
-// Merkt sich Mittelpunkt/Radius des Joystick-Kreises für die Dauer einer
-// Berührung, damit touchmove nicht bei jedem Aufruf neu messen muss.
 function initJoystick() {
     let base = document.getElementById('joystick-base');
     base.addEventListener('touchstart', startJoystickTouch);
@@ -300,8 +258,6 @@ function startJoystickTouch(e) {
     moveJoystickTouch(e);
 }
 
-// Bewegt den sichtbaren Knopf mit dem Finger mit (auf den Radius begrenzt)
-// und setzt daraus die Bewegungsrichtung
 function moveJoystickTouch(e) {
     e.preventDefault();
     let touch = e.touches[0];
@@ -316,9 +272,6 @@ function moveJoystickTouch(e) {
     updateJoystickKeys(dx, dy);
 }
 
-// Totzone: erst ab 25% Auslenkung zählt eine Richtung als "gedrückt" -
-// sonst würde schon ein leichtes Zittern des Fingers ständig hin- und
-// herschalten.
 function updateJoystickKeys(dx, dy) {
     let deadzone = joystickRadius * 0.25;
     keyboard.RIGHT = dx > deadzone;
@@ -338,8 +291,6 @@ function wireTouchActionButtons() {
     bindTouchButton('touch-poison', 'Q');
 }
 
-// Simuliert Tasten-Drücken/Loslassen: gleiches keyboard-Feld wie die
-// echte Taste, nur per Touch statt per Tastendruck ausgelöst.
 function bindTouchButton(elementId, keyboardField) {
     let btn = document.getElementById(elementId);
     btn.addEventListener('touchstart', (e) => {

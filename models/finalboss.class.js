@@ -149,24 +149,20 @@ export class Finalboss extends MovableObject {
         this.img = this.imageCache[this.FINALBOSS_IMAGES_INTRODUCE[0]];
         AudioHub.playOne(AudioHub.BOSS_APPEARS);
     }
-    // Wird jeden Frame von World.update() aufgerufen.
+
     update(deltaTime, character){
         if (this.updateIntro(deltaTime)) return;
         if (!this.introduced) return;
         if (this.isDying) { this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
- 
         this.updatePoisonTick(deltaTime);
         if (this.isDying) { this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
- 
         this.updateHurtTimer(deltaTime);
         this.updateState(character);
         this.updateDirection(deltaTime, character);
         this.applyMovement(deltaTime);
         this.updateBossAnimation(deltaTime);
     }
- 
-    // Spielt die Auftritts-Animation ab. Gibt true zurück, solange sie noch
-    // läuft (der Aufrufer bricht dann für diesen Frame ab).
+
     updateIntro(deltaTime){
         if (!this.isIntroducing) return false;
         this.introTimer += deltaTime;
@@ -183,7 +179,6 @@ export class Finalboss extends MovableObject {
         return true;
     }
 
-    // Fügt alle poisonTickInterval-ms Gift-Schaden zu, solange isPoisoned aktiv ist.
     updatePoisonTick(deltaTime){
         if (!this.isPoisoned) return;
         this.poisonTickTimer += deltaTime;
@@ -194,7 +189,6 @@ export class Finalboss extends MovableObject {
         }
     }
 
-    // Zählt die Hurt-Animation durch und beendet sie nach dem letzten Bild.
     updateHurtTimer(deltaTime){
         if (!this.isHurt) return;
         this.hurtTimer += deltaTime;
@@ -207,8 +201,6 @@ export class Finalboss extends MovableObject {
         }
     }
 
-    // Zustandsmaschine wander -> following -> attacking, abhängig von
-    // Sichtkontakt und Abstand zu Sharkie.
     updateState(character){
         if (!character) { this.state = 'wander'; return; }
         let inSight = this.isCharacterInSight(character);
@@ -230,8 +222,6 @@ export class Finalboss extends MovableObject {
         AudioHub.playOne(AudioHub.BOSS_ATTACK);
     }
 
-     // Legt die Bewegungsrichtung (vx/vy) fest: im "wander"-Zustand per Timer
-    // zufällig, sonst direkt auf Sharkie zu.
     updateDirection(deltaTime, character){
         if (this.state === 'wander') {
             this.directionChangeTimer += deltaTime;
@@ -253,8 +243,6 @@ export class Finalboss extends MovableObject {
         return 1;
     }
 
-    // Bewegt den Boss gemäß vx/vy, hält ihn innerhalb seines Bereichs und
-    // aktualisiert die Blickrichtung.
     applyMovement(deltaTime){
         let factor = deltaTime / (1000 / 120);
         let speedMultiplier = this.getSpeedMultiplier();

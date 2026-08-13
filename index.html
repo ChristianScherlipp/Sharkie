@@ -15,8 +15,6 @@
     <!-- ========================= -->
     <!-- Querformat-Hinweis        -->
     <!-- ========================= -->
-    <!--    Nur sichtbar auf Touch-Geräten im Hochformat (siehe style.css) -
-            blendet dann per CSS auch den Rest der Seite komplett aus. -->
     <div id="rotate-device">
         <p>
             <img class="popup-icon" src="./assets/icons/turn.svg" alt="Switch-Icon"><br><br>
@@ -147,8 +145,6 @@
 
                 <button id="music-toggle-btn"><img class="btn-icon" src="./assets/icons/Volume-Off--Streamline-Core.svg" alt="Volume Icon"> Musik AUS</button>
 
-                
-
                 <div class="volume-row">
                     <label for="volume-master">Gesamtlautstärke</label>
                     <input type="range" id="volume-master" min="0" max="1" step="0.01" value="0.4">
@@ -215,11 +211,6 @@
             </div>
         </div>
 
-        <!--    Touch-Steuerung: nur auf Touch-Geräten im Querformat sichtbar
-                (siehe style.css), erst ab Spielstart eingeblendet. Joystick
-                steuert die Bewegung, die drei Buttons lösen Fin Slap/Blase/
-                Gift aus - beide setzen dieselben keyboard.*-Felder wie die
-                echte Tastatur, Character/World merken den Unterschied nicht. -->
         <div id="touch-controls" class="hidden">
             <div id="joystick-base">
                 <div id="joystick-knob"></div>

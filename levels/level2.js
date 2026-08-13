@@ -8,7 +8,7 @@ import { BackgroundObject } from "../models/background-object.class.js";
 import { BigCoin } from "../models/big-coin.class.js";
 import { Poison } from "../models/poison.class.js";
 import { Net } from "../models/net.class.js";
- 
+
 export function createLevl2() {
     return new Level(
     [
@@ -26,11 +26,7 @@ export function createLevl2() {
         new Jellyfish(5099, 140, 1),
         new Finalboss(6900, 5, 5),
     ],
- 
-    // Hinweis: Alle Coins bleiben vor x=5752 - die letzten beiden
-    // Hintergrund-Bereiche (Start bei 5752 und 6471) sind bewusst coin-frei,
-    // damit dort der Endkampf gegen den Finalboss ohne Ablenkung stattfindet.
-    // Gesamtwert (Coin.value Summe) liegt bei ca. 140.
+
     [
         new Coin(150, 60),
         new Coin(258, 105),
@@ -84,7 +80,7 @@ export function createLevl2() {
         new Coin(5442, 60),
         new Coin(5550, 105),
         new Coin(5658, 150),
- 
+
         new BigCoin(300, 80),
         new BigCoin(745, 150),
         new BigCoin(1190, 220),
@@ -98,7 +94,7 @@ export function createLevl2() {
         new BigCoin(4750, 80),
         new BigCoin(5195, 150),
     ],
- 
+
     [
         new Poison(350, 100),
         new Poison(870, 180),
@@ -113,57 +109,57 @@ export function createLevl2() {
     ],
     
         new Net(5752),
- 
+
     [
         new Light()
     ],
- 
+
     [
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D1.png', 0),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 0),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 0),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 0),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D2.png', 719),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D2.png', 719),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D2.png', 719),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D2.png', 719),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D1.png', 1438),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 1438),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 1438),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 1438),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D2.png', 2157),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D2.png', 2157),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D2.png', 2157),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D2.png', 2157),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D1.png', 2876),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 2876),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 2876),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 2876),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D2.png', 3595),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D2.png', 3595),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D2.png', 3595),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D2.png', 3595),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D1.png', 4314),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 4314),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 4314),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 4314),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D2.png', 5033),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D2.png', 5033),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D2.png', 5033),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D2.png', 5033),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D1.png', 5752),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D1.png', 5752),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D1.png', 5752),
         new BackgroundObject('./assets/img/3.Background/Layers/2.Floor/D1.png', 5752),
- 
+
         new BackgroundObject('./assets/img/3.Background/Layers/5.Water/D2.png', 6471),
         new BackgroundObject('./assets/img/3.Background/Layers/4.Fondo2/D2.png', 6471),
         new BackgroundObject('./assets/img/3.Background/Layers/3.Fondo1/D2.png', 6471),

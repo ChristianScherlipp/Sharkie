@@ -34,8 +34,6 @@ export class Statusbar extends DrawableObject{
             }
     }
 
-    // Zeichnet zuerst die Balken-Grafik (wie bisher) und schreibt danach
-    // den aktuellen Wert als "60" mittig über den Balken.
     draw(ctx) {
         super.draw(ctx);
         this.drawValueText(ctx);
@@ -56,8 +54,6 @@ export class Statusbar extends DrawableObject{
         ctx.restore();
     }
 
-    // iconMode: Text steht rechts neben dem Icon. Sonst: Text liegt mittig
-    // über dem Balken.
     getTextPosition() {
         if (this.iconMode) {
             return { x: this.x + this.width + 18, y: this.y + this.height / 2 };

@@ -10,16 +10,14 @@ export class Pufferfish extends MovableObject {
     damage = 2;
     strengthBonus = 0;
     detectionRange = 100;
-    exitRange = 130;  // Hysterese gegen Flackern an der Grenze
-    alertState = 'idle';  // 'idle' | 'entering' | 'charging' | 'exiting'
+    exitRange = 130;
+    alertState = 'idle';
     transitionFrame = 0;
     transitionTimer = 0;
     transitionFrameDuration = 100;
     chargeDeadzone = 20;
     chargeDirectionLeft = true;
-    // Nach einem Bounce (Rand/BigCoin) wird die Charge-Richtung für diese
-    // Dauer nicht aus der Spielerposition neu berechnet - verhindert, dass
-    // der Fisch am Hindernis "vibriert", wenn der Spieler dahinter steht.
+    
     chargeBounceCooldown = 0;
     chargeBounceCooldownDuration = 400;
     knocksBack = true;
@@ -82,7 +80,6 @@ export class Pufferfish extends MovableObject {
         this.getRealFrame();
     }
 
-     // Wird jeden Frame von World.update() aufgerufen.
     update(deltaTime, character, level) {
 
         if (this.isDying) {
@@ -99,8 +96,6 @@ export class Pufferfish extends MovableObject {
         this.updatePatrol(deltaTime, level);
     }
 
-    // Wechselt zwischen idle/entering/charging/exiting je nach Abstand zu
-    // Sharkie (mit Hysterese, damit der Status nicht an der Grenze flackert).
     updateAlertState(distance, character){
         if (this.alertState === 'idle' && distance <= this.detectionRange && character) {
             if (this.isCharacterInFront(character)) {
@@ -122,7 +117,6 @@ export class Pufferfish extends MovableObject {
         return facingLeft ? charCenterX <= myCenterX : charCenterX >= myCenterX;
     }
 
-    // Übergangs-Animation "Kugelfisch bläst sich auf", bevor er angreift.
     updateEntering(deltaTime){
         this.transitionTimer += deltaTime;
         if (this.transitionTimer > this.transitionFrameDuration) {
@@ -138,7 +132,6 @@ export class Pufferfish extends MovableObject {
         }
     }
 
-     // Übergangs-Animation zurück in den Ruhezustand, wenn Sharkie zu weit weg ist.
     updateExiting(deltaTime){
         this.transitionTimer += deltaTime;
         if (this.transitionTimer > this.transitionFrameDuration) {
@@ -155,7 +148,6 @@ export class Pufferfish extends MovableObject {
         }
     }
 
-    // Angriffsmodus: schwimmt zielstrebig auf Sharkies letzte X-Position zu.
     updateCharging(deltaTime, character, level){
         this.updateChargeDirection(deltaTime, character);
         if (this.chargeDirectionLeft) this.moveLeft(deltaTime); else this.moveRight(deltaTime);
@@ -177,8 +169,6 @@ export class Pufferfish extends MovableObject {
         }
     }
 
-    // Rand des Levels bzw. eine BigCoin im Weg während der Charge: Richtung
-    // umkehren, statt hindurchzuschwimmen.
     checkChargeBounce(level){
         let hitLeft = this.isAtLeftLevelBound(level);
         let hitRight = this.isAtRightLevelBound(level);
@@ -195,7 +185,6 @@ export class Pufferfish extends MovableObject {
         }
     }
 
-    // Ruhezustand: pendelt zwischen minX und maxX.
     updatePatrol(deltaTime, level){
         if (this.movingLeft) {
             this.moveLeft(deltaTime);

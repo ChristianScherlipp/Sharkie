@@ -1,14 +1,8 @@
 import { getSharedImage } from "./image-cache.js";
 
-// Zeichen-Methoden für World, ausgelagert damit world.class.js unter der
-// 400-LOC-Grenze bleibt. Wird per Object.assign(World.prototype, ...) in
-// world.class.js eingebunden - die Methoden greifen weiterhin ganz normal
-// über "this" auf die World-Instanz zu.
 export const WorldRenderMixin = {
 
     draw(){
-        // Canvas Clearen um neu geladenen bilder anzuzeigen
-        // und das vorgänger bild aus dem canvas entfernt wird.
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
         this.drawWorldLayer();
@@ -19,8 +13,6 @@ export const WorldRenderMixin = {
         this.ctx.translate(-this.camera_x, 0);
     },
 
-    // Alles, was sich mit der Kamera mitbewegt: Hintergrund, Licht, Gegner,
-    // Coins, Poisons, XP-/Schadens-Popups.
     drawWorldLayer(){
         this.addObjectsToMap(this.level.backgroundObjects);
         this.addObjectsToMap(this.level.lights);
@@ -32,7 +24,6 @@ export const WorldRenderMixin = {
         this.drawCoinPopups();
     },
 
-    // HUD: fest auf dem Bildschirm, bewegt sich nicht mit der Kamera.
     drawHud(){
         this.addToMap(this.coinBar);
         this.addToMap(this.posionBar);
@@ -41,7 +32,6 @@ export const WorldRenderMixin = {
         this.drawFinalbossHealthbar();
     },
 
-    // Wieder mit Kamera-Versatz: Blasen, Netz, Sharkie selbst.
     drawForegroundLayer(){
         this.addObjectsToMap(this.firingObjects);
         this.addToMap(this.level.net);
@@ -49,13 +39,9 @@ export const WorldRenderMixin = {
         this.drawConfusion();
     },
 
-    // Zeichnet 3 bouncende "?" über Sharkies Kopf, solange showingConfusion
-    // true ist - als Text statt Bild, da hierfür kein Asset vorliegt.
     drawConfusion(){
         if (!this.character.showingConfusion) return;
         let baseX = this.character.x + this.character.width / 2;
-        // relativ zur tatsächlichen Kopf-Hitbox (offset.top), nicht zur rohen
-        // Sprite-Oberkante - da oben ist sonst viel leerer Platz im Bild.
         let baseY = this.character.y + this.character.offset.top - 20;
 
         this.ctx.save();
@@ -84,9 +70,6 @@ export const WorldRenderMixin = {
         });
     },
 
-    // Gemeinsame Zeichenroutine für XP- (gelb) und Schadens- (rot) Popups -
-    // beide funktionierten vorher identisch in zwei fast gleichen Methoden,
-    // nur Array und Farbe unterschieden sich.
     drawPopups(popups, color){
         popups.forEach(popup => {
             let t = Math.min(popup.elapsed / popup.duration, 1);
@@ -109,9 +92,6 @@ export const WorldRenderMixin = {
         this.ctx.strokeStyle = 'black';
     },
 
-    // Kleines Coin-Icon, das über einer getroffenen BigCoin hochsteigt und
-    // dabei ausblendet - gleiche Steig-/Ausblend-Physik wie drawPopups(),
-    // nur wird statt Text ein Bild gezeichnet.
     drawCoinPopups(){
         let icon = getSharedImage('./assets/img/4.Marcadores/1.Coins/1.png');
         let size = 30;
@@ -125,8 +105,6 @@ export const WorldRenderMixin = {
         });
     },
 
-    // Boss-Healthbar: nur sichtbar, sobald Sharkie hinter dem Netz ist.
-    // Reine Canvas-Zeichnung (Rechtecke), da hierfür kein Bild-Asset vorliegt.
     drawFinalbossHealthbar(){
         if (!this.showFinalbossHealthbar || !this.finalboss) return;
         let bar = { x: this.canvas.width - 170, y: 20, width: 150, height: 18, radius: 8 };
@@ -208,14 +186,14 @@ export const WorldRenderMixin = {
         mo.drawFrame(this.ctx);
     },
 
-    // Image Spiegeln
+
     flipImage (mo){
         this.ctx.save();
         this.ctx.translate(mo.width, 0);
         this.ctx.scale(-1, 1)
         mo.x = mo.x * -1;
     },
-    // gespiegeltest Image zurücksetzen
+
     flipImageBack(mo){
         mo.x = mo.x * -1;
         this.ctx.restore();

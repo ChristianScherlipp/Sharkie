@@ -2,14 +2,8 @@ import { FiringObject } from "./firing-object.class.js";
 import { PoisonBubble } from "./poison-bubble.class.js";
 import { AudioHub } from "./audio-hub.class.js";
 
-// Sammel-/Schuss-Methoden für World, ausgelagert damit world.class.js unter
-// der 400-LOC-Grenze bleibt. Wird per Object.assign(World.prototype, ...) in
-// world.class.js eingebunden - die Methoden greifen weiterhin ganz normal
-// über "this" auf die World-Instanz zu.
 export const WorldItemsMixin = {
 
-    // Erhöht die Gesamt-XP und erzeugt einen "+100"/"+200"-Popup über dem
-    // Gegner, der gerade getötet wurde.
     awardExperience(amount, enemy){
         this.experience += amount;
         this.xpPopups.push({
@@ -22,7 +16,6 @@ export const WorldItemsMixin = {
         });
     },
 
-    // Erzeugt einen roten "-2"-Popup über einem Gegner (z.B. Gift-Tick-Schaden).
     showDamagePopup(amount, enemy){
         this.damagePopups.push({
             x: enemy.x + enemy.width / 2,
@@ -34,9 +27,6 @@ export const WorldItemsMixin = {
         });
     },
 
-    // Erzeugt ein kleines Coin-Icon, das über der getroffenen BigCoin
-    // hochsteigt und dabei ausblendet - gleiches Prinzip wie
-    // awardExperience()/showDamagePopup(), nur mit Bild statt Text.
     showCoinPopup(coin){
         this.coinPopups.push({
             x: coin.x + coin.width / 2,
@@ -47,8 +37,6 @@ export const WorldItemsMixin = {
         });
     },
 
-    // Läuft jeden Frame: normale Coins (collectOnTouch = true) werden einfach
-    // durch Berühren eingesammelt.
     checkCoinCollision(){
         for (let i = this.level.coins.length - 1; i >= 0; i--) {
             let coin = this.level.coins[i];
@@ -62,10 +50,6 @@ export const WorldItemsMixin = {
         }
     },
 
-    // Wird genau einmal pro Angriff aufgerufen (siehe justAttacked in Character).
-    // Nur Coins mit collectOnTouch = false (z.B. BigCoin) reagieren darauf.
-    // Jeder Treffer verringert coin.value um 1 und erhöht collectedCoins um 1 -
-    // fällt coin.value auf 0, verschwindet die Münze aus dem Level.
     checkCoinHit(){
         let hitSomething = false;
         for (let i = this.level.coins.length - 1; i >= 0; i--) {
@@ -74,8 +58,6 @@ export const WorldItemsMixin = {
         return hitSomething;
     },
 
-    // Statt des Fin-Slap-Schlagsounds (der schon beim Angriffsstart läuft)
-    // hört man bei einer BicCoin den Münz-Sound.
     hitBlockingCoin(coin, index){
         if (coin.collectOnTouch || !this.character.isNear(coin)) return false;
         coin.value--;
@@ -89,8 +71,6 @@ export const WorldItemsMixin = {
         return true;
     },
 
-    // Läuft jeden Frame: Poisons werden durch Berühren eingesammelt,
-    // genau wie normale Coins.
     checkPoisonCollision(){
         for (let i = this.level.poisons.length - 1; i >= 0; i--) {
             let poison = this.level.poisons[i];
@@ -104,9 +84,6 @@ export const WorldItemsMixin = {
         }
     },
 
-    // Gemeinsame Spawn-Position für Bubble/Gift-Schuss: seitlich neben
-    // Sharkie, abhängig von der Blickrichtung (war vorher in beiden
-    // check*FiringObjects()-Methoden dupliziert).
     getShotSpawnPosition(){
         let direction = this.character.otherDirection ? -1 : 1;
         let x = this.character.otherDirection
@@ -123,9 +100,6 @@ export const WorldItemsMixin = {
         AudioHub.playOne(AudioHub.BUBBLE_FINISH_LOAD);
     },
 
-    // Gift-Schuss ('q'): gleicher Ablauf wie die Bubble, nur mit eigener
-    // Formations-Animation in Character (IMAGES_POISON_FORMATION) und
-    // Munitionsverbrauch.
     checkPoisonFiringObjects(){
         if (!this.character.justFiredPoison) return;
         this.character.justFiredPoison = false;

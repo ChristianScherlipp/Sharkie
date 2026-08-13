@@ -1,16 +1,3 @@
-/* ================================= */
-/* Game-Over- / Sieg-Overlay          */
-/* ================================= */
-
-/*  Wrapper um Canvas + Overlay, damit das Overlay passgenau über dem
-    Canvas positioniert werden kann.
-    Eigene fließende Breite (statt sich am Canvas-Inhalt zu orientieren).
-    Obergrenze bewusst bei 720px (= native Zeichenauflösung des Canvas,
-    siehe width="720" height="480" im HTML) statt bei den ursprünglich
-    angefragten 1440px - darüber hinaus würde der Browser die 720x480-Bitmap
-    nur hochskalieren und sichtbar unscharf werden. Nach unten skaliert es
-    weiterhin fließend bis ca. 320px. Das Hintergrundbild auf body bleibt
-    davon unberührt und deckt weiterhin den ganzen Bildschirm ab. */
 .game-wrapper {
     position: relative;
     width: min(720px, 92vw, calc(92vh * 3 / 2));
@@ -18,9 +5,6 @@
     line-height: 0;
 }
 
-/*  Overlay für Game Over / Levelsieg, liegt direkt über dem Canvas.
-    Das Ein-/Ausblenden läuft über die bereits vorhandene globale
-    .hidden-Klasse (siehe Popup weiter oben). */
 .overlay {
     position: absolute;
     inset: 0;
@@ -32,7 +16,6 @@
     pointer-events: none;
 }
 
-/* Banner (Game Over / You Win), fährt von oben ins Canvas rein */
 .overlay-banner {
     margin-top: 15%;
     max-width: 85%;
@@ -45,8 +28,6 @@
                 opacity 0.4s ease;
 }
 
-/*  Sieg im letzten Level: Bild deckt das komplette Canvas ab statt nur
-    als kleines Banner oben zu liegen */
 .overlay-banner.fullcover {
     margin-top: 0;
     width: 100%;
@@ -62,7 +43,6 @@
     opacity: 1;
 }
 
-/* Buttons fahren von unten ins Canvas rein */
 .overlay-buttons {
     position: absolute;
     bottom: 8%;
@@ -110,14 +90,6 @@
     transform: scale(0.95);
 }
 
-/* ================================= */
-/* Game-Controls (Mute/Pause) & Pausenmenü */
-/* ================================= */
-
-/*  Sitzt oberhalb des Canvas, also sichtbar außerhalb davon - nicht auf
-    dem Canvas selbst gezeichnet. War bei -200px/-550px weit außerhalb des
-    sichtbaren Bereichs positioniert - auf eine sinnvolle, mit dem Canvas
-    mitskalierende Position zurückgesetzt. */
 #game-controls {
     position: absolute;
     top: clamp(-56px, -8vw, -40px);
@@ -148,11 +120,6 @@
     transform: scale(1.08);
 }
 
-/*  Pausenmenü liegt direkt über dem Canvas (wie das Game-Over-Overlay),
-    nutzt aber die gleichen Buttons (.menu-btn) wie der Startbildschirm.
-    pointer-events:none auf dem Container selbst, damit ausschließlich die
-    Buttons (pointer-events:auto) auf Maus-Interaktion/Hover reagieren -
-    nicht die Hintergrundfläche/das ganze Menü. */
 #pause-menu {
     position: absolute;
     inset: 0;
@@ -173,7 +140,7 @@
 }
 
 canvas {
-    display: none; /* JS setzt dies beim Spielstart per inline style auf "block" */
+    display: none;
     width: 100%;
     height: auto;
     aspect-ratio: 3 / 2;

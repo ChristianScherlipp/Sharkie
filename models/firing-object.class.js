@@ -1,7 +1,7 @@
 import { MovableObject } from "./movable-object.class.js";
 
 export class FiringObject extends MovableObject {
-    direction = 1; // 1 = rechts, -1 = links
+    direction = 1;
     baseDamage = 1;
     currentDamage = 1;
     distanceTraveled = 0;
@@ -11,10 +11,6 @@ export class FiringObject extends MovableObject {
     antiGravityTimer = 0;
     damageDecayDuration = 1000;
 
-    // Läuft nichts ins Leere: wird jeden Frame hochgezählt und in World
-    // genutzt, um Blasen zu entfernen, die nie ein Ziel treffen (sonst
-    // blieben sie für immer im firingObjects-Array und würden weiter
-    // aktualisiert/gezeichnet).
     age = 0;
 
     constructor(x, y, direction = 1) {
@@ -28,9 +24,6 @@ export class FiringObject extends MovableObject {
         this.otherDirection = direction === -1;
     }
 
-
-    // Wird jeden Frame von World.update() aufgerufen (ersetzt applyAintiGravity()-
-    //  Interval und das seoerate x += 3-Interval)
     update(deltaTime) {
         this.age += deltaTime;
         if (!this.antiGravityActive) {
@@ -39,8 +32,7 @@ export class FiringObject extends MovableObject {
             this.updateDriftAndDecay(deltaTime);
         }
     }
-        
-    // Erste Phase: schnelle geradlinige Bewegung, bis briskDistance erreicht ist.
+
     updateBriskMovement(deltaTime) {
         let step = this.briskSpeed * (deltaTime / 50);
         this.x += step * this.direction;
@@ -51,8 +43,6 @@ export class FiringObject extends MovableObject {
         }
     }
 
-    // Zweite Phase: treibt langsam weiter und verliert dabei an Schaden, bis
-    // currentDamage nach damageDecayDuration bei 0 ankommt.
     updateDriftAndDecay(deltaTime) {
         this.applyAntiGravity(deltaTime);
         this.x += 3 * (deltaTime / 50) * this.direction;

@@ -85,9 +85,6 @@ export class Character extends MovableObject {
         this.getRealFrame();
     }
 
-    // Spielt bei jedem Treffer (unabhängig vom Gegner) den Hurt-Sound ab.
-    // Der zusätzliche Elektroschock-Sound bei direktem Quallen-Kontakt
-    // bleibt davon unberührt - der wird separat in World ausgelöst.
     hit(damage = 2){
         super.hit(damage);
         AudioHub.playOne(AudioHub.HURT);
@@ -109,11 +106,6 @@ export class Character extends MovableObject {
         this.updateIdleAnimation(deltaTime, isMoving);
     }
 
-    // Tod: eigene Sterbe-Animation (inkl. Boden-Absinken bei der
-    // Stromschlag-Variante) einmal komplett abspielen und danach alles
-    // einfrieren - World erkennt "markedForRemoval" und löst darüber den
-    // Game-Over-Screen aus. Levelsieg (nicht letztes Level): Sharkie
-    // ignoriert die Tastatur und schwimmt eigenständig nach rechts raus.
     updateConfusion(deltaTime){
         if (!this.showingConfusion) return;
         this.confusionTimer += deltaTime;
@@ -123,8 +115,6 @@ export class Character extends MovableObject {
         }
     }
 
-    // Bewegungs-Geräusch läuft, solange eine Bewegungstaste gedückt ist,
-    // und stoppt sofort wieder, sobald Losgelassen wird
     updateMoveSound(isMoving){
         if (isMoving) {
             AudioHub.playIfNotRunning(AudioHub.MOVE);
@@ -145,9 +135,6 @@ export class Character extends MovableObject {
         }
     }
 
-    // Bewegt Sharkie (Knockback oder Tastatur), lässt die Kamera folgen und
-    // blockiert die Bewegung, falls sie durch eine BigCoin/das Netz
-    // kollidiert. Gibt zurück, ob gerade eine Bewegungstaste gedrückt ist.
     updateMovementAndCamera(deltaTime){
         let prevX = this.x, prevY = this.y;
         if (this.knockbackActive) {
@@ -197,12 +184,6 @@ export class Character extends MovableObject {
         }
     }
 
-    // Kamera mit Totzone: bleibt stehen, solange der Hintergrund sonst eine
-    // schwarze Lücke zeigen würde (Weltanfang/-ende), folgt Sharkie sonst
-    // ab 30% der Canvas-Breite. Auf ganze Pixel gerundet - sonst verschiebt
-    // ctx.translate() die Hintergrund-Kacheln auf Subpixel-Ebene, was an
-    // ihren Rändern einen sichtbaren, leicht verwaschenen Streifen erzeugt
-    // (unabhängig von der gewählten Kachelbreite).
     updateCamera(){
         let canvasWidth = this.world.canvas.width;
         let followX = this.world.level.level_start_x + canvasWidth * 0.3;
@@ -237,8 +218,6 @@ export class Character extends MovableObject {
         }
     }
 
-    // Fin-Slap-Angriff (Leertaste). Gibt true zurück, während der Angriff
-    // läuft (der Aufrufer bricht dann für diesen Frame ab).
     updateAttack(deltaTime){
         if (this.world.keyboard.SPACE && !this.isAttacking && !this.isFormingBubble && !this.isFormingPoison) {
             this.startAttack();
@@ -272,7 +251,6 @@ export class Character extends MovableObject {
         }
     }
 
-    // Blasen-Formation (E-Taste). Gibt true zurück, während sie läuft.
     updateBubbleFormation(deltaTime){
         if (this.world.keyboard.E && !this.isFormingBubble && !this.isAttacking && !this.isFormingPoison) {
             this.startBubbleFormation();
@@ -303,8 +281,6 @@ export class Character extends MovableObject {
         }
     }
 
-    // Gift-Formation (Q-Taste, nur mit Munition). Gibt true zurück, während
-    // sie läuft.
     updatePoisonFormation(deltaTime){
         let canStart = !this.isFormingPoison && !this.isAttacking && !this.isFormingBubble && this.world.collectedPoisons > 0;
         if (this.world.keyboard.Q && canStart) {
@@ -352,12 +328,6 @@ export class Character extends MovableObject {
         }
     }
 
-    // Eigene Sterbe-Steuerung (statt playAnimation()): läuft einmalig bis
-    // zum letzten Bild durch und bleibt dort stehen, statt zu loopen - nutzt
-    // einen eigenen Frame-Zähler, damit die Animation zuverlässig bei Bild 1
-    // startet (playAnimation() teilt sich sonst den Zähler mit Swim/Idle/etc.).
-    // Bei der Stromschlag-Variante (Tod durch Qualle) sinkt Sharkie ab Bild 7
-    // zusätzlich auf den Boden des Canvas ab.
     playDeathAnimation(deltaTime){
         if (!this.deathAnimationStarted) {
             this.deathAnimationStarted = true;
@@ -372,10 +342,6 @@ export class Character extends MovableObject {
         this.sinkToFloorIfElectro(images);
     }
 
-    // Bildwechsel/Ende der Animation zeitgesteuert (dieTimer/dieFrameDuration
-    // von MovableObject geerbt) statt bei jedem Frame-Aufruf sofort
-    // weiterzuspringen - sonst wäre die Animation in ~150ms komplett
-    // durchgelaufen.
     advanceDeathFrame(deltaTime, images){
         this.dieTimer += deltaTime;
         if (this.dieTimer <= this.dieFrameDuration) return;
@@ -387,8 +353,6 @@ export class Character extends MovableObject {
         }
     }
 
-    // Nur bei der Stromschlag-Variante: ab Bild 7 (Index 6) auf den Boden
-    // des Canvas absinken, verteilt über die restlichen Bilder.
     sinkToFloorIfElectro(images){
         if (!this.lastHitByJellyfish || this.deathFrame < 6) return;
         let floorY = 480 - this.height;

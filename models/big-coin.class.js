@@ -7,7 +7,7 @@ export class BigCoin extends Coin {
     blocksMovement = true;
     
     constructor(x, y) {
-        let value = 5 + Math.floor(Math.random() * 6); // 5 bis 10 (inklusive)
+        let value = 5 + Math.floor(Math.random() * 6);
         super(x, y, value);
         this.getRealFrame();
     }

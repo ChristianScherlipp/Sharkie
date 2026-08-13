@@ -48,11 +48,6 @@ export class Jellyfish extends MovableObject {
     maxY;
     movingUp = true;
 
-    // Zählt, wie viele Quallen im Level gerade alarmiert sind. Der geteilte
-    // Elektro-Sound (ein Audio-Element für alle Quallen) läuft, solange
-    // dieser Zähler > 0 ist, und stoppt erst, wenn die letzte alarmierte
-    // Qualle sich wieder beruhigt (oder stirbt) - so schneidet eine Qualle
-    // nicht mehr versehentlich den Sound einer anderen ab.
     static alertedCount = 0;
 
     constructor(x, y, strengthBonus = 0) {
@@ -72,7 +67,6 @@ export class Jellyfish extends MovableObject {
         this.getRealFrame();
     }
 
-    // Wird jeden Frame von World.update() aufgerufen
     update(deltaTime, character, level){
         if (this.isDying) {
             this.updateDying(deltaTime, this.JELLY_IMAGES_DIE);
@@ -84,9 +78,7 @@ export class Jellyfish extends MovableObject {
         this.updateVerticalPatrol(deltaTime, level);
         this.updateSwimAnimation(deltaTime);
     }
-    // Qualle wird "alarmiert" (macht mehr Schaden), sobald Sharkie nah
-    // genug und nicht unterhalb der Qualle ist, und beruhigt sich wieder,
-    // sobald der Abstand exitRange überschreitet.
+
     updateAlertState(distance, character){
 
         let characterBelow = character && (character.y + character.height / 2) > (this.y + this.height / 2);
@@ -116,16 +108,11 @@ export class Jellyfish extends MovableObject {
         }
     }
 
-    // Stirbt eine noch alarmierte Qualle (z.B. durch eine Blase getroffen),
-    // muss sie sich genauso "beruhigen" wie beim normalen Entfernen -
-    // sonst bliebe der Zähler für immer zu hoch stehen.
     startDying(){
         if (this.isAlerted) this.markCalm();
         super.startDying();
     }
 
-    // Pendelt senkrecht zwischen minY und maxY (oder bricht früher ab,
-    // wenn eine BigCoin im Weg ist).
     updateVerticalPatrol(deltaTime, level){
         if (this.movingUp) {
             this.moveUp(deltaTime);
@@ -136,8 +123,6 @@ export class Jellyfish extends MovableObject {
         }
     }
 
-    // Prüft, ob die Qualle ihre Patrouillen-Grenze (minY/maxY) oder ein
-    // Hindernis erreicht hat, und dreht in dem Fall die Richtung um.
     checkPatrolTurn(level, boundaryY, isMovingUp){
         let reachedBoundary = isMovingUp ? this.y <= boundaryY : this.y >= boundaryY;
         if (!reachedBoundary && !this.isBlockedByObstacle(level)) return;

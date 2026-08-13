@@ -1,10 +1,3 @@
-/* ================================= */
-/* Mobile: Querformat-Zwang & Touch-Steuerung */
-/* ================================= */
-
-/* Nur auf Touch-Geräten (hover:none) relevant - Desktop mit Maus bleibt
-   davon komplett unberührt, unabhängig vom Fenster-Seitenverhältnis. */
-
 #rotate-device {
     display: none;
 }
@@ -25,17 +18,11 @@
         line-height: 1.6;
     }
 
-    /*  Rest der Seite komplett ausblenden, solange das Gerät im
-        Hochformat gehalten wird - egal ob Startbildschirm, Popup oder
-        laufendes Spiel gerade aktiv wäre. */
     body > *:not(#rotate-device) {
         display: none !important;
     }
 }
 
-/*  Touch-Steuerung (Joystick + Angriffs-Buttons): nur auf Touch-Geräten im
-    Querformat sichtbar. Auf dem Desktop bleibt die Tastatur die einzige
-    Steuerung, im Hochformat ist ohnehin alles ausgeblendet (siehe oben). */
 #touch-controls {
     display: none;
 }
