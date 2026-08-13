@@ -136,8 +136,23 @@ function showPopupSection(sectionId) {
     document.getElementById("popup").classList.remove("hidden");
 }
 
+// Erkennt Touch-Geräte genauso wie das CSS in style-mobile.css
+// (@media (hover: none)).
+function isTouchDevice() {
+    return window.matchMedia("(hover: none)").matches;
+}
+
+// Zeigt je nach Gerät die Tastatur- oder die Touch-Belegung im
+// Steuerung-Popup an, die jeweils andere bleibt versteckt.
+function updateControlsPopupForDevice() {
+    let touch = isTouchDevice();
+    document.getElementById("controls-keyboard").classList.toggle("hidden", touch);
+    document.getElementById("controls-touch").classList.toggle("hidden", !touch);
+}
+
 function openControls() {
-    showPopupSection("popup-controls")
+    showPopupSection("popup-controls");
+    updateControlsPopupForDevice();
 }
 
 function openCredits() {
