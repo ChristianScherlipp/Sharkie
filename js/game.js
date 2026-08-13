@@ -156,7 +156,9 @@ function handleMusicToggle() {
 }
 
 function updateMusicUI(isPlaying){
-    document.getElementById('music-toggle-btn').textContent = isPlaying ? '🔇 Musik AUS' : '🔊 Musik AN';
+    document.getElementById('music-toggle-btn').innerHTML = isPlaying 
+    ? '<img class="btn-icon" src="./assets/icons/Volume-Level-High--Streamline-Core.svg" alt="Volume Icon"> Musik AN'
+    : '<img class="btn-icon" src="./assets/icons/Volume-Off--Streamline-Core.svg" alt="Volume Icon"> Musik AUS'; 
     document.getElementById('mute-icon').src = isPlaying
         ? './assets/icons/Volume-Level-High--Streamline-Core.svg'
         : './assets/icons/Volume-Mute--Streamline-Core.svg';

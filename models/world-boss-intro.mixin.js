@@ -56,7 +56,8 @@ export const WorldBossIntroMixin = {
         this.cameraPanElapsed += deltaTime;
         let t = Math.min(this.cameraPanElapsed / this.cameraPanDuration, 1);
         let eased = 1 - Math.pow(1 - t, 3); // Ease-out, wie beim Rückstoß
-        this.camera_x = this.cameraPanStartX + (this.cameraPanTargetX - this.cameraPanStartX) * eased;
+        let camera = this.cameraPanStartX + (this.cameraPanTargetX - this.cameraPanStartX) * eased;
+        this.camera_x = Math.round(camera);
         if (t >= 1) {
             this.bossIntroPhase = 'introducing';
             if (this.finalboss) this.finalboss.startIntroducing();

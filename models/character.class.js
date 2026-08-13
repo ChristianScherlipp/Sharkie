@@ -199,14 +199,18 @@ export class Character extends MovableObject {
 
     // Kamera mit Totzone: bleibt stehen, solange der Hintergrund sonst eine
     // schwarze Lücke zeigen würde (Weltanfang/-ende), folgt Sharkie sonst
-    // ab 30% der Canvas-Breite.
+    // ab 30% der Canvas-Breite. Auf ganze Pixel gerundet - sonst verschiebt
+    // ctx.translate() die Hintergrund-Kacheln auf Subpixel-Ebene, was an
+    // ihren Rändern einen sichtbaren, leicht verwaschenen Streifen erzeugt
+    // (unabhängig von der gewählten Kachelbreite).
     updateCamera(){
         let canvasWidth = this.world.canvas.width;
         let followX = this.world.level.level_start_x + canvasWidth * 0.3;
         let cameraMax = -this.world.level.level_start_x;
         let cameraMin = canvasWidth - this.world.level.level_end_x;
         let desiredCamera = followX - this.x;
-        this.world.camera_x = Math.min(cameraMax, Math.max(cameraMin, desiredCamera));
+        let camera = Math.min(cameraMax, Math.max(cameraMin, desiredCamera));
+        this.world.camera_x = Math.round(camera);
     }
 
     blockMovementIfColliding(prevX, prevY){

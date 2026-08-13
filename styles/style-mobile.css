@@ -43,11 +43,11 @@
 @media (hover: none) and (orientation: landscape) {
     #touch-controls {
         display: flex;
-        position: absolute;
+        position: fixed;
         inset: 0;
         justify-content: space-between;
         align-items: flex-end;
-        padding: 4%;
+        padding: clamp(10px, 3vw, 26px);
         pointer-events: none;
         z-index: 6;
     }
@@ -79,12 +79,14 @@
 }
 
 #touch-actions {
-    display: flex;
-    align-items: flex-end;
-    gap: clamp(8px, 2.5vw, 14px);
+    position: relative;
+    width: clamp(150px, 32vw, 210px);
+    height: clamp(150px, 32vw, 210px);
 }
 
 .touch-btn {
+    position: absolute;
+    transform: translate(-50%, -50%);
     width: clamp(50px, 13vw, 70px);
     height: clamp(50px, 13vw, 70px);
     border-radius: 50%;
@@ -93,4 +95,23 @@
     color: white;
     font-size: clamp(1.2rem, 5vw, 1.6rem);
     touch-action: none;
+}
+
+.touch-btn img {
+    width: 80%;
+}
+
+#touch-bubble {
+    top: 53%;
+    left: 70%;
+}
+
+#touch-fin-slap {
+    top: 90%;
+    left: 85%;
+}
+
+#touch-poison {
+    top: 89%;
+    left: 42%;
 }
