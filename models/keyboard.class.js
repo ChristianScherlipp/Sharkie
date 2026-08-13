@@ -7,6 +7,9 @@ export class Keyboard {
     E = false;
     Q = false;
 
+    /**
+     * Creates a new Keyboard instance.
+     */
     constructor() {
         
     }

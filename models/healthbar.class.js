@@ -15,6 +15,9 @@ export class Healthbar extends Statusbar {
         './assets/img/4.Marcadores/green/Life/100_copia3.png',
     ];
 
+    /**
+     * Create a new Healthbar instance.
+     */
     constructor() {
         super();
 

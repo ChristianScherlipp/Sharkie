@@ -13,6 +13,12 @@ export class FiringObject extends MovableObject {
 
     age = 0;
 
+    /**
+     * Creates a new FiringObject instance
+     * @param {number} x - X position in pixels.
+     * @param {number} y  - Y position in pixels.
+     * @param {number} direction - Movement direction (1 = right, -1 = left).
+     */
     constructor(x, y, direction = 1) {
         super().loadImage('./assets/img/1.Sharkie/4.Attack/Bubble_trap/Bubble.png');
         this.x = x;
@@ -24,6 +30,10 @@ export class FiringObject extends MovableObject {
         this.otherDirection = direction === -1;
     }
 
+    /**
+     * Update the object's state for the current frame.
+     * @param {number} deltaTime  - Time elapsed since the last frame, in millisecond.
+     */
     update(deltaTime) {
         this.age += deltaTime;
         if (!this.antiGravityActive) {
@@ -33,6 +43,10 @@ export class FiringObject extends MovableObject {
         }
     }
 
+    /**
+     * Update brisk movement.
+     * @param {number} deltaTime - Time elapsed since the last frame, in millisecond.
+     */
     updateBriskMovement(deltaTime) {
         let step = this.briskSpeed * (deltaTime / 50);
         this.x += step * this.direction;
@@ -43,6 +57,10 @@ export class FiringObject extends MovableObject {
         }
     }
 
+    /**
+     * Update drift and decay.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateDriftAndDecay(deltaTime) {
         this.applyAntiGravity(deltaTime);
         this.x += 3 * (deltaTime / 50) * this.direction;

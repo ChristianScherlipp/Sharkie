@@ -50,6 +50,12 @@ export class Jellyfish extends MovableObject {
 
     static alertedCount = 0;
 
+    /**
+     * Creates a new Jellyfish instance
+     * @param {number} x - X position in pixels.
+     * @param {number} y - Y position in pixels.
+     * @param {number} [strengthBonus=0] -Extra strength/health added on top of the base value. 
+     */
     constructor(x, y, strengthBonus = 0) {
         super().loadImage('./assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png');
         this.loadImages(this.JELLY_IMAGES_SWIM);
@@ -67,6 +73,12 @@ export class Jellyfish extends MovableObject {
         this.getRealFrame();
     }
 
+    /**
+     * Update the object#s state for the current frame.
+     * @param {number} deltaTime 
+     * @param {Character} character - the player character.
+     * @param {level} level - The current level, containing enemies, coins and bounds.
+     */
     update(deltaTime, character, level){
         if (this.isDying) {
             this.updateDying(deltaTime, this.JELLY_IMAGES_DIE);
@@ -79,8 +91,12 @@ export class Jellyfish extends MovableObject {
         this.updateSwimAnimation(deltaTime);
     }
 
+    /**
+     * Updates alert state.
+     * @param {number} distance - Distance in pixels.
+     * @param {Character} character - The player character.
+     */
     updateAlertState(distance, character){
-
         let characterBelow = character && (character.y + character.height / 2) > (this.y + this.height / 2);
         let visible = !characterBelow;
 
@@ -92,6 +108,9 @@ export class Jellyfish extends MovableObject {
         this.damage = (this.isAlerted ? 5 : 2) + this.strengthBonus;
     }
 
+    /**
+     * Marks alerted.
+     */
     markAlerted(){
         this.isAlerted = true;
         Jellyfish.alertedCount++;
@@ -100,6 +119,9 @@ export class Jellyfish extends MovableObject {
         }
     }
 
+    /**
+     * Marks calm.
+     */
     markCalm() {
         this.isAlerted = false;
         Jellyfish.alertedCount = Math.max(0, Jellyfish.alertedCount - 1);
@@ -108,11 +130,19 @@ export class Jellyfish extends MovableObject {
         }
     }
 
+    /**
+     * Starts dying
+     */
     startDying(){
         if (this.isAlerted) this.markCalm();
         super.startDying();
     }
 
+    /**
+     * Update vertical patrol.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {level} level - The current level, containing enemies, coins and bounds.
+     */
     updateVerticalPatrol(deltaTime, level){
         if (this.movingUp) {
             this.moveUp(deltaTime);
@@ -123,6 +153,12 @@ export class Jellyfish extends MovableObject {
         }
     }
 
+    /**
+     * Checks patrol turn.
+     * @param {level} level - The current level, containing enemies, coins and bounds.
+     * @param {number} boundaryY - Y position of the patrol boundary.
+     * @param {boolean} isMovingUp - Whether the entity is moving upward.
+     */
     checkPatrolTurn(level, boundaryY, isMovingUp){
         let reachedBoundary = isMovingUp ? this.y <= boundaryY : this.y >= boundaryY;
         if (!reachedBoundary && !this.isBlockedByObstacle(level)) return;
@@ -135,6 +171,10 @@ export class Jellyfish extends MovableObject {
         this.getRealFrame();
     }
 
+    /**
+     * Updates swim animation.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateSwimAnimation(deltaTime){
         if (this.isAlerted) {
             this.animateImages(this.JELLY_IMAGES_DANGEROUS, deltaTime, 200);
