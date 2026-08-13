@@ -20,6 +20,7 @@ export class AudioHub {
     static musicVolume = 0.4;
     static sfxVolume = 0.4;
 
+    static MUTE_STORAGE_KEY = 'sharkie-muted';
     static isMuted = false;
 
     static allSounds = [
@@ -68,11 +69,17 @@ export class AudioHub {
 
     static toggleMusic() {
         AudioHub.isMuted = !AudioHub.isMuted;
+        localStorage.setItem(AudioHub.MUTE_STORAGE_KEY, AudioHub.isMuted);
         if (AudioHub.isMuted){
             AudioHub.stopAll();
         } else {
             AudioHub.MUSIC.play().catch(() => {});
         }
+        return !AudioHub.isMuted;
+    }
+
+    static loadMuteState() {
+        AudioHub.isMuted = localStorage.getItem(AudioHub.MUTE_STORAGE_KEY) === 'true';
         return !AudioHub.isMuted;
     }
 

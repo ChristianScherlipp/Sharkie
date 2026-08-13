@@ -209,6 +209,7 @@ function initEventListeners(){
     wireMusicPopupControls();
     document.getElementById("close-popup").addEventListener("click", closePopup);
     AudioHub.applyVolumes();
+    updateMusicUI(AudioHub.loadMuteState());
     resetPauseMenu();
     initJoystick();
     wireTouchActionButtons();
