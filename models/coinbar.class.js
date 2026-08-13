@@ -11,6 +11,9 @@ export class Coinbar extends Statusbar {
         './assets/img/4.Marcadores/green/100_copia_6.png'
     ];
 
+    /**
+     * Creates a new Coinbar instance.
+     */
     constructor (){
         super();
 

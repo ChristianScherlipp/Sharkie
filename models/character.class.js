@@ -71,6 +71,9 @@ export class Character extends MovableObject {
     IMAGES_BUBBLE_FORMATION = CHARACTER_IMAGES.BUBBLE_FORMATION;
     IMAGES_POISON_FORMATION = CHARACTER_IMAGES.POISON_FORMATION;
 
+    /**
+     * Creates a new Character instance.
+     */
     constructor() {
         super().loadImage('./assets/img/1.Sharkie/3.Swim/1.png');
         this.loadImages(this.IMAGES_SWIM);
@@ -85,11 +88,19 @@ export class Character extends MovableObject {
         this.getRealFrame();
     }
 
+    /**
+     * Applies a hit to hit.
+     * @param {number} [damage=2] - Amount of damage to apply.
+     */
     hit(damage = 2){
         super.hit(damage);
         AudioHub.playOne(AudioHub.HURT);
     }
 
+    /**
+     * Updates the object's state for the current frame.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     update(deltaTime) {
         if (this.isFrozen) { this.updateConfusion(deltaTime); return; }
         if (this.isDead()) { this.playDeathAnimation(deltaTime); return; }
@@ -106,6 +117,10 @@ export class Character extends MovableObject {
         this.updateIdleAnimation(deltaTime, isMoving);
     }
 
+    /**
+     * Updates confusion.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateConfusion(deltaTime){
         if (!this.showingConfusion) return;
         this.confusionTimer += deltaTime;
@@ -115,6 +130,10 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Updates move sound.
+     * @param {boolean} isMoving - Whether the character is currently moving.
+     */
     updateMoveSound(isMoving){
         if (isMoving) {
             AudioHub.playIfNotRunning(AudioHub.MOVE);
@@ -123,6 +142,10 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Updates auto swim.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateAutoSwim(deltaTime){
         let factor = deltaTime / (1000 / 60);
         this.x += this.speed * factor;
@@ -135,6 +158,11 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Updates movement and camera.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @returns {*} The computed result.
+     */
     updateMovementAndCamera(deltaTime){
         let prevX = this.x, prevY = this.y;
         if (this.knockbackActive) {
@@ -148,6 +176,10 @@ export class Character extends MovableObject {
         return this.isMovementKeyPressed();
     }
 
+    /**
+     * Updates knockback.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateKnockback(deltaTime){
         this.knockbackElapsed += deltaTime;
         let t = Math.min(this.knockbackElapsed / this.knockbackDuration, 1);
@@ -157,12 +189,20 @@ export class Character extends MovableObject {
         if (t >= 1) this.knockbackActive = false;
     }
 
+    /**
+     * Updates keyboard movement.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateKeyboardMovement(deltaTime){
         let factor = deltaTime / (1000 / 60);
         this.handleHorizontalMovement(factor);
         this.handleVerticalMovement(factor);
     }
 
+    /**
+     * Handles horizontal movement.
+     * @param {number} factor - Direction factor applied to the movement speed (1 or -1).
+     */
     handleHorizontalMovement(factor){
         if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x - this.width) {
             this.x += this.speed * factor;
@@ -174,6 +214,10 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Handles vertical movement.
+     * @param {number} factor - Direction factor applied to the movement speed (1 or -1).
+     */
     handleVerticalMovement(factor){
         if (this.world.keyboard.UP && this.y > -130) {
             this.y -= this.speed * factor;
@@ -184,6 +228,9 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Updates camera.
+     */
     updateCamera(){
         let canvasWidth = this.world.canvas.width;
         let followX = this.world.level.level_start_x + canvasWidth * 0.3;
@@ -194,6 +241,11 @@ export class Character extends MovableObject {
         this.world.camera_x = Math.round(camera);
     }
 
+    /**
+     * Block movement if colliding.
+     * @param {number} prevX - The character's X position before this frame's movement.
+     * @param {number} prevY - The character's Y position before this frame's movement.
+     */
     blockMovementIfColliding(prevX, prevY){
         let blockedByCoin = this.world.level.coins.some(coin => coin.blocksMovement && this.isColliding(coin));
         let net = this.world.level.net;
@@ -205,11 +257,20 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Checks whether movement key pressed.
+     * @returns {boolean} True if the condition holds, false otherwise.
+     */
     isMovementKeyPressed(){
         let k = this.world.keyboard;
         return k.RIGHT || k.LEFT || k.UP || k.DOWN || k.E || k.SPACE || k.Q;
     }
 
+    /**
+     * Updates idle time.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {boolean} isMoving - Whether the character is currently moving.
+     */
     updateIdleTime(deltaTime, isMoving){
         if (isMoving) {
             this.idleTime = 0;
@@ -218,6 +279,11 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Updates attack.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @returns {*} The computed result.
+     */
     updateAttack(deltaTime){
         if (this.world.keyboard.SPACE && !this.isAttacking && !this.isFormingBubble && !this.isFormingPoison) {
             this.startAttack();
@@ -227,6 +293,9 @@ export class Character extends MovableObject {
         return true;
     }
 
+    /**
+     * Starts attack.
+     */
     startAttack(){
         this.isAttacking = true;
         this.attackFrame = 0;
@@ -236,6 +305,10 @@ export class Character extends MovableObject {
         AudioHub.playOne(AudioHub.FIN_SLAP);
     }
 
+    /**
+     * Advances attack frame.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     advanceAttackFrame(deltaTime){
         this.attackTimer += deltaTime;
         if (this.attackTimer <= this.attackFrameDuration) return;
@@ -251,6 +324,11 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Updates bubble formation.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @returns {*} The computed result.
+     */
     updateBubbleFormation(deltaTime){
         if (this.world.keyboard.E && !this.isFormingBubble && !this.isAttacking && !this.isFormingPoison) {
             this.startBubbleFormation();
@@ -260,6 +338,9 @@ export class Character extends MovableObject {
         return true;
     }
 
+    /**
+     * Starts bubble formation.
+     */
     startBubbleFormation(){
         this.isFormingBubble = true;
         this.bubbleFrame = 0;
@@ -268,6 +349,10 @@ export class Character extends MovableObject {
         AudioHub.playOne(AudioHub.BUBBLE_LOAD);
     }
 
+    /**
+     * Advances bubble frame.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     advanceBubbleFrame(deltaTime){
         this.bubbleTimer += deltaTime;
         if (this.bubbleTimer <= this.bubbleFrameDuration) return;
@@ -281,6 +366,11 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Updates poison formation.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @returns {*} The computed result.
+     */
     updatePoisonFormation(deltaTime){
         let canStart = !this.isFormingPoison && !this.isAttacking && !this.isFormingBubble && this.world.collectedPoisons > 0;
         if (this.world.keyboard.Q && canStart) {
@@ -291,6 +381,9 @@ export class Character extends MovableObject {
         return true;
     }
 
+    /**
+     * Starts poison formation.
+     */
     startPoisonFormation(){
         this.isFormingPoison = true;
         this.poisonFrame = 0;
@@ -299,6 +392,10 @@ export class Character extends MovableObject {
         AudioHub.playOne(AudioHub.BUBBLE_LOAD);
     }
 
+    /**
+     * Advances poison frame.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     advancePoisonFrame(deltaTime){
         this.poisonTimer += deltaTime;
         if (this.poisonTimer <= this.poisonFrameDuration) return;
@@ -312,6 +409,11 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Updates idle animation.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {boolean} isMoving - Whether the character is currently moving.
+     */
     updateIdleAnimation(deltaTime, isMoving){
         this.animationTimer += deltaTime;
         if (this.animationTimer <= 150) return;
@@ -328,6 +430,10 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Plays death animation.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     playDeathAnimation(deltaTime){
         if (!this.deathAnimationStarted) {
             this.deathAnimationStarted = true;
@@ -342,6 +448,11 @@ export class Character extends MovableObject {
         this.sinkToFloorIfElectro(images);
     }
 
+    /**
+     * Advances death frame.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {Array<HTMLImageElement|string>} images - Ordered list of animation frame images.
+     */
     advanceDeathFrame(deltaTime, images){
         this.dieTimer += deltaTime;
         if (this.dieTimer <= this.dieFrameDuration) return;
@@ -353,6 +464,10 @@ export class Character extends MovableObject {
         }
     }
 
+    /**
+     * Moves to floor if electro.
+     * @param {Array<HTMLImageElement|string>} images - Ordered list of animation frame images.
+     */
     sinkToFloorIfElectro(images){
         if (!this.lastHitByJellyfish || this.deathFrame < 6) return;
         let floorY = 480 - this.height;

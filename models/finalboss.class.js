@@ -111,7 +111,12 @@ export class Finalboss extends MovableObject {
         './assets/img/2.Enemy/3.Final_Enemy/Dead/2death10.png',
     ];
 
-
+    /**
+     * Creates a new Finalboss instance.
+     * @param {number} x - X position in pixels.
+     * @param {number} y - Y position in pixels.
+     * @param {number} [strengthBonus=0] - Extra strength/health added on top of the base value.
+     */
     constructor (x, y, strengthBonus = 0){
         super().loadImage('./assets/img/2.Enemy/3.Final_Enemy/2.floating/1.png');
         this.loadImages(this.FINALBOSS_IMAGES_SWIM);
@@ -129,6 +134,9 @@ export class Finalboss extends MovableObject {
         this.getRealFrame();
     }
 
+    /**
+     * Picks random direction.
+     */
     pickRandomDirection(){
         const options = [
             [1, 0], [-1, 0], [0, 1], [0, -1],
@@ -141,6 +149,9 @@ export class Finalboss extends MovableObject {
         this.directionChangeInterval = 3000 + Math.random() * 3000;
     }
 
+    /**
+     * Starts introducing.
+     */
     startIntroducing() {
         this.hasAppeared = true;
         this.isIntroducing = true;
@@ -149,13 +160,19 @@ export class Finalboss extends MovableObject {
         this.img = this.imageCache[this.FINALBOSS_IMAGES_INTRODUCE[0]];
         AudioHub.playOne(AudioHub.BOSS_APPEARS);
     }
-
+    
+    /**
+     * Updates the object's state for the current frame.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {Character} character - The player character.
+     */
     update(deltaTime, character){
         if (this.updateIntro(deltaTime)) return;
         if (!this.introduced) return;
-        if (this.isDying) { this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
+        if (this.isDying) { this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; } 
         this.updatePoisonTick(deltaTime);
         if (this.isDying) { this.updateDying(deltaTime, this.FINALBOSS_IMAGES_DEATH); return; }
+
         this.updateHurtTimer(deltaTime);
         this.updateState(character);
         this.updateDirection(deltaTime, character);
@@ -163,6 +180,11 @@ export class Finalboss extends MovableObject {
         this.updateBossAnimation(deltaTime);
     }
 
+    /**
+     * Updates intro.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @returns {*} The computed result.
+     */
     updateIntro(deltaTime){
         if (!this.isIntroducing) return false;
         this.introTimer += deltaTime;
@@ -179,6 +201,10 @@ export class Finalboss extends MovableObject {
         return true;
     }
 
+    /**
+     * Updates poison tick.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updatePoisonTick(deltaTime){
         if (!this.isPoisoned) return;
         this.poisonTickTimer += deltaTime;
@@ -189,6 +215,10 @@ export class Finalboss extends MovableObject {
         }
     }
 
+    /**
+     * Updates hurt timer.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateHurtTimer(deltaTime){
         if (!this.isHurt) return;
         this.hurtTimer += deltaTime;
@@ -201,6 +231,10 @@ export class Finalboss extends MovableObject {
         }
     }
 
+    /**
+     * Updates state.
+     * @param {Character} character - The player character.
+     */
     updateState(character){
         if (!character) { this.state = 'wander'; return; }
         let inSight = this.isCharacterInSight(character);
@@ -217,11 +251,19 @@ export class Finalboss extends MovableObject {
         }
     }
 
+    /**
+     * Starts attacking.
+     */
     startAttacking(){
         this.state = 'attacking';
         AudioHub.playOne(AudioHub.BOSS_ATTACK);
     }
 
+    /**
+     * Updates direction.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     * @param {Character} character - The player character.
+     */
     updateDirection(deltaTime, character){
         if (this.state === 'wander') {
             this.directionChangeTimer += deltaTime;
@@ -237,12 +279,20 @@ export class Finalboss extends MovableObject {
         this.vy = dy / len;
     }
 
+    /**
+     * Gets speed multiplier.
+     * @returns {*} The requested value.
+     */
     getSpeedMultiplier(){
         if (this.state === 'following') return this.folloSpeedMultiplier;
         if (this.state === 'attacking') return this.attackSpeedMultuplier;
         return 1;
     }
 
+    /**
+     * Applies movement.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     applyMovement(deltaTime){
         let factor = deltaTime / (1000 / 120);
         let speedMultiplier = this.getSpeedMultiplier();
@@ -253,6 +303,9 @@ export class Finalboss extends MovableObject {
         else if (this.vx > 0) this.otherDirection = true;
     }
 
+    /**
+     * Clamps to bounds.
+     */
     clampToBounds(){
         if (this.x <= this.minX) { this.x = this.minX; this.vx = 1; }
         if (this.x >= this.maxX) { this.x = this.maxX; this.vx = -1; }
@@ -260,6 +313,10 @@ export class Finalboss extends MovableObject {
         if (this.y >= this.maxY) { this.y = this.maxY; this.vy = -1; }
     }
 
+    /**
+     * Updates boss animation.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     updateBossAnimation(deltaTime){
         this.getRealFrame();
         if (this.isHurt) {
@@ -271,6 +328,11 @@ export class Finalboss extends MovableObject {
         }
     }
 
+    /**
+     * Checks whether character in sight.
+     * @param {Character} character - The player character.
+     * @returns {boolean} True if the condition holds, false otherwise.
+     */
     isCharacterInSight(character){
         let facingLeft = !this.otherDirection;
         let inFront = facingLeft 
@@ -281,6 +343,10 @@ export class Finalboss extends MovableObject {
         return inFront && verticalDiff <= this.verticalSightTolerance;
     }
 
+    /**
+     * Take damage.
+     * @param {number} amount - The amount to apply.
+     */
     takeDamage (amount) {
         if (this.isDying) return;
         this.health -= amount;
@@ -294,6 +360,9 @@ export class Finalboss extends MovableObject {
         this.hurtTimer = 0;
     }
 
+    /**
+     * Registers poison hit.
+     */
     registerPoisonHit() {
         if (this.isPoisoned) return;
         this.poisonHitCount++;

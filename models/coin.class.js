@@ -24,6 +24,12 @@ export class Coin extends MovableObject {
         './assets/img/4.Marcadores/1.Coins/4.png',
     ];
 
+    /**
+     * Creates a new Coin instance.
+     * @param {number} x - X position in pixels.
+     * @param {number} y - Y position in pixels.
+     * @param {number} [value=1] - The value to apply.
+     */
     constructor(x, y, value = 1) {
         super();
         this.loadImage(this.IMAGES_COIN[0]);
@@ -34,6 +40,10 @@ export class Coin extends MovableObject {
         this.getRealFrame();
     }
 
+    /**
+     * Updates the object's state for the current frame.
+     * @param {number} deltaTime - Time elapsed since the last frame, in milliseconds.
+     */
     update(deltaTime){
         this.animateImages(this.IMAGES_COIN, deltaTime, 255)
     }

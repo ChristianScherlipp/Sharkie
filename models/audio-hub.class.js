@@ -1,4 +1,5 @@
 export class AudioHub {
+    
     static MUSIC = new Audio('./assets/audio/HG_Sound.mp3');
     static MOVE = new Audio('./assets/audio/move-sound.mp3');
     static FIN_SLAP = new Audio('./assets/audio/punch.mp3');
@@ -15,12 +16,13 @@ export class AudioHub {
     static LEVEL_SUCCESS = new Audio('./assets/audio/lvl-succes.mp3');
     static GAME_WIN = new Audio('./assets/audio/game-win.mp3');
     static GAME_OVER = new Audio('./assets/audio/game-over1.mp3');
-    
+
     static masterVolume = 0.4;
     static musicVolume = 0.4;
     static sfxVolume = 0.4;
 
     static MUTE_STORAGE_KEY = 'sharkie-muted';
+
     static isMuted = false;
 
     static allSounds = [
@@ -44,29 +46,49 @@ export class AudioHub {
 
     static { AudioHub.MUSIC.loop = true; AudioHub.JELLYFISH_ELECTRO.loop = true; }
 
+    /**
+     * Plays a single sound effect from the beginning. Does nothing while muted
+     * or while the audio file hasn't buffered enough data yet.
+     * @param {HTMLAudioElement} sound - The audio element to play.
+     */
     static playOne(sound) {
         if (AudioHub.isMuted) return;
         if (sound.readyState < 2) return;
-        sound.currentTime = 0;
+        sound.currentTime = 0; 
         sound.play().catch(() => {});
     }
 
+    /**
+     * Plays a sound only if it isn't already playing (e.g. looping move sound).
+     * @param {HTMLAudioElement} sound - The audio element to play.
+     */
     static playIfNotRunning(sound) {
         if (AudioHub.isMuted || !sound.paused) return;
         AudioHub.playOne(sound);
     }
 
+    /**
+     * Stops a single sound and resets its playback position.
+     * @param {HTMLAudioElement} sound - The audio element to stop.
+     */
     static stopOne(sound) {
         sound.pause();
         sound.currentTime = 0;
     }
 
+    /**
+     * Stops every registered sound (used on mute and on game-over/win).
+     */
     static stopAll() {
         AudioHub.allSounds.forEach((sound) => {
             sound.pause();
         });
     }
 
+    /**
+     * Toggles the global mute state and persists it to Local Storage.
+     * @returns {boolean} True if sound is now playing (unmuted), false if muted.
+     */
     static toggleMusic() {
         AudioHub.isMuted = !AudioHub.isMuted;
         localStorage.setItem(AudioHub.MUTE_STORAGE_KEY, AudioHub.isMuted);
@@ -78,32 +100,55 @@ export class AudioHub {
         return !AudioHub.isMuted;
     }
 
+    /**
+     * Reads the persisted mute state from Local Storage into AudioHub.isMuted.
+     * @returns {boolean} True if sound is currently unmuted, false if muted.
+     */
     static loadMuteState() {
         AudioHub.isMuted = localStorage.getItem(AudioHub.MUTE_STORAGE_KEY) === 'true';
         return !AudioHub.isMuted;
     }
 
+    /**
+     * Sets volume.
+     * @param {*} volume
+     */
     static setVolume(volume) {
         AudioHub.allSounds.forEach((sound) => {
             sound.volume = volume;
         });
     }
 
+    /**
+     * Sets master volume.
+     * @param {number} value - The value to apply.
+     */
     static setMasterVolume(value) {
         AudioHub.masterVolume = Number(value);
         AudioHub.applyVolumes();
     }
 
+    /**
+     * Sets music volume.
+     * @param {number} value - The value to apply.
+     */
     static setMusicVolume(value) {
         AudioHub.musicVolume = Number(value);
         AudioHub.applyVolumes();
     }
 
+    /**
+     * Sets sfx volume.
+     * @param {number} value - The value to apply.
+     */
     static setSfxVolume(value) {
         AudioHub.sfxVolume = Number(value);
         AudioHub.applyVolumes();
     }
 
+    /**
+     * Applies volumes.
+     */
     static applyVolumes() {
         AudioHub.MUSIC.volume = AudioHub.masterVolume * AudioHub.musicVolume;
         AudioHub.allSounds.forEach((sound) => {
