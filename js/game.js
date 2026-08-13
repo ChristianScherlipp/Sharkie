@@ -33,9 +33,6 @@ function init() {
     resetKeyboard();
     
     world = new World(canvas, keyboard, buildWorldCallbacks(), currentLevel);
-
-    console.log('My Character is', world.character);
-    
 }
 
 function resetPauseMenu() {
