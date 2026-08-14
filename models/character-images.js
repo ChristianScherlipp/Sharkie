@@ -1,3 +1,8 @@
+/**
+ * Image paths for every one of Sharkie's animations, grouped by state
+ * (swim, dead, hurt, idle, long idle, attack, bubble/poison formation).
+ * Consumed by Character via loadImages() and playAnimation().
+ */
 export const CHARACTER_IMAGES = {
     SWIM: [
         './assets/img/1.Sharkie/3.Swim/1.png',

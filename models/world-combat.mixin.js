@@ -53,6 +53,12 @@ export const WorldCombatMixin = {
         return hitSomething;
     },
 
+    /**
+     * Checks whether the character is close enough and the enemy is a valid
+     * fin-slap target (Pufferfish or an already-introduced Finalboss).
+     * @param {MovableObject} enemy - The enemy to check/affect.
+     * @returns {boolean} True if the enemy is in fin-slap range.
+     */
     canFinSlapReach(enemy){
         if (enemy.isDying) return false;
         let isPufferfish = enemy.constructor.name === 'Pufferfish';
@@ -63,10 +69,10 @@ export const WorldCombatMixin = {
     },
 
     /**
-     * Checks whether the character is close enough and the enemy is a valid
-     * fin-slap target (Pufferfish or an already-introduced Finalboss).
+     * Checks whether the enemy is facing the character, so a fin slap from
+     * the front should be punished instead of counted as a hit.
      * @param {MovableObject} enemy - The enemy to check/affect.
-     * @returns {boolean} True if the enemy is in fin-slap range.
+     * @returns {boolean} True if the enemy is facing the character.
      */
     isEnemyFacingCharacter(enemy){
         let facingLeft = !enemy.otherDirection;

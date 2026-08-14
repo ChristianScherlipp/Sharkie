@@ -9,6 +9,11 @@ import { BigCoin } from "../models/big-coin.class.js";
 import { Poison } from "../models/poison.class.js";
 import { Net } from "../models/net.class.js";
 
+/**
+ * Builds level 1: enemies (Pufferfish/Jellyfish plus the Finalboss), coins,
+ * poisons, the net obstacle, lights and the scrolling background layers.
+ * @returns {Level} A fully assembled Level instance ready to hand to World.
+ */
 export function createLevl1() {
     return new Level(
     [

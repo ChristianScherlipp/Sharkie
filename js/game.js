@@ -29,14 +29,15 @@ let overlay = new GameOverlay(
 /**
  * Resets the UI, creates a fresh World instance for the current level and
  * starts the game loop. Called on game start, level transitions and restarts.
+ * @param {Object} [carryOver=null] - Stats carried over from the previous level (coins, poisons, experience, life). Omitted for a fresh game start or restart.
  */
-function init() {
+function init(carryOver = null) {
     canvas = document.getElementById('canvas');
     overlay.reset();
     resetPauseMenu();
     resetKeyboard();
     
-    world = new World(canvas, keyboard, buildWorldCallbacks(), currentLevel);
+    world = new World(canvas, keyboard, buildWorldCallbacks(), currentLevel, carryOver);
 }
 
 /**
@@ -90,8 +91,9 @@ function handleWinFinal() {
  * Handles level complete.
  */
 function handleLevelComplete() {
+    let carryOver = world.getCarryOverState();
     currentLevel++;
-    init();
+    init(carryOver);
 }
 
 /**

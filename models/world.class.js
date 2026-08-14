@@ -63,14 +63,16 @@ export class World {
      * @param {Keyboard} keyboard - The keyboard state object.
      * @param {Object} [callbacks={}] - Callback functions the World triggers on game events.
      * @param {number} [levelNumber=1] - Number of the level to load (1-based).
+     * @param {Object} [carryOver=null] - Stats carried over from the previous level (coins, poisons, experience, life). Null for a fresh game start.
      */
-    constructor(canvas, keyboard, callbacks = {}, levelNumber = 1) {
+    constructor(canvas, keyboard, callbacks = {}, levelNumber = 1, carryOver = null) {
         this.ctx = canvas.getContext('2d');
         this.canvas = canvas;
         this.keyboard = keyboard;
         this.callbacks = callbacks;
-        this.loadLevel(levelNumber);
+        this.loadLevel(levelNumber, carryOver);
         this.setWorld();
+        this.applyCarryOverState(carryOver);
         this.lastTime = performance.now();
         this.run();
     }
@@ -78,11 +80,14 @@ export class World {
     /**
      * Loads level.
      * @param {number} levelNumber - Number of the level to load (1-based).
+     * @param {Object} [carryOver=null] - Stats carried over from the previous level; its totals are added on top of this level's own coins/poisons so the status bars keep reflecting overall game progress.
      */
-    loadLevel(levelNumber){
+    loadLevel(levelNumber, carryOver = null){
         this.level = levelNumber === 2 ? createLevl2() : createLevl1();
-        this.totalCoins = this.level.coins.reduce((sum, coin) => sum + coin.value, 0);
-        this.totalPoisons = this.level.poisons.reduce((sum, poison) => sum + poison.value, 0);
+        let levelCoins = this.level.coins.reduce((sum, coin) => sum + coin.value, 0);
+        let levelPoisons = this.level.poisons.reduce((sum, poison) => sum + poison.value, 0);
+        this.totalCoins = (carryOver?.totalCoins || 0) + levelCoins;
+        this.totalPoisons = (carryOver?.totalPoisons || 0) + levelPoisons;
         this.finalboss = this.level.enemies.find(e => e instanceof Finalboss);
         this.isLastLevel = levelNumber >= 2;
     }
@@ -292,6 +297,38 @@ export class World {
      */
     setWorld(){
         this.character.world = this;
+    }
+
+    /**
+     * Carries the coins, poisons, experience and life collected in the
+     * previous level over into this one, and refreshes the status bars to
+     * display the carried-over amounts right away.
+     * @param {Object} [carryOver=null] - Stats carried over from the previous level. Nothing is applied for a fresh game start.
+     */
+    applyCarryOverState(carryOver = null){
+        if (!carryOver) return;
+        this.collectedCoins = carryOver.collectedCoins;
+        this.collectedPoisons = carryOver.collectedPoisons;
+        this.experience = carryOver.experience;
+        this.character.energy = carryOver.energy;
+        this.coinBar.setPercentage((this.collectedCoins / this.totalCoins) * 100, this.coinBar.IMAGES_COINBAR, this.collectedCoins);
+        this.posionBar.setPercentage((this.collectedPoisons / this.totalPoisons) * 100, [], this.collectedPoisons);
+        this.healthBar.setPercentage(this.character.energy, this.healthBar.IMAGES_HEALTHBAR);
+    }
+
+    /**
+     * Captures the stats that should carry over into the next level.
+     * @returns {{collectedCoins: number, totalCoins: number, collectedPoisons: number, totalPoisons: number, experience: number, energy: number}} Snapshot of the current run's progress.
+     */
+    getCarryOverState(){
+        return {
+            collectedCoins: this.collectedCoins,
+            totalCoins: this.totalCoins,
+            collectedPoisons: this.collectedPoisons,
+            totalPoisons: this.totalPoisons,
+            experience: this.experience,
+            energy: this.character.energy,
+        };
     }
 }
 
