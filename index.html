@@ -66,22 +66,28 @@
                     <p><img class="popup-icon" src="./assets/icons/Keyboard.png" alt="Arrow keys-Icon">  Pfeiltasten oder WASD = Bewegen</p> <br>
                     <p>Leertaste = Schwanzflossen-Schlag (Nahkampf)</p> <br>
                     <p>E = Blase abschießen (Fernkampf)</p> <br>
-                    <p>Q = Gift-Schuss (nur mit Munition)</p>
+                    <p>Q = Gift-Schuss (nur mit Munition)</p><br>
+                    <p>F = Shop öffnen</p>
                 </div>
 
                 <div id="controls-touch" class="hidden">
                     <p>Joystick (links) = Bewegen</p> <br>
                     <p>Flossen-Button = Schwanzflossen-Schlag (Nahkampf)</p> <br>
                     <p>Blasen-Button = Blase abschießen (Fernkampf)</p> <br>
-                    <p>Gift-Button = Gift-Schuss (nur mit Munition)</p>
+                    <p>Gift-Button = Gift-Schuss (nur mit Munition)</p> <br>
+                    <p><img class="popup-icon" src="./assets/img/4.Marcadores/green/100_copia_6.png" alt="Coin-Icon">  Shop-Button (oben) = Shop öffnen</p>
                 </div>
                 <br>
-                <small>
-                Kugelfisch nur von hinten mit dem Schlag treffbar,
-                von vorne wehrt er sich mit Stacheln.
-                Quallen nur mit der Blase besiegbar.
+                <p>
+                <strong>Spiel Anleitung</strong><br>
+                Der Kugelfisch kann nur von hinten mit dem Schlag getroffen werden.
+                Von vorne, oben oder unten wehrt er sich mit Stacheln und verfolgt einen. Werde die Verfolgung los
+                und überrasche ihn mit dem Blasenschuss.
+                Die Quallen können allerdings nur durch Blasenschuss besiegt werden.
                 Der Gift-Schuss wirkt ausschließlich gegen den Endgegner.
-                </small>
+                Kugelfische und Quallen sind gegen Gift immun.
+                Im Shop: 25 Coins = +50% Leben, 15 Coins = 5 Tränke.
+                </p>
             </div>
 
             <div id="popup-credits" class="hidden">
@@ -139,6 +145,41 @@
                     <input type="range" id="volume-sfx" min="0" max="1" step="0.01" value="0.4">
                 </div>
             </div>
+            <div id="popup-shop" class="hidden">
+                <h2>Shop</h2>
+                <br>
+                <p id="shop-balance">
+                    <img class="popup-icon" src="./assets/img/4.Marcadores/green/100_copia_6.png" alt="Coin-Icon">
+                    <span id="shop-coin-count">0</span> Coins
+                </p>
+                <br>
+
+                <div class="shop-item">
+                    <img class="shop-item-icon" src="./assets/img/4.Marcadores/green/100_copia_3.png" alt="Leben-Icon">
+                    <div class="shop-item-info">
+                        <p class="shop-item-title">Leben</p>
+                        <p class="shop-item-desc">+50% Leben</p>
+                    </div>
+                    <button id="buy-life-btn" class="shop-buy-btn">
+                        25 <img class="popup-icon" src="./assets/img/4.Marcadores/green/100_copia_6.png" alt="Coin-Icon">
+                    </button>
+                </div>
+
+                <div class="shop-item">
+                    <img class="shop-item-icon" src="./assets/img/4.Marcadores/green/100_copia_5.png" alt="Trank-Icon">
+                    <div class="shop-item-info">
+                        <p class="shop-item-title">Tränke</p>
+                        <p class="shop-item-desc">+5 Schuss</p>
+                    </div>
+                    <button id="buy-poison-btn" class="shop-buy-btn">
+                        15 <img class="popup-icon" src="./assets/img/4.Marcadores/green/100_copia_6.png" alt="Coin-Icon">
+                    </button>
+                </div>
+
+                <br>
+                <small>Im Spiel jederzeit mit der Taste <strong>F</strong> oder dem Shop-Button aufrufbar.</small>
+            </div>
+
             <button id="close-popup">
                 Schließen
             </button>
@@ -154,6 +195,9 @@
             </button>
             <button id="fullscreen-btn" class="icon-btn">
                 <img id="fullscreen-icon" src="./assets/icons/Arrow-Expand--Streamline-Core.svg" alt="Vollbild an/aus">
+            </button>
+            <button id="shop-btn" class="icon-btn">
+                <img src="./assets/img/4.Marcadores/green/100_copia_6.png" alt="Shop öffnen">
             </button>
             <button id="pause-btn" class="icon-btn">
                 <img src="./assets/icons/Button-Pause-2--Streamline-Core.svg" alt="Pause">

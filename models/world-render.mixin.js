@@ -9,11 +9,9 @@ export const WorldRenderMixin = {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.translate(this.camera_x, 0);
         this.drawWorldLayer();
-        this.ctx.translate(-this.camera_x, 0);
-        this.drawHud();
-        this.ctx.translate(this.camera_x, 0);
         this.drawForegroundLayer();
         this.ctx.translate(-this.camera_x, 0);
+        this.drawHud();
     },
 
     /**
@@ -144,7 +142,7 @@ export const WorldRenderMixin = {
      */
     drawFinalbossHealthbar(){
         if (!this.showFinalbossHealthbar || !this.finalboss) return;
-        let bar = { x: this.canvas.width - 170, y: 20, width: 150, height: 18, radius: 8 };
+        let bar = { x: this.canvas.width - 170, y: 80, width: 150, height: 18, radius: 8 };
         let pct = Math.max(0, this.finalboss.health / this.finalboss.maxHealth);
 
         this.ctx.save();

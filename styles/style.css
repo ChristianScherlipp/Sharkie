@@ -282,3 +282,68 @@ body h1 {
     width:100%;
     accent-color:#7FFFE0;
 }
+
+/* ================================= */
+/* Shop */
+/* ================================= */
+
+#shop-balance{
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    font-size:1.1rem;
+}
+
+#popup-shop .shop-item{
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+    gap:clamp(8px, 3vw, 14px);
+    width:100%;
+    margin-top:1rem;
+    padding:10px 14px;
+    background:rgba(0, 0, 0, 0.15);
+    border-radius:14px;
+    text-align:left;
+}
+
+.shop-item-icon{
+    width:clamp(36px, 10vw, 48px);
+    height:clamp(36px, 10vw, 48px);
+    object-fit:contain;
+    flex-shrink:0;
+}
+
+#popup-shop .shop-item-info{
+    align-items:flex-start;
+    flex-grow:1;
+}
+
+.shop-item-title{
+    font-size:1rem;
+}
+
+.shop-item-desc{
+    font-size:.8rem;
+    opacity:.85;
+}
+
+.shop-buy-btn{
+    margin-top:0 !important;
+    width:auto !important;
+    min-width:80px;
+    flex-shrink:0;
+}
+
+.shop-buy-btn:disabled{
+    background:#5a5a5a;
+    cursor:not-allowed;
+    opacity:.6;
+}
+
+.shop-buy-btn:disabled:hover{
+    transform:none;
+    box-shadow:none;
+}

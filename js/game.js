@@ -12,6 +12,8 @@ let joystickCenterX = 0;
 let joystickCenterY = 0;
 let joystickRadius = 0;
 
+let shopPausedWorld = false;
+
 let overlay = new GameOverlay(
     {
         overlay: document.getElementById('overlay'),
@@ -151,7 +153,7 @@ function showGameAfterFadeOut() {
  * @param {string} sectionId - ID of the popup section to show.
  */
 function showPopupSection(sectionId) {
-    ["popup-controls", "popup-credits", "popup-music"].forEach((id) => {
+    ["popup-controls", "popup-credits", "popup-music", "popup-shop"].forEach((id) => {
         document.getElementById(id).classList.toggle("hidden", id !== sectionId);
     });
     document.getElementById("popup").classList.remove("hidden");
@@ -197,6 +199,62 @@ function openMusicSettings() {
 }
 
 /**
+ * Opens the shop popup. Pauses the running game while shopping, unless it
+ * was already paused (e.g. opened from the pause menu), in which case
+ * closing the shop won't resume it either.
+ */
+function openShop() {
+    if (!world || world.gameEnded) return;
+    if (!world.paused) {
+        world.pause();
+        shopPausedWorld = true;
+    }
+    refreshShopUI();
+    showPopupSection("popup-shop");
+}
+
+/**
+ * Refreshes the shop's coin balance display and disables buy buttons the
+ * player can't currently afford.
+ */
+function refreshShopUI() {
+    if (!world) return;
+    document.getElementById("shop-coin-count").textContent = world.collectedCoins;
+    document.getElementById("buy-life-btn").disabled = world.collectedCoins < 25;
+    document.getElementById("buy-poison-btn").disabled = world.collectedCoins < 15;
+}
+
+/**
+ * Spends 25 coins to heal the character by 50% (capped at full health) and
+ * updates the coin/health bars accordingly.
+ */
+function buyLife() {
+    if (!world || world.collectedCoins < 25) return;
+    world.collectedCoins -= 25;
+    world.character.energy = Math.min(100, world.character.energy + 50);
+    world.coinBar.setPercentage((world.collectedCoins / world.totalCoins) * 100, world.coinBar.IMAGES_COINBAR, world.collectedCoins);
+    world.healthBar.setPercentage(world.character.energy, world.healthBar.IMAGES_HEALTHBAR);
+    AudioHub.playOne(AudioHub.COIN_COLLECTED);
+    refreshShopUI();
+}
+
+/**
+ * Spends 15 coins for 5 extra poison shots and updates the coin/poison bars
+ * accordingly. Raises totalPoisons alongside so the poison bar's percentage
+ * stays meaningful instead of exceeding 100%.
+ */
+function buyPoisons() {
+    if (!world || world.collectedCoins < 15) return;
+    world.collectedCoins -= 15;
+    world.collectedPoisons += 5;
+    world.totalPoisons += 5;
+    world.coinBar.setPercentage((world.collectedCoins / world.totalCoins) * 100, world.coinBar.IMAGES_COINBAR, world.collectedCoins);
+    world.posionBar.setPercentage((world.collectedPoisons / world.totalPoisons) * 100, [], world.collectedPoisons);
+    AudioHub.playOne(AudioHub.POTIN_COLLECTED);
+    refreshShopUI();
+}
+
+/**
  * Handles music toggle.
  */
 function handleMusicToggle() {
@@ -222,6 +280,10 @@ function updateMusicUI(isPlaying){
  */
 function closePopup(){
     document.getElementById("popup").classList.add("hidden");
+    if (shopPausedWorld && world) {
+        world.resume();
+        shopPausedWorld = false;
+    }
 }
 
 /**
@@ -271,12 +333,28 @@ function setMovementKey(e, isPressed) {
 }
 
 /**
+ * Checks whether the shared popup (controls/credits/music/shop) is
+ * currently open, regardless of which section is showing inside it.
+ * @returns {boolean} True if the popup is visible.
+ */
+function isPopupOpen() {
+    return !document.getElementById("popup").classList.contains("hidden");
+}
+
+/**
  * Handles global keydown.
  * @param {Event} e - The triggered DOM/touch event.
  */
 function handleGlobalKeydown(e) {
-    if (e.key.toLowerCase() === 'p' || e.key === 'Escape') {
+    if (e.key === 'Escape') {
+        isPopupOpen() ? closePopup() : togglePauseMenu();
+        return;
+    }
+    if (e.key.toLowerCase() === 'p') {
         togglePauseMenu();
+    }
+    if (e.key.toLowerCase() === 'f') {
+        openShop();
     }
 }
 
@@ -299,6 +377,7 @@ function initEventListeners(){
     wireGameControlButtons();
     wirePauseMenuButtons();
     wireMusicPopupControls();
+    wireShopButtons();
     document.getElementById("close-popup").addEventListener("click", closePopup);
     AudioHub.applyVolumes();
     updateMusicUI(AudioHub.loadMuteState());
@@ -324,9 +403,30 @@ function wireStartMenuButtons() {
 function wireGameControlButtons() {
     document.getElementById("mute-btn").addEventListener("click", handleMusicToggle);
     document.getElementById("fullscreen-btn").addEventListener("click", toggleFullscreen);
+    document.getElementById("shop-btn").addEventListener("click", openShop);
     document.getElementById("pause-btn").addEventListener("click", togglePauseMenu);
     document.addEventListener("fullscreenchange", updateFullscreenUI);
     document.addEventListener("webkitfullscreenchange", updateFullscreenUI);
+    document.getElementById("game-controls").addEventListener("click", blurClickedIconButton);
+}
+
+/**
+ * Removes keyboard focus from a clicked game-control icon button
+ * (mute/fullscreen/shop/pause). Without this, a focused button would also
+ * react to the Space key, which conflicts with Space being the fin-slap
+ * attack key during gameplay.
+ * @param {Event} e - The triggered DOM/touch event.
+ */
+function blurClickedIconButton(e) {
+    e.target.closest(".icon-btn")?.blur();
+}
+
+/**
+ * Wires up the shop's buy buttons.
+ */
+function wireShopButtons() {
+    document.getElementById("buy-life-btn").addEventListener("click", buyLife);
+    document.getElementById("buy-poison-btn").addEventListener("click", buyPoisons);
 }
 
 /**
