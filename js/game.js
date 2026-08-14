@@ -321,7 +321,10 @@ function wireStartMenuButtons() {
  */
 function wireGameControlButtons() {
     document.getElementById("mute-btn").addEventListener("click", handleMusicToggle);
+    document.getElementById("fullscreen-btn").addEventListener("click", toggleFullscreen);
     document.getElementById("pause-btn").addEventListener("click", togglePauseMenu);
+    document.addEventListener("fullscreenchange", updateFullscreenUI);
+    document.addEventListener("webkitfullscreenchange", updateFullscreenUI);
 }
 
 /**
@@ -352,6 +355,29 @@ function initJoystick() {
     base.addEventListener('touchstart', startJoystickTouch);
     base.addEventListener('touchmove', moveJoystickTouch);
     base.addEventListener('touchend', endJoystickTouch);
+}
+
+/**
+ * Toggles fullscreen.
+ */
+function toggleFullscreen() {
+    let wrapper = document.querySelector(".game-wrapper");
+    let isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+    if (!isFullscreen) {
+        (wrapper.requestFullscreen || wrapper.webkitRequestFullscreen)?.call(wrapper);
+    } else {
+        (document.exitFullscreen || document.webkitExitFullscreen)?.call(document);
+    }
+}
+
+/**
+ * Updates fullscreen UI.
+ */
+function updateFullscreenUI() {
+    let isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+    document.getElementById("fullscreen-icon").src = isFullscreen
+        ? "./assets/icons/Arrow-Shrink--Streamline-Core.svg"
+        : "./assets/icons/Arrow-Expand--Streamline-Core.svg";
 }
 
 /**

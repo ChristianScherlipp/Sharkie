@@ -424,7 +424,9 @@ export class Character extends MovableObject {
             this.playAnimation(this.IMAGES_SWIM);
         } else if (this.idleTime > this.longIdleThreshold) {
             this.playAnimation(this.IMAGES_LONG_IDLE);
+            let prevY = this.y;
             this.applyGravity(deltaTime);
+            this.blockMovementIfColliding(this.x, prevY);
         } else {
             this.playAnimation(this.IMAGES_IDLE);
         }

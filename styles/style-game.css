@@ -5,6 +5,14 @@
     line-height: 0;
 }
 
+.game-wrapper:fullscreen,
+.game-wrapper:-webkit-full-screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: black;
+}
+
 .overlay {
     position: absolute;
     inset: 0;
