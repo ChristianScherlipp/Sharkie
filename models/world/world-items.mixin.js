@@ -1,6 +1,6 @@
-import { FiringObject } from "./firing-object.class.js";
-import { PoisonBubble } from "./poison-bubble.class.js";
-import { AudioHub } from "./audio-hub.class.js";
+import { FiringObject } from "../projectiles/firing-object.class.js";
+import { PoisonBubble } from "../projectiles/poison-bubble.class.js";
+import { AudioHub } from "../audio/audio-hub.class.js";
 
 export const WorldItemsMixin = {
 

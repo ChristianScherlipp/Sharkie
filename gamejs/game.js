@@ -1,7 +1,7 @@
-import { Keyboard } from '../models/keyboard.class.js';
-import { World } from "../models/world.class.js";
-import { GameOverlay } from "../models/game-overlay.class.js"
-import { AudioHub } from '../models/audio-hub.class.js';
+import { Keyboard } from '../models/core/keyboard.class.js';
+import { World } from "../models/world/world.class.js";
+import { GameOverlay } from "../models/ui/game-overlay.class.js"
+import { AudioHub } from '../models/audio/audio-hub.class.js';
 
 let canvas;
 let world;

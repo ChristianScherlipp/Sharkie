@@ -1,5 +1,5 @@
-import { MovableObject } from "./movable-object.class.js";
-import { AudioHub } from "./audio-hub.class.js";
+import { MovableObject } from "../core/movable-object.class.js";
+import { AudioHub } from "../audio/audio-hub.class.js";
 
 export class Finalboss extends MovableObject {
     showFrame = false;

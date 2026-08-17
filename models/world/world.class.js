@@ -1,10 +1,10 @@
-import { Character } from "./character.class.js";
-import { Coinbar } from "./coinbar.class.js";
-import { Healthbar } from "./healthbar.class.js";
-import { Posionbar } from "./posionbar-object.class.js";
-import { Finalboss } from "./finalboss.class.js";
-import { AudioHub } from "./audio-hub.class.js";
-import { generateLevel, TOTAL_LEVELS } from "../levels/level-generator.js";
+import { Character } from "../character/character.class.js";
+import { Coinbar } from "../ui/coinbar.class.js";
+import { Healthbar } from "../ui/healthbar.class.js";
+import { Posionbar } from "../ui/posionbar-object.class.js";
+import { Finalboss } from "../enemies/finalboss.class.js";
+import { AudioHub } from "../audio/audio-hub.class.js";
+import { generateLevel, TOTAL_LEVELS } from "../../levels/level-generator.js";
 import { WorldRenderMixin } from "./world-render.mixin.js";
 import { WorldCombatMixin } from "./world-combat.mixin.js";
 import { WorldItemsMixin } from "./world-items.mixin.js";

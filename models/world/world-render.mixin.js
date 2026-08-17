@@ -1,4 +1,4 @@
-import { getSharedImage } from "./image-cache.js";
+import { getSharedImage } from "../image-cache.js";
 
 export const WorldRenderMixin = {
 

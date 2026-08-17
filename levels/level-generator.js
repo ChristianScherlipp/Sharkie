@@ -1,13 +1,13 @@
-import { Level } from "../models/level.class.js";
-import { Pufferfish } from "../models/pufferfish.class.js";
-import { Jellyfish } from "../models/jellyfish.class.js";
-import { Finalboss } from "../models/finalboss.class.js";
-import { createCoinEllipse, createCoinLineHorizontal, createCoinLineVertical, createCoinLineDiagonal } from "../models/coin-layout.js";
-import { Light } from "../models/light.class.js";
-import { BackgroundObject } from "../models/background-object.class.js";
-import { BigCoin } from "../models/big-coin.class.js";
-import { Poison } from "../models/poison.class.js";
-import { Net } from "../models/net.class.js";
+import { Level } from "../models/core/level.class.js";
+import { Pufferfish } from "../models/enemies/pufferfish.class.js";
+import { Jellyfish } from "../models/enemies/jellyfish.class.js";
+import { Finalboss } from "../models/enemies/finalboss.class.js";
+import { createCoinEllipse, createCoinLineHorizontal, createCoinLineVertical, createCoinLineDiagonal } from "../models/items/coin-layout.js";
+import { Light } from "../models/items/light.class.js";
+import { BackgroundObject } from "../models/items/background-object.class.js";
+import { BigCoin } from "../models/items/big-coin.class.js";
+import { Poison } from "../models/items/poison.class.js";
+import { Net } from "../models/items/net.class.js";
 
 /**
  * Total number of levels in the game. Raise this to add more levels -
@@ -109,7 +109,7 @@ function buildEnemies(levelNumber, coins) {
  * @returns {Array<Coin|BigCoin>} The level's coins.
  */
 function buildCoins() {
-    let clusterCount = 5;
+    let clusterCount = 7;
     let coins = [];
     for (let i = 0; i < clusterCount; i++) {
         let cx = 550 + i * ((ENEMY_ZONE_END - 550) / (clusterCount - 1));
@@ -129,8 +129,8 @@ function buildCoins() {
         }
     }
 
-        let bigCoinYCycle = [80, 150, 220, 290, 360];
-    let bigCoinCount = 10;
+    let bigCoinYCycle = [80, 150, 220, 290, 360];
+    let bigCoinCount = 12;
     for (let i = 0; i < bigCoinCount; i++) {
         let x = 300 + i * ((ENEMY_ZONE_END - 300) / (bigCoinCount - 1));
         coins.push(new BigCoin(x, bigCoinYCycle[i % bigCoinYCycle.length]));
@@ -145,7 +145,7 @@ function buildCoins() {
  */
 function buildPoisons() {
     let yCycle = [100, 180, 260, 340];
-    let count = 4;
+    let count = 10;
     let poisons = [];
     for (let i = 0; i < count; i++) {
         let x = 350 + i * ((ENEMY_ZONE_END - 350) / (count - 1));

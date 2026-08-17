@@ -1,6 +1,6 @@
-import { MovableObject } from "./movable-object.class.js";
+import { MovableObject } from "../core/movable-object.class.js";
 import { CHARACTER_IMAGES } from "./character-images.js";
-import { AudioHub } from "./audio-hub.class.js";
+import { AudioHub } from "../audio/audio-hub.class.js";
 
 export class Character extends MovableObject {
     showFrame = false;

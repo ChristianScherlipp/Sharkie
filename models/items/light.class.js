@@ -1,4 +1,4 @@
-import { MovableObject } from "./movable-object.class.js";
+import { MovableObject } from "../core/movable-object.class.js";
 
 export class Light extends MovableObject {
     y = 0;

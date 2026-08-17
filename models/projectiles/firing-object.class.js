@@ -1,4 +1,4 @@
-import { MovableObject } from "./movable-object.class.js";
+import { MovableObject } from "../core/movable-object.class.js";
 
 export class FiringObject extends MovableObject {
     direction = 1;

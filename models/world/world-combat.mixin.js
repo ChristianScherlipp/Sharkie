@@ -1,8 +1,8 @@
-import { Finalboss } from "./finalboss.class.js";
-import { Jellyfish } from "./jellyfish.class.js";
-import { PoisonBubble } from "./poison-bubble.class.js";
-import { AudioHub } from "./audio-hub.class.js";
-import { MovableObject } from "./movable-object.class.js";
+import { Finalboss } from "../enemies/finalboss.class.js";
+import { Jellyfish } from "../enemies/jellyfish.class.js";
+import { PoisonBubble } from "../projectiles/poison-bubble.class.js";
+import { AudioHub } from "../audio/audio-hub.class.js";
+import { MovableObject } from "../core/movable-object.class.js";
 
 export const WorldCombatMixin = {
 
