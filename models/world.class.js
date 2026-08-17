@@ -4,8 +4,7 @@ import { Healthbar } from "./healthbar.class.js";
 import { Posionbar } from "./posionbar-object.class.js";
 import { Finalboss } from "./finalboss.class.js";
 import { AudioHub } from "./audio-hub.class.js";
-import { createLevl1 } from "../levels/level1.js"
-import { createLevl2 } from "../levels/level2.js";
+import { generateLevel, TOTAL_LEVELS } from "../levels/level-generator.js";
 import { WorldRenderMixin } from "./world-render.mixin.js";
 import { WorldCombatMixin } from "./world-combat.mixin.js";
 import { WorldItemsMixin } from "./world-items.mixin.js";
@@ -83,13 +82,13 @@ export class World {
      * @param {Object} [carryOver=null] - Stats carried over from the previous level; its totals are added on top of this level's own coins/poisons so the status bars keep reflecting overall game progress.
      */
     loadLevel(levelNumber, carryOver = null){
-        this.level = levelNumber === 2 ? createLevl2() : createLevl1();
+        this.level = generateLevel(levelNumber);
         let levelCoins = this.level.coins.reduce((sum, coin) => sum + coin.value, 0);
         let levelPoisons = this.level.poisons.reduce((sum, poison) => sum + poison.value, 0);
         this.totalCoins = (carryOver?.totalCoins || 0) + levelCoins;
         this.totalPoisons = (carryOver?.totalPoisons || 0) + levelPoisons;
         this.finalboss = this.level.enemies.find(e => e instanceof Finalboss);
-        this.isLastLevel = levelNumber >= 2;
+        this.isLastLevel = levelNumber >= TOTAL_LEVELS;
     }
 
     /**
