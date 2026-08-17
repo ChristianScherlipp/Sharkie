@@ -2,7 +2,8 @@
 
 Willkommen im Ozean! Du steuerst Sharkie, einen kleinen Hai, der sich durch ein
 gefährliches Riff kämpfen muss – vorbei an Quallen und Kugelfischen, bis hin
-zum großen Endgegner am Ende des Levels.
+zum großen Endgegner am Ende jedes Levels. Insgesamt warten 10 Level auf
+dich, jedes davon etwas härter als das vorherige.
 
 ---
 
@@ -14,6 +15,11 @@ zum großen Endgegner am Ende des Levels.
 | **Leertaste** | Schwanzflossen-Schlag (Nahkampf-Angriff) |
 | **E** | Blase abschießen (Fernkampf-Angriff) |
 | **Q** | Gift-Schuss abschießen (nur mit Munition, siehe unten) |
+| **F** | Shop öffnen |
+
+Auf Mobilgeräten ersetzen Joystick und Touch-Buttons die Tastatur – welche
+Taste zu welchem Button gehört, zeigt dir das Steuerung-Menü im Spiel, das
+sich automatisch an dein Gerät anpasst.
 
 Bewegung und Angriffe kannst du frei kombinieren – schwimm einfach los und
 greif an, wann immer ein Gegner in Reichweite ist.
@@ -69,9 +75,34 @@ Schuss. Ohne Munition lässt sich kein Gift-Schuss abfeuern.
 | 🟡 **Große Münze** | Nur durch Angreifen (Schlag oder Blase) – blockiert den Weg, bis sie zerstört ist | Mehr Punkte als eine normale Münze |
 | 🧪 **Gifttrank** | Einfach dagegen schwimmen | Munition für den Gift-Schuss (Q) |
 
+Achtung: Eine Blase, die eine Coin trifft, platzt einfach – die Coin bleibt
+dabei unangetastet, nutze also lieber den direkten Kontakt oder den
+Schwanzflossen-Schlag zum Einsammeln.
+
+---
+
+## Der Shop
+
+Mit **F** oder dem Shop-Button öffnest du jederzeit im Spiel den Shop und
+tauschst gesammelte Coins gegen:
+
+| Angebot | Preis | Effekt |
+|---|---|---|
+| ❤️ Leben | 25 Coins | +50 % Leben (maximal bis volle Gesundheit) |
+| 🧪 Tränke | 15 Coins | +5 Schuss Gift-Munition |
+
+Das Spiel pausiert automatisch, solange der Shop offen ist – niemand
+greift dich in Ruhe beim Einkaufen an.
+
 ---
 
 ## Die Gegner
+
+Beide Gegnertypen bemerken dich nur, wenn sie freie Sicht auf dich haben –
+steht eine große Münze zwischen euch, greift sie erstmal nicht ein, du
+bist also für einen kurzen Moment "getarnt". Ihre Farbe wechselt außerdem
+von Level zu Level (Kugelfisch: 3 Farben, Qualle: 2 Farben) – neue Farbe,
+gleiches Verhalten.
 
 ### Kugelfisch 🐡
 Patrouilliert normalerweise ruhig hin und her. Kommst du ihm zu nahe **und
@@ -86,7 +117,7 @@ oben – **von unten bemerkt sie dich nicht**), wird sie kurz "gefährlich" und
 macht mehr Schaden. Nur mit der Blase (E) zu besiegen.
 
 ### Der Endgegner 🌊
-Ganz am Ende des Levels versperrt dir ein **Netz** den Rückweg – ab hier
+Ganz am Ende jedes Levels versperrt dir ein **Netz** den Rückweg – ab hier
 gibt's kein Zurück mehr, nur noch vorwärts zum Showdown. Der Endgegner
 schwimmt frei im letzten Bereich umher, hat eine eigene Gesundheitsleiste
 und reagiert je nach Entfernung unterschiedlich:
@@ -113,6 +144,10 @@ Oben mittig siehst du deinen Erfahrungspunkte-Zähler. Du bekommst:
 - **+5000** für den Endgegner, ganz egal, mit welchem Angriff der letzte
   Treffer war
 
+Schaffst du ein Level, nimmst du deine Coins, Tränke, Erfahrung und dein
+Leben direkt mit ins nächste – du fängst also nicht bei null an. Nur ein
+Neustart nach einem Game Over setzt dich für das aktuelle Level zurück.
+
 ---
 
 ## Kurz zusammengefasst
@@ -120,8 +155,12 @@ Oben mittig siehst du deinen Erfahrungspunkte-Zähler. Du bekommst:
 1. Bewegen mit Pfeiltasten oder WASD.
 2. Kugelfisch: nur von hinten mit Leertaste angreifen, sonst Blase (E) nutzen.
 3. Qualle: nur mit der Blase (E) zu besiegen.
-4. Gifttränke einsammeln, um mit Q auf den Endgegner schießen zu können.
-5. Sobald das Netz auftaucht, gibt's kein Zurück mehr – mach dich bereit
+4. Gegner sehen dich nicht durch Hindernisse hindurch – nutze das zu deinem
+   Vorteil.
+5. Gifttränke einsammeln, um mit Q auf den Endgegner schießen zu können.
+6. Im Shop (F) Coins gegen Leben oder Gift-Munition eintauschen.
+7. Sobald das Netz auftaucht, gibt's kein Zurück mehr – mach dich bereit
    für den Endkampf!
+8. Nach dem Sieg geht's direkt weiter ins nächste von insgesamt 10 Leveln.
 
 Viel Erfolg, und pass auf deine Flossen auf! 🦈

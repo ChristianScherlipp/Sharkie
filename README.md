@@ -11,16 +11,24 @@ Levels einem Endgegner.
 
 ## Features
 
-- 2 Level mit steigendem Schwierigkeitsgrad
+- 10 Level, komplett prozedural generiert (Gegner, Coins, Tränke, Hintergrund)
+  – die Levelanzahl lässt sich über eine einzige Konstante erhöhen, ohne
+  auch nur ein Level von Hand anzulegen
+- Steigender Schwierigkeitsgrad: mehr und stärkere Gegner mit jedem Level
+- Gegner-Farbvarianten wechseln pro Level (3 Kugelfisch-Farben, 2
+  Quallen-Skins), damit sich die Level auch optisch unterscheiden
+- Coins in vier verschiedenen Anordnungen (Ellipse, horizontale/vertikale/
+  diagonale Linie), Gegner spawnen nie innerhalb einer Coin
 - Nahkampf (Schwanzflossen-Schlag) und zwei Fernkampf-Angriffe (Blase,
-  Gift-Schuss)
+  Gift-Schuss); Blasen platzen beim Kontakt mit Coins, ohne sie einzusammeln
+- Gegner brauchen freie Sicht auf Sharkie, um Alarm auszulösen – ein
+  Hindernis dazwischen blockiert die Wahrnehmung
 - Gegner mit unterschiedlichem Verhalten: Quallen, Kugelfische, Endgegner
   mit eigener Intro-Sequenz
-- Coins, Gifttränke und Erfahrungspunkte, die beim Levelaufstieg mitgenommen
-  werden
+- Coins, Gifttränke, Erfahrung und Leben werden beim Levelaufstieg mitgenommen
 - Shop im Spiel: Coins gegen zusätzliches Leben oder Gift-Munition eintauschen
 - Vollständig responsive: eigene Touch-Steuerung (Joystick + Buttons) für
-  Mobilgeräte, echter Vollbildmodus
+  Mobilgeräte, echter Vollbildmodus (Canvas füllt den tatsächlichen Bildschirm)
 - Speicherbarer Mute-Status (Local Storage)
 - Pausenmenü, Steuerungs-Popup (passt sich automatisch an Tastatur/Touch an),
   Musik-Einstellungen, Impressum
@@ -51,16 +59,28 @@ Eine ausführlichere Spielanleitung inklusive Gegner-Taktik findest du in
 
 ```
 Sharkie/
-├── index.html              Einstiegspunkt, lädt alle Styles/Scripts
-├── game/
-│   └── game.js              UI-Steuerung, Popups, Menüs, Game-Loop-Start
-├── models/                  Alle Klassen (Character, Gegner, World, ...)
-│   └── world-*.mixin.js     World-Logik aufgeteilt nach Bereich (Combat,
-│                             Items, Render, Boss-Intro)
-├── levels/                  Level-Aufbau (Gegner, Coins, Hintergrund, ...)
-├── styles/                  CSS, aufgeteilt nach Bereich (Basis, Spiel,
-│                             Mobile)
-└── assets/                  Bilder, Sounds, Icons
+├── index.html               Einstiegspunkt, lädt alle Styles/Scripts
+├── gamejs/
+│   └── game.js               UI-Steuerung, Popups, Menüs, Game-Loop-Start
+├── models/
+│   ├── core/                 Basisklassen (DrawableObject, MovableObject,
+│   │                          Keyboard, Level)
+│   ├── character/             Sharkie selbst + seine Animationsdaten
+│   ├── enemies/               Kugelfisch, Qualle, Endgegner
+│   ├── items/                 Coins, Tränke, Netz, Licht, Hintergrund
+│   ├── projectiles/           Blase & Gift-Blase
+│   ├── ui/                    Statusleisten, Overlay
+│   ├── world/                 World-Klasse + ihre Mixins (Combat, Items,
+│   │                          Render, Boss-Intro)
+│   ├── audio/                 AudioHub
+│   └── image-cache.js         Geteilter Bild-Cache
+├── levels/
+│   └── level-generator.js     Prozedurale Levelerzeugung (Gegner, Coins,
+│                                Hintergrund) – Levelanzahl über
+│                                TOTAL_LEVELS steuerbar
+├── styles/                    CSS, aufgeteilt nach Bereich (Basis, Spiel,
+│                                Mobile)
+└── assets/                    Bilder, Sounds, Icons
 ```
 
 ## Lokal starten
