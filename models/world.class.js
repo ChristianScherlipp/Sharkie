@@ -197,6 +197,7 @@ export class World {
         this.checkAttackHits();
         this.checkFiringObjects();
         this.checkPoisonFiringObjects();
+        this.checkBubbleHitOnCoins();
         this.checkBubbleHitOnEnemies();
         this.checkPoisonBubbleHitOnEnemies();
     }

@@ -122,6 +122,23 @@ export const WorldCombatMixin = {
     },
 
     /**
+     * Pops any bubble (regular or poison) that touches a coin, with no
+     * other effect - the coin is neither collected nor damaged, and the
+     * enemy/boss checks simply skip that bubble afterwards since it's
+     * already been removed.
+     */
+    checkBubbleHitOnCoins(){
+        for (let i = this.firingObjects.length - 1; i >= 0; i--) {
+            let bubble = this.firingObjects[i];
+            let hitCoin = this.level.coins.some(coin => bubble.isColliding(coin));
+            if (hitCoin) {
+                this.firingObjects.splice(i, 1);
+                AudioHub.playOne(AudioHub.BUBBLE_BURST);
+            }
+        }
+    },
+
+    /**
      * Checks bubble against enemies.
      * @param {FiringObject} bubble - The fired bubble/poison-bubble object.
      * @param {number} bubbleIndex - Index of the bubble within the firing objects array.

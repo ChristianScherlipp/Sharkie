@@ -5,7 +5,7 @@ import { AudioHub } from "./audio-hub.class.js";
 export class Character extends MovableObject {
     showFrame = false;
     x = 20;
-    y = 150;
+    y = 100;
     width = 250;
     height = 290;
     speed = 4;

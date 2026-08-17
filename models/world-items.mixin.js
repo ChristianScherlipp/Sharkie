@@ -62,7 +62,7 @@ export const WorldItemsMixin = {
                 this.collectedCoins += coin.value;
                 let percentage = (this.collectedCoins / this.totalCoins) * 100;
                 this.coinBar.setPercentage(percentage, this.coinBar.IMAGES_COINBAR, this.collectedCoins);
-                AudioHub.playOne(AudioHub.COIN_COLLECTED);
+                AudioHub.playOverlapping(AudioHub.COIN_COLLECTED);
             }
         }
     },
@@ -97,7 +97,7 @@ export const WorldItemsMixin = {
         this.showCoinPopup(coin);
         if (coin.value <= 0) this.level.coins.splice(index, 1);
         AudioHub.stopOne(AudioHub.FIN_SLAP);
-        AudioHub.playOne(AudioHub.COIN_COLLECTED);
+        AudioHub.playOverlapping(AudioHub.COIN_COLLECTED);
         return true;
     },
 

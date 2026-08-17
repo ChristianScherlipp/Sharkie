@@ -59,6 +59,22 @@ export class AudioHub {
     }
 
     /**
+     * Plays a sound effect on a fresh cloned audio element instead of the
+     * shared one, so rapid repeats (e.g. collecting several coins within a
+     * second) each play fully instead of cutting each other off - a
+     * single Audio element can only play one instance at a time, so
+     * restarting it early truncates whatever was still playing.
+     * @param {HTMLAudioElement} sound - The audio element to play a copy of.
+     */
+    static playOverlapping(sound) {
+        if (AudioHub.isMuted) return;
+        if (sound.readyState < 2) return;
+        let clone = sound.cloneNode();
+        clone.volume = sound.volume;
+        clone.play().catch(() => {});
+    }
+
+    /**
      * Plays a sound only if it isn't already playing (e.g. looping move sound).
      * @param {HTMLAudioElement} sound - The audio element to play.
      */

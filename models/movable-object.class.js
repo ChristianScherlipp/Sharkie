@@ -156,6 +156,58 @@ export class MovableObject extends DrawableObject {
     }
 
     /**
+     * Checks whether a straight line between this object's center and the
+     * target's center is unobstructed by any movement-blocking coin (e.g.
+     * a BigCoin). Used so enemies don't "see through" obstacles they
+     * couldn't actually see past.
+     * @param {MovableObject} target - The object to check visibility toward.
+     * @param {Level} level - The current level, containing enemies, coins and bounds.
+     * @returns {boolean} True if nothing blocking stands between this object and the target.
+     */
+    hasLineOfSightTo(target, level){
+        if (!level || !level.coins || !target) return true;
+        let x1 = this.x + this.width / 2, y1 = this.y + this.height / 2;
+        let x2 = target.x + target.width / 2, y2 = target.y + target.height / 2;
+        return !level.coins.some(coin => coin.blocksMovement &&
+            MovableObject.segmentIntersectsRect(x1, y1, x2, y2, coin.x, coin.y, coin.width, coin.height));
+    }
+ 
+    /**
+     * Checks whether a line segment intersects an axis-aligned rectangle,
+     * using the Liang-Barsky line-clipping algorithm.
+     * @param {number} x1 - X position of the segment's start, in pixels.
+     * @param {number} y1 - Y position of the segment's start, in pixels.
+     * @param {number} x2 - X position of the segment's end, in pixels.
+     * @param {number} y2 - Y position of the segment's end, in pixels.
+     * @param {number} rx - X position of the rectangle's top-left corner, in pixels.
+     * @param {number} ry - Y position of the rectangle's top-left corner, in pixels.
+     * @param {number} rw - Width of the rectangle, in pixels.
+     * @param {number} rh - Height of the rectangle, in pixels.
+     * @returns {boolean} True if the segment passes through the rectangle.
+     */
+    static segmentIntersectsRect(x1, y1, x2, y2, rx, ry, rw, rh){
+        let dx = x2 - x1, dy = y2 - y1;
+        let p = [-dx, dx, -dy, dy];
+        let q = [x1 - rx, rx + rw - x1, y1 - ry, ry + rh - y1];
+        let u1 = 0, u2 = 1;
+        for (let i = 0; i < 4; i++) {
+            if (p[i] === 0) {
+                if (q[i] < 0) return false;
+                continue;
+            }
+            let t = q[i] / p[i];
+            if (p[i] < 0) {
+                if (t > u2) return false;
+                if (t > u1) u1 = t;
+            } else {
+                if (t < u1) return false;
+                if (t < u2) u2 = t;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Checks whether blocked by obstacle.
      * @param {Level} level - the current level, containing enemies, coins and bounds.
      * @returns {boolean} - true if the contition holds, false otherwise.

@@ -23,26 +23,35 @@ export class Jellyfish extends MovableObject {
         bottom : 40
     };
     
-    JELLY_IMAGES_SWIM = [
-            './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png',
-            './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila2.png',
-            './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila3.png',
-            './assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila4.png',
+    /**
+     * The 2 available skins. Only Lila and Yellow exist as calm-state
+     * (Regular_damage) images - Green and Pink only exist for the
+     * alert-state (Super_dangerous) images, so each calm color is paired
+     * with one of those two alert colors instead of matching itself.
+     */
+    static SKINS = [
+        { calm: 'Lila', dead: 'Lila', deadPrefix: 'L', alert: 'Pink' },
+        { calm: 'Yellow', dead: 'Yellow', deadPrefix: 'y', alert: 'Green' },
     ];
 
-    JELLY_IMAGES_DANGEROUS = [
-        './assets/img/2.Enemy/2.Jelly_fish/Super_dangerous/Pink1.png',
-        './assets/img/2.Enemy/2.Jelly_fish/Super_dangerous/Pink2.png',
-        './assets/img/2.Enemy/2.Jelly_fish/Super_dangerous/Pink3.png',
-        './assets/img/2.Enemy/2.Jelly_fish/Super_dangerous/Pink4.png',
-    ];
+    JELLY_IMAGES_SWIM;
+    JELLY_IMAGES_DANGEROUS;
+    JELLY_IMAGES_DIE;
 
-    JELLY_IMAGES_DIE = [
-        './assets/img/2.Enemy/2.Jelly_fish/Dead/Lila/L1.png',
-        './assets/img/2.Enemy/2.Jelly_fish/Dead/Lila/L2.png',
-        './assets/img/2.Enemy/2.Jelly_fish/Dead/Lila/L3.png',
-        './assets/img/2.Enemy/2.Jelly_fish/Dead/Lila/L4.png',
-    ];
+    /**
+     * Builds the swim/dangerous/die image paths for a given skin.
+     * @param {number} skinIndex - Index into Jellyfish.SKINS.
+     * @returns {{swim: Array<string>, dangerous: Array<string>, die: Array<string>}} Image path sets for this skin.
+     */
+    static buildImageSet(skinIndex) {
+        let skin = Jellyfish.SKINS[skinIndex % Jellyfish.SKINS.length];
+        let base = './assets/img/2.Enemy/2.Jelly_fish';
+        return {
+            swim: [1, 2, 3, 4].map(n => `${base}/Regular_damage/${skin.calm}${n}.png`),
+            dangerous: [1, 2, 3, 4].map(n => `${base}/Super_dangerous/${skin.alert}${n}.png`),
+            die: [1, 2, 3, 4].map(n => `${base}/Dead/${skin.dead}/${skin.deadPrefix}${n}.png`),
+        };
+    }
 
     minY;
     maxY;
@@ -55,9 +64,15 @@ export class Jellyfish extends MovableObject {
      * @param {number} x - X position in pixels.
      * @param {number} y - Y position in pixels.
      * @param {number} [strengthBonus=0] -Extra strength/health added on top of the base value. 
+     * @param {number} [skinIndex=0] - Which of the 4 color skins to use, e.g. picked per level.
      */
-    constructor(x, y, strengthBonus = 0) {
-        super().loadImage('./assets/img/2.Enemy/2.Jelly_fish/Regular_damage/Lila1.png');
+    constructor(x, y, strengthBonus = 0, skinIndex = 0) {
+        super();
+        let images = Jellyfish.buildImageSet(skinIndex);
+        this.JELLY_IMAGES_SWIM = images.swim;
+        this.JELLY_IMAGES_DANGEROUS = images.dangerous;
+        this.JELLY_IMAGES_DIE = images.die;
+        this.loadImage(images.swim[0]);
         this.loadImages(this.JELLY_IMAGES_SWIM);
         this.loadImages(this.JELLY_IMAGES_DANGEROUS);
         this.loadImages(this.JELLY_IMAGES_DIE);
@@ -86,7 +101,7 @@ export class Jellyfish extends MovableObject {
         }
 
         let distance = this.edgeDistanceTo(character);
-        this.updateAlertState(distance, character);
+        this.updateAlertState(distance, character, level);
         this.updateVerticalPatrol(deltaTime, level);
         this.updateSwimAnimation(deltaTime);
     }
@@ -95,10 +110,11 @@ export class Jellyfish extends MovableObject {
      * Updates alert state.
      * @param {number} distance - Distance in pixels.
      * @param {Character} character - The player character.
+     * @param {Level} level - The current level, containing enemies, coins and bounds.
      */
-    updateAlertState(distance, character){
+    updateAlertState(distance, character, level){
         let characterBelow = character && (character.y + character.height / 2) > (this.y + this.height / 2);
-        let visible = !characterBelow;
+        let visible = !characterBelow && this.hasLineOfSightTo(character, level);
 
         if (!this.isAlerted && distance <= this.detectionRange && visible) {
             this.markAlerted();
